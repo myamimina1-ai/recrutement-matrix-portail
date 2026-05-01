@@ -1,11 +1,10 @@
-
 ```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ZCMC Recrutement Vision - Portail candidat</title>
+    <title>ZCMC Recrutement Vision – Portail candidat</title>
     <style>
         * {
             margin: 0;
@@ -13,85 +12,95 @@
             box-sizing: border-box;
             font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
         }
+
         body {
-            background: linear-gradient(145deg, #e9f0fc 0%, #d9e3f0 100%);
+            background: linear-gradient(145deg, #fdf2f8 0%, #f3e8ff 100%);
             min-height: 100vh;
             padding: 2rem 1rem;
         }
+
         .container {
             max-width: 1300px;
             margin: 0 auto;
         }
-        /* Cartes et UI */
+
         .card {
-            background: rgba(255,255,255,0.95);
+            background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(2px);
             border-radius: 2rem;
-            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
             padding: 1.8rem;
             margin-bottom: 2rem;
-            transition: 0.2s;
-            border: 1px solid rgba(255,255,255,0.4);
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
+
         .auth-card {
             max-width: 500px;
             margin: 4rem auto;
             text-align: center;
         }
+
         h1 {
             font-size: 1.8rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #00337C, #2A6F97);
+            background: linear-gradient(135deg, #be185d, #7c3aed);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             margin-bottom: 0.5rem;
         }
+
         .badge-zcmc {
-            background: #0B2F5C;
+            background: linear-gradient(95deg, #be185d, #7c3aed);
             color: white;
             padding: 0.25rem 1rem;
             border-radius: 40px;
             font-size: 0.8rem;
             display: inline-block;
             margin-bottom: 1rem;
+            font-weight: bold;
         }
+
         .timer {
             background: #11212E;
             color: #FFD966;
             font-size: 1.8rem;
             font-weight: bold;
             font-family: monospace;
-            padding: 0.5rem 1.2rem;
+            padding: 0.4rem 1.2rem;
             border-radius: 60px;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             margin-bottom: 1rem;
         }
+
         .progress-ia {
-            background: #e2e8f0;
+            background: #f1f5f9;
             border-radius: 40px;
             height: 10px;
             width: 100%;
             overflow: hidden;
             margin: 0.5rem 0 1rem;
         }
+
         .progress-fill {
-            background: linear-gradient(90deg, #2A6F97, #0F4C5F);
+            background: linear-gradient(90deg, #ec4899, #8b5cf6);
             width: 0%;
             height: 100%;
             border-radius: 40px;
             transition: width 0.3s ease;
         }
+
         .nav-tabs {
             display: flex;
             gap: 0.8rem;
             flex-wrap: wrap;
             margin-bottom: 2rem;
-            border-bottom: 2px solid #cbd5e1;
+            border-bottom: 2px solid #fbcfe8;
             padding-bottom: 0.8rem;
         }
+
         .tab-btn {
             background: none;
             border: none;
@@ -101,46 +110,58 @@
             border-radius: 40px;
             cursor: pointer;
             transition: 0.2s;
-            color: #1e293b;
+            color: #4c1d95;
         }
+
         .tab-btn.active {
-            background: #00337C;
+            background: linear-gradient(95deg, #be185d, #7c3aed);
             color: white;
-            box-shadow: 0 6px 12px -8px #00337C;
+            box-shadow: 0 6px 12px -8px #6b21a5;
         }
+
         .volet {
             display: none;
             animation: fade 0.2s ease;
         }
+
         .volet.active-volet {
             display: block;
         }
-        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+        @keyframes fade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         .question-block {
-            background: #f8fafc;
+            background: #fff5fc;
             border-radius: 1.5rem;
             padding: 1.2rem;
             margin-bottom: 1.5rem;
-            border-left: 6px solid #2A6F97;
+            border-left: 6px solid #ec4899;
         }
+
         .question-label {
             font-weight: 700;
             margin-bottom: 0.6rem;
-            color: #0f172a;
+            color: #831843;
         }
+
         input, select, textarea {
             width: 100%;
             padding: 0.7rem;
             border-radius: 1rem;
-            border: 1px solid #cbd5e1;
+            border: 1px solid #fbcfe8;
             background: white;
         }
+
         .checkbox-group {
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
             margin-top: 0.5rem;
         }
+
         .checkbox-group label {
             display: flex;
             align-items: center;
@@ -148,17 +169,19 @@
             background: white;
             padding: 0.3rem 1rem;
             border-radius: 40px;
-            border: 1px solid #cbd5e1;
+            border: 1px solid #fbcfe8;
         }
+
         .rh-section {
-            background: #EFF6FF;
+            background: #fff1f9;
             border-radius: 1.5rem;
             padding: 1rem;
             margin-top: 2rem;
-            border: 1px dashed #2c6e9e;
+            border: 1px dashed #c084fc;
         }
+
         button {
-            background: #00337C;
+            background: linear-gradient(95deg, #be185d, #7c3aed);
             color: white;
             border: none;
             padding: 0.7rem 1.5rem;
@@ -167,34 +190,87 @@
             cursor: pointer;
             transition: 0.2s;
         }
+
         button:hover {
-            background: #001f4f;
+            opacity: 0.9;
             transform: scale(0.98);
         }
+
         .flex-end {
             display: flex;
             justify-content: flex-end;
             gap: 1rem;
             margin-top: 1rem;
         }
+
         .score-ai {
-            background: #11212E;
-            color: #BBE9FF;
+            background: #fae8ff;
+            color: #6b21a5;
             padding: 0.8rem;
             border-radius: 1.2rem;
             text-align: center;
             font-weight: bold;
             margin: 1rem 0;
+            border: 1px solid #d8b4fe;
         }
+
         footer {
             text-align: center;
             font-size: 0.7rem;
-            color: #334155;
+            color: #6b21a5;
             margin-top: 2rem;
         }
-        @media (max-width: 700px) {
-            .card { padding: 1rem; }
-            .tab-btn { padding: 0.4rem 1rem; font-size: 0.8rem; }
+
+        /* Styles pour le rapport RH */
+        .rapport-rh {
+            background: white;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        .skill-bar-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .skill-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .skill-bar-bg {
+            background-color: #f3e8ff;
+            border-radius: 1rem;
+            height: 0.75rem;
+            overflow: hidden;
+        }
+
+        .skill-bar-fill {
+            background: linear-gradient(90deg, #f472b6, #a855f7);
+            width: 0%;
+            height: 100%;
+            border-radius: 1rem;
+        }
+
+        .stars-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .star {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #d1d5db;
+            transition: color 0.2s;
+        }
+
+        .star.selected {
+            color: #fbbf24;
         }
     </style>
 </head>
@@ -206,7 +282,7 @@
         <h1>🔐 Espace confidentiel</h1>
         <p style="margin-bottom: 1.5rem;">Chaque collaborateur possède un code unique.<br>Vos réponses restent privées et sauvegardées.</p>
         <input type="text" id="collabName" placeholder="Prénom et nom du collaborateur" style="margin-bottom: 1rem;">
-        <input type="password" id="collabCode" placeholder="Code d'accès (fourni par RH)" style="margin-bottom: 1.5rem;">
+        <input type="password" id="collabCode" placeholder="Code d'accès (fourni par RH, ex: ZCMC001)" style="margin-bottom: 1.5rem;">
         <button id="loginBtn">🔓 Accéder à mon espace</button>
         <p style="margin-top: 1rem; font-size: 0.8rem;">🔹 Le RH génère les codes (ex: ZCMC001).<br>Les données restent sur ce poste.</p>
     </div>
@@ -216,7 +292,7 @@
         <div class="card" style="text-align: center;">
             <div class="badge-zcmc">ZCMC Recrutement Vision</div>
             <h1>📋 Évaluation intégrale 360°</h1>
-            <div class="timer" id="timerDisplay">⏱️ 20:00</div>
+            <div class="timer" id="timerDisplay">⏱️ 45:00</div>
             <div class="progress-ia"><div class="progress-fill" id="globalProgressFill"></div></div>
             <p id="aiAdvice" class="score-ai">🧠 IA Analyse : en attente de réponses...</p>
         </div>
@@ -229,22 +305,20 @@
                 <button class="tab-btn" data-volet="volet3">🎨 Graphiste / UI Motion</button>
             </div>
 
-            <!-- VOLET 1 : Conseiller Clientèle (questionnaire détaillé) -->
+            <!-- VOLET 1 : Conseiller Clientèle -->
             <div id="volet1" class="volet active-volet">
                 <h3>🎯 Compétences & cas pratiques (Conseiller)</h3>
-                <!-- Cases RH à cocher -->
                 <div class="rh-section">
                     <strong>📌 Cases RH (à cocher selon validation)</strong><br>
                     <div class="checkbox-group" id="rhCases1">
-                        <label><input type="checkbox" value="gestion_kpi"> Gestion des KPI (Taux satisfaction)</label>
-                        <label><input type="checkbox" value="outils_crm"> Maîtrise CRM / Zendesk</label>
-                        <label><input type="checkbox" value="empathie"> Empathie client avéré</label>
-                        <label><input type="checkbox" value="vente_add"> Capacité upselling</label>
-                        <label><input type="checkbox" value="gestion_stress"> Gestion du stress pic d'appels</label>
-                        <label><input type="checkbox" value="ponctualite"> Ponctualité / Assiduité</label>
+                        <label><input type="checkbox" value="gestion_kpi"> Gestion des KPI (taux satisfaction, NPS)</label>
+                        <label><input type="checkbox" value="outils_crm"> Maîtrise outils omnicanaux (Salesforce / Zendesk)</label>
+                        <label><input type="checkbox" value="empathie"> Empathie & écoute active</label>
+                        <label><input type="checkbox" value="vente_add"> Techniques de vente / Upselling</label>
+                        <label><input type="checkbox" value="gestion_stress"> Gestion du stress & objections</label>
+                        <label><input type="checkbox" value="ponctualite"> Aisance digitale multicanale</label>
                     </div>
                 </div>
-                <!-- Questionnaire psychologique / clé -->
                 <div class="question-block"><div class="question-label">🧠 Question 1 : Face à un client très en colère qui insulte, quelle est votre réaction ?</div><textarea rows="2" class="qtext" data-volet="1" data-qid="q1"></textarea></div>
                 <div class="question-block"><div class="question-label">📊 Question 2 : Décrivez votre méthode pour prioriser plusieurs demandes urgentes.</div><textarea rows="2" class="qtext" data-volet="1" data-qid="q2"></textarea></div>
                 <div class="question-block"><div class="question-label">🔍 Question 3 : Comment gérez-vous le feedback négatif d’un superviseur ?</div><textarea rows="2" class="qtext" data-volet="1" data-qid="q3"></textarea></div>
@@ -254,57 +328,67 @@
 
             <!-- VOLET 2 : Social Media Manager -->
             <div id="volet2" class="volet">
-                <h3>📱 Branding, engagement & crisis management</h3>
+                <h3>📱 Branding, engagement & stratégie cross-canal</h3>
                 <div class="rh-section">
                     <strong>📌 Cases RH (SMM)</strong><div class="checkbox-group" id="rhCases2">
-                        <label><input type="checkbox" value="communaute"> Animation communauté</label>
-                        <label><input type="checkbox" value="crisis"> Gestion de crise e-réputation</label>
-                        <label><input type="checkbox" value="analytics"> Maîtrise Meta Business Suite</label>
-                        <label><input type="checkbox" value="crea_tendance"> Création de tendances</label>
-                        <label><input type="checkbox" value="reporting"> Reporting mensuel</label>
+                        <label><input type="checkbox" value="communaute"> Animation communauté & Social Listening</label>
+                        <label><input type="checkbox" value="crisis"> Gestion de crise e-réputation (multi-réseaux)</label>
+                        <label><input type="checkbox" value="analytics"> Maîtrise outils analytics (Meta, LinkedIn, TikTok)</label>
+                        <label><input type="checkbox" value="crea_tendance"> Création de contenu & veille tendances</label>
+                        <label><input type="checkbox" value="reporting"> Reporting stratégique & KPIs</label>
                     </div>
                 </div>
-                <div class="question-block"><div class="question-label">📢 Stratégie : Quel contenu viral proposeriez-vous pour ZCMC ?</div><textarea rows="2" class="qtext" data-volet="2" data-qid="q1"></textarea></div>
-                <div class="question-block"><div class="question-label">⚠️ Gestion de crise : Un client insulte la marque sur X (Twitter). Réponse type ?</div><textarea rows="2" class="qtext" data-volet="2" data-qid="q2"></textarea></div>
-                <div class="question-block"><div class="question-label">🧩 Outils : Citez 3 KPIs essentiels pour mesurer l'engagement.</div><textarea rows="2" class="qtext" data-volet="2" data-qid="q3"></textarea></div>
-                <div class="question-block"><div class="question-label">💡 Question psychologique : Comment acceptez-vous les critiques sur une campagne que vous avez menée ?</div><textarea rows="2" class="qtext" data-volet="2" data-qid="q4"></textarea></div>
+                <div class="question-block"><div class="question-label">📢 Stratégie : Quel contenu viral proposeriez-vous pour ZCMC sur LinkedIn, Instagram et TikTok ?</div><textarea rows="2" class="qtext" data-volet="2" data-qid="q1"></textarea></div>
+                <div class="question-block"><div class="question-label">⚠️ Gestion de crise : Un client insulte la marque sur un post public. Décrivez votre processus de réponse sur chaque réseau.</div><textarea rows="2" class="qtext" data-volet="2" data-qid="q2"></textarea></div>
+                <div class="question-block"><div class="question-label">🧩 Outils & méthodes : Quels sont selon vous les 3 KPIs essentiels pour mesurer l'engagement sur LinkedIn et TikTok ?</div><textarea rows="2" class="qtext" data-volet="2" data-qid="q3"></textarea></div>
+                <div class="question-block"><div class="question-label">💡 Question stratégique : Imaginez que vous ayez à gérer un portefeuille de 45 clients actifs chaque jour, avec des offres différentes. Comment organiseriez-vous votre travail pour maintenir qualité et réactivité ?</div><textarea rows="3" class="qtext" data-volet="2" data-qid="q4"></textarea></div>
             </div>
 
             <!-- VOLET 3 : Graphiste / UI Motion -->
             <div id="volet3" class="volet">
-                <h3>🎨 Suite Adobe, Design system & créativité</h3>
+                <h3>🎨 Suite Adobe, Design system, Créativité & Contraintes métier</h3>
                 <div class="rh-section">
                     <strong>📌 Cases RH (Design)</strong><div class="checkbox-group" id="rhCases3">
                         <label><input type="checkbox" value="photoshop"> Photoshop avancé</label>
                         <label><input type="checkbox" value="illustrator"> Illustrator / vectoriel</label>
-                        <label><input type="checkbox" value="after_effects"> After Effects / motion</label>
-                        <label><input type="checkbox" value="ui_ux"> Notions UI/UX</label>
-                        <label><input type="checkbox" value="brief"> Respect des briefs</label>
+                        <label><input type="checkbox" value="after_effects"> After Effects / motion design</label>
+                        <label><input type="checkbox" value="ui_ux"> Notions UI/UX & maquettes</label>
+                        <label><input type="checkbox" value="brief"> Respect des briefs & gestion des versions</label>
                     </div>
                 </div>
-                <div class="question-block"><div class="question-label">🎬 Créativité : Décrivez votre processus de création d’une identité visuelle.</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q1"></textarea></div>
-                <div class="question-block"><div class="question-label">🖌️ Feedback : Comment réagissez-vous si un client rejette 3 versions successives ?</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q2"></textarea></div>
-                <div class="question-block"><div class="question-label">⚡ Outils : Maîtrisez-vous Figma ? Décrivez une collaboration avec un dev.</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q3"></textarea></div>
-                <div class="question-block"><div class="question-label">🧪 Test psychologique : Délais serrés + changement de brief 3h avant rendu. Gestion.</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q4"></textarea></div>
+                <div class="question-block"><div class="question-label">🎬 Créativité & rigueur : Décrivez votre processus de création d'une identité visuelle, de la prise de brief à la livraison des gabarits.</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q1"></textarea></div>
+                <div class="question-block"><div class="question-label">🖌️ Feedback client : Comment réagissez-vous si un médecin vous demande une charte graphique complète mais rejette vos 3 premières propositions ?</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q2"></textarea></div>
+                <div class="question-block"><div class="question-label">⚡ Outils & collaboration : Maîtrisez-vous Figma ? Décrivez comment vous intégreriez une charte graphique dans des gabarits prédéfinis pour une application médicale.</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q3"></textarea></div>
+                <div class="question-block"><div class="question-label">🧪 Test psychologique & gestion projet : Délais très serrés et changement de brief 3h avant rendu pour un client exigeant. Quelle est votre méthode ?</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q4"></textarea></div>
             </div>
 
             <div class="flex-end">
                 <button id="saveAllBtn">💾 Sauvegarder progression</button>
-                <button id="exportRHBtn">📎 Exporter rapport RH (JSON)</button>
+                <button id="exportRHBtn">📎 Générer le Rapport RH</button>
             </div>
         </div>
+
+        <!-- SECTION RAPPORT RH -->
+        <div id="rhReportSection" class="rapport-rh card" style="display: none;">
+            <h2 style="color: #be185d;">📊 Rapport d'évaluation - ZCMC Vision</h2>
+            <div id="rhReportContent"></div>
+            <div class="flex-end" style="margin-top: 1.5rem;">
+                <button id="downloadReportBtn">📥 Télécharger le rapport (JSON)</button>
+            </div>
+        </div>
+
         <footer>🔒 Session privée – données enregistrées localement. ZCMC Recrutement Vision · IA d'aide à la décision</footer>
     </div>
 </div>
 
 <script>
-    // ------------------ GESTION SESSION PRIVEE (code + stockage local dédié) ------------------
-    let currentUserKey = null;      // clé unique "nom_code"
+    // ---------- GESTION SESSION PRIVEE ----------
+    let currentUserKey = null;
+    let userData = {};
+    let currentReport = null;
     let timerInterval = null;
-    let timeSeconds = 20 * 60;      // 20 minutes
-    let userData = {};              // stockage des réponses du collaborateur connecté
+    let timeSeconds = 45 * 60; // 45 minutes
 
-    // Initialisation : charger depuis localStorage pour l'utilisateur
     function loadUserData() {
         if (!currentUserKey) return;
         const raw = localStorage.getItem(`zcmc_${currentUserKey}`);
@@ -314,12 +398,13 @@
             userData = {
                 rhCases: {1:[],2:[],3:[]},
                 answers: {1:{},2:{},3:{}},
+                starRatings: {},
                 lastUpdated: new Date().toISOString()
             };
         }
-        // s'assurer des structures
         if (!userData.rhCases) userData.rhCases = {1:[],2:[],3:[]};
         if (!userData.answers) userData.answers = {1:{},2:{},3:{}};
+        if (!userData.starRatings) userData.starRatings = {};
         updateUIFromData();
         updateGlobalProgressAndAI();
     }
@@ -330,9 +415,7 @@
         localStorage.setItem(`zcmc_${currentUserKey}`, JSON.stringify(userData));
     }
 
-    // Synchroniser l'interface avec userData (cases RH, textareas, selects)
     function updateUIFromData() {
-        // Restaurer cases RH volets 1,2,3
         for (let v=1; v<=3; v++) {
             const savedChecks = userData.rhCases[v] || [];
             const container = document.getElementById(`rhCases${v}`);
@@ -342,12 +425,10 @@
                     cb.checked = savedChecks.includes(cb.value);
                 });
             }
-            // Restaurer les textareas et selects correspondants
             document.querySelectorAll(`.qtext[data-volet="${v}"]`).forEach(el => {
                 const qid = el.getAttribute('data-qid');
-                if (userData.answers[v] && userData.answers[v][qid] !== undefined) {
-                    el.value = userData.answers[v][qid];
-                } else { el.value = ''; }
+                if (userData.answers[v] && userData.answers[v][qid] !== undefined) el.value = userData.answers[v][qid];
+                else el.value = '';
             });
             document.querySelectorAll(`.qselect[data-volet="${v}"]`).forEach(el => {
                 const qid = el.getAttribute('data-qid');
@@ -355,18 +436,16 @@
                 else el.value = "3";
             });
         }
+        // Restauration étoiles si nécessaires (pour rapport)
     }
 
-    // Collecte des réponses depuis l'interface vers userData
     function collectUItoData() {
         for (let v=1; v<=3; v++) {
-            // Cases RH
             const container = document.getElementById(`rhCases${v}`);
             if (container) {
                 const checks = Array.from(container.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
                 userData.rhCases[v] = checks;
             }
-            // Questions texte
             if (!userData.answers[v]) userData.answers[v] = {};
             document.querySelectorAll(`.qtext[data-volet="${v}"]`).forEach(el => {
                 const qid = el.getAttribute('data-qid');
@@ -377,9 +456,19 @@
                 userData.answers[v][qid] = el.value;
             });
         }
+        // Récupération des étoiles si présentes dans le rapport
+        const stars = document.querySelectorAll('.star');
+        stars.forEach(star => {
+            const key = star.getAttribute('data-rating-key');
+            const value = parseInt(star.getAttribute('data-value'));
+            if (star.classList.contains('selected')) {
+                if (!userData.starRatings[key] || userData.starRatings[key] < value) {
+                    userData.starRatings[key] = value;
+                }
+            }
+        });
     }
 
-    // IA de progression : calcule un score basé sur remplissage réponses + cases RH
     function computeAIScore() {
         let totalFill = 0;
         let maxFill = 0;
@@ -389,7 +478,6 @@
             const totalTexts = document.querySelectorAll(`.qtext[data-volet="${v}"]`).length + document.querySelectorAll(`.qselect[data-volet="${v}"]`).length;
             totalFill += textCount;
             maxFill += totalTexts;
-            // cases RH: bonus
             const nbRh = (userData.rhCases[v] || []).length;
             totalFill += nbRh * 0.8;
             maxFill += (document.querySelectorAll(`#rhCases${v} input`).length) * 0.8;
@@ -414,14 +502,14 @@
         alert("✅ Progression sauvegardée (privée pour ce collaborateur)");
     }
 
-    // Timer 20 min
+    // Timer 45 min
     function startTimer() {
         if (timerInterval) clearInterval(timerInterval);
         timerInterval = setInterval(() => {
             if (timeSeconds <= 0) {
                 clearInterval(timerInterval);
                 document.getElementById('timerDisplay').innerHTML = "⏱️ Temps écoulé !";
-                alert("Les 20 minutes sont écoulées. Veuillez finaliser avec le RH.");
+                alert("Les 45 minutes sont écoulées. Veuillez finaliser avec le RH.");
                 return;
             }
             timeSeconds--;
@@ -431,39 +519,133 @@
         }, 1000);
     }
 
-    // Export RH (rapport détaillé)
-    function exportRHReport() {
+    // Génération du rapport RH avec barres de progression
+    function generateRHReport() {
         collectUItoData();
         const nomCollaborateur = currentUserKey.split('_')[0];
-        const rapport = {
+        // Calcul des scores pour les barres (exemples basés sur les réponses)
+        const softSkillsScore = (userData.rhCases[1].includes('empathie') ? 20 : 0) + 
+                                (userData.rhCases[1].includes('gestion_stress') ? 20 : 0) +
+                                (userData.answers[1] && userData.answers[1].q1 && userData.answers[1].q1.length > 10 ? 20 : 0) +
+                                (userData.answers[2] && userData.answers[2].q2 && userData.answers[2].q2.length > 10 ? 20 : 0) +
+                                (userData.answers[3] && userData.answers[3].q4 && userData.answers[3].q4.length > 10 ? 20 : 0);
+        const autonomieScore = (userData.answers[1] && userData.answers[1].q2 && userData.answers[1].q2.length > 15 ? 25 : 0) +
+                               (userData.answers[2] && userData.answers[2].q4 && userData.answers[2].q4.length > 20 ? 25 : 0) +
+                               (userData.answers[3] && userData.answers[3].q1 && userData.answers[3].q1.length > 15 ? 25 : 0) +
+                               (userData.rhCases[1].length + userData.rhCases[2].length + userData.rhCases[3].length > 5 ? 25 : 0);
+        const softSkillsMetierScore = (userData.rhCases[1].includes('outils_crm') ? 20 : 0) +
+                                      (userData.rhCases[1].includes('vente_add') ? 20 : 0) +
+                                      (userData.rhCases[2].includes('analytics') ? 20 : 0) +
+                                      (userData.rhCases[2].includes('crea_tendance') ? 20 : 0) +
+                                      (userData.rhCases[3].includes('ui_ux') ? 20 : 0);
+        const adequationScore = (userData.answers[1] && userData.answers[1].q5 ? parseInt(userData.answers[1].q5) * 10 : 0) +
+                                (userData.answers[2] && userData.answers[2].q3 && userData.answers[2].q3.length > 10 ? 20 : 0) +
+                                (userData.answers[3] && userData.answers[3].q2 && userData.answers[3].q2.length > 15 ? 30 : 0);
+        const finalScores = {
+            softSkills: Math.min(softSkillsScore, 100),
+            autonomie: Math.min(autonomieScore, 100),
+            softSkillsMetier: Math.min(softSkillsMetierScore, 100),
+            adequation: Math.min(adequationScore, 100)
+        };
+        return {
             collaborateur: nomCollaborateur,
             codeSession: currentUserKey,
             timestamp: new Date().toISOString(),
-            scoresParVolet: {
-                Conseiller: { casesRH: userData.rhCases[1], reponses_cle: userData.answers[1] },
-                SocialMedia: { casesRH: userData.rhCases[2], reponses_cle: userData.answers[2] },
-                Graphiste: { casesRH: userData.rhCases[3], reponses_cle: userData.answers[3] }
+            scores: finalScores,
+            details: {
+                rhCases: userData.rhCases,
+                reponses_cle: userData.answers,
+                notes_etoiles: userData.starRatings
             },
             iaCompletion: computeAIScore().pourcent,
             recommandation_ia: computeAIScore().advice
         };
-        const dataStr = JSON.stringify(rapport, null, 2);
+    }
+
+    function displayRHReport() {
+        const report = generateRHReport();
+        currentReport = report;
+        const container = document.getElementById('rhReportContent');
+        container.innerHTML = `
+            <div style="margin-bottom: 1rem;">
+                <p><strong>Candidat :</strong> ${report.collaborateur}</p>
+                <p><strong>Date :</strong> ${new Date(report.timestamp).toLocaleString()}</p>
+                <p><strong>Score IA :</strong> ${report.iaCompletion}% - ${report.recommandation_ia}</p>
+            </div>
+            <div class="skill-bar-container">
+                <div class="skill-label"><span>🧠 Soft Skills (Communication, Empathie)</span><span>${report.scores.softSkills}%</span></div>
+                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.softSkills}%;"></div></div>
+            </div>
+            <div class="skill-bar-container">
+                <div class="skill-label"><span>⚡ Autonomie & Gestion de charge</span><span>${report.scores.autonomie}%</span></div>
+                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.autonomie}%;"></div></div>
+            </div>
+            <div class="skill-bar-container">
+                <div class="skill-label"><span>💼 Soft Skills Métier (Outils, KPI)</span><span>${report.scores.softSkillsMetier}%</span></div>
+                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.softSkillsMetier}%;"></div></div>
+            </div>
+            <div class="skill-bar-container">
+                <div class="skill-label"><span>🎯 Adéquation & Proactivité</span><span>${report.scores.adequation}%</span></div>
+                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.adequation}%;"></div></div>
+            </div>
+            <hr style="margin: 1rem 0; border-color: #fbcfe8;">
+            <h3>⭐ Évaluation détaillée par compétence</h3>
+            <div class="question-block">
+                <div class="question-label">Aisance digitale & outils CRM</div>
+                <div class="stars-container" id="rating-outils">
+                    ${[1,2,3,4,5].map(i => `<span class="star ${(report.details.notes_etoiles.outils || 0) >= i ? 'selected' : ''}" data-rating-key="outils" data-value="${i}" style="cursor: pointer;">★</span>`).join('')}
+                </div>
+            </div>
+            <div class="question-block">
+                <div class="question-label">Créativité & adaptation</div>
+                <div class="stars-container" id="rating-creativite">
+                    ${[1,2,3,4,5].map(i => `<span class="star ${(report.details.notes_etoiles.creativite || 0) >= i ? 'selected' : ''}" data-rating-key="creativite" data-value="${i}" style="cursor: pointer;">★</span>`).join('')}
+                </div>
+            </div>
+            <div class="question-block">
+                <div class="question-label">Gestion du stress & objections</div>
+                <div class="stars-container" id="rating-stress">
+                    ${[1,2,3,4,5].map(i => `<span class="star ${(report.details.notes_etoiles.stress || 0) >= i ? 'selected' : ''}" data-rating-key="stress" data-value="${i}" style="cursor: pointer;">★</span>`).join('')}
+                </div>
+            </div>
+        `;
+        // Ajouter les événements pour les étoiles
+        document.querySelectorAll('.star').forEach(star => {
+            star.addEventListener('click', function() {
+                const key = this.getAttribute('data-rating-key');
+                const value = parseInt(this.getAttribute('data-value'));
+                const stars = document.querySelectorAll(`.star[data-rating-key="${key}"]`);
+                stars.forEach((s, idx) => {
+                    if (idx < value) s.classList.add('selected');
+                    else s.classList.remove('selected');
+                });
+                userData.starRatings[key] = value;
+                saveUserData();
+                displayRHReport(); // rafraîchir
+            });
+        });
+        document.getElementById('rhReportSection').style.display = 'block';
+        document.getElementById('rhReportSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function downloadReport() {
+        if (!currentReport) currentReport = generateRHReport();
+        const dataStr = JSON.stringify(currentReport, null, 2);
         const blob = new Blob([dataStr], {type: "application/json"});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `rapport_ZCMC_${nomCollaborateur}.json`;
+        a.download = `rapport_ZCMC_${currentReport.collaborateur}.json`;
         a.click();
         URL.revokeObjectURL(url);
-        alert("Rapport exporté pour le RH.");
+        alert("Rapport téléchargé.");
     }
 
-    // ----- Gestion authentification privée -----
+    // ---------- AUTHENTIFICATION ----------
     document.getElementById('loginBtn').addEventListener('click', () => {
         const name = document.getElementById('collabName').value.trim();
         const code = document.getElementById('collabCode').value.trim();
         if (!name || !code) { alert("Veuillez saisir votre nom et le code fourni par RH"); return; }
-        // code simulé : n'importe quel code fonctionne pour la démo, mais peut être personnalisable : ici on exige "ZCMC"+chiffres
         if (!code.match(/^ZCMC\d{3}$/i) && code !== "RHMASTER") {
             alert("Code invalide. Format: ZCMC suivi de 3 chiffres (ex: ZCMC007). Contactez RH.");
             return;
@@ -473,14 +655,15 @@
         document.getElementById('authScreen').style.display = 'none';
         document.getElementById('mainSpace').style.display = 'block';
         startTimer();
-        // Événements onchange pour sauvegarde auto optionnelle
+        // Événements auto-save
         document.querySelectorAll('input, textarea, select').forEach(el => {
             el.addEventListener('change', () => { collectUItoData(); saveUserData(); updateGlobalProgressAndAI(); });
             el.addEventListener('input', () => { collectUItoData(); saveUserData(); updateGlobalProgressAndAI(); });
         });
         document.getElementById('saveAllBtn').addEventListener('click', saveAndRefresh);
-        document.getElementById('exportRHBtn').addEventListener('click', exportRHReport);
-        // navigation tabs
+        document.getElementById('exportRHBtn').addEventListener('click', () => { displayRHReport(); });
+        document.getElementById('downloadReportBtn').addEventListener('click', downloadReport);
+        // Navigation onglets
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const voletId = btn.getAttribute('data-volet');
