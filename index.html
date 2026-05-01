@@ -1,11 +1,13 @@
 
-```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ZCMC Recrutement Vision – Portail RH & Candidats</title>
+    <title>ZCMC Recrutement Vision – Portail complet</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -13,18 +15,15 @@
             box-sizing: border-box;
             font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
         }
-
         body {
             background: linear-gradient(145deg, #fdf2f8 0%, #f3e8ff 100%);
             min-height: 100vh;
             padding: 2rem 1rem;
         }
-
         .container {
             max-width: 1300px;
             margin: 0 auto;
         }
-
         .card {
             background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(2px);
@@ -34,23 +33,6 @@
             margin-bottom: 2rem;
             border: 1px solid rgba(255, 255, 255, 0.8);
         }
-
-        .auth-card {
-            max-width: 600px;
-            margin: 2rem auto;
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #be185d, #7c3aed);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 0.5rem;
-        }
-
         .badge-zcmc {
             background: linear-gradient(95deg, #be185d, #7c3aed);
             color: white;
@@ -61,126 +43,52 @@
             margin-bottom: 1rem;
             font-weight: bold;
         }
-
-        .timer {
-            background: #11212E;
-            color: #FFD966;
+        h1 {
             font-size: 1.8rem;
-            font-weight: bold;
-            font-family: monospace;
-            padding: 0.4rem 1.2rem;
-            border-radius: 60px;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #be185d, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
         }
-
-        .progress-ia {
+        .progress-bar {
             background: #f1f5f9;
             border-radius: 40px;
-            height: 10px;
-            width: 100%;
+            height: 12px;
+            margin: 1rem 0;
             overflow: hidden;
-            margin: 0.5rem 0 1rem;
         }
-
         .progress-fill {
             background: linear-gradient(90deg, #ec4899, #8b5cf6);
             width: 0%;
             height: 100%;
             border-radius: 40px;
-            transition: width 0.3s ease;
+            transition: width 0.3s;
         }
-
-        .nav-tabs {
-            display: flex;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid #fbcfe8;
-            padding-bottom: 0.8rem;
-        }
-
-        .tab-btn {
-            background: none;
-            border: none;
-            font-size: 1rem;
-            font-weight: 600;
-            padding: 0.6rem 1.4rem;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: 0.2s;
-            color: #4c1d95;
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(95deg, #be185d, #7c3aed);
-            color: white;
-            box-shadow: 0 6px 12px -8px #6b21a5;
-        }
-
-        .volet {
-            display: none;
-            animation: fade 0.2s ease;
-        }
-
-        .volet.active-volet {
-            display: block;
-        }
-
-        @keyframes fade {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .question-block {
+        .question {
             background: #fff5fc;
             border-radius: 1.5rem;
-            padding: 1.2rem;
-            margin-bottom: 1.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
             border-left: 6px solid #ec4899;
         }
-
-        .question-label {
+        .question-text {
             font-weight: 700;
-            margin-bottom: 0.6rem;
+            margin-bottom: 0.5rem;
             color: #831843;
         }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 0.7rem;
-            border-radius: 1rem;
-            border: 1px solid #fbcfe8;
-            background: white;
-        }
-
-        .checkbox-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .checkbox-group label {
+        .options label {
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.5rem;
             background: white;
-            padding: 0.3rem 1rem;
-            border-radius: 40px;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
             border: 1px solid #fbcfe8;
+            margin: 0.3rem 0;
+            cursor: pointer;
         }
-
-        .rh-section {
-            background: #fff1f9;
-            border-radius: 1.5rem;
-            padding: 1rem;
-            margin-top: 2rem;
-            border: 1px dashed #c084fc;
-        }
-
         button {
             background: linear-gradient(95deg, #be185d, #7c3aed);
             color: white;
@@ -189,90 +97,20 @@
             border-radius: 2rem;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.2s;
-        }
-
-        button:hover {
-            opacity: 0.9;
-            transform: scale(0.98);
-        }
-
-        .flex-end {
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
             margin-top: 1rem;
         }
-
-        .score-ai {
-            background: #fae8ff;
-            color: #6b21a5;
-            padding: 0.8rem;
-            border-radius: 1.2rem;
-            text-align: center;
-            font-weight: bold;
-            margin: 1rem 0;
-            border: 1px solid #d8b4fe;
-        }
-
-        footer {
-            text-align: center;
-            font-size: 0.7rem;
-            color: #6b21a5;
-            margin-top: 2rem;
-        }
-
-        .rapport-rh {
-            background: white;
-            border-radius: 2rem;
-            padding: 1.5rem;
-            margin-top: 2rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-        }
-
-        .skill-bar-container {
-            margin-bottom: 1.5rem;
-        }
-
-        .skill-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #374151;
-        }
-
-        .skill-bar-bg {
-            background-color: #f3e8ff;
+        input, textarea {
+            width: 100%;
+            padding: 0.7rem;
             border-radius: 1rem;
-            height: 0.75rem;
-            overflow: hidden;
+            border: 1px solid #fbcfe8;
+            margin-bottom: 1rem;
         }
-
-        .skill-bar-fill {
-            background: linear-gradient(90deg, #f472b6, #a855f7);
-            width: 0%;
-            height: 100%;
-            border-radius: 1rem;
+        .auth-card {
+            max-width: 550px;
+            margin: 2rem auto;
+            text-align: center;
         }
-
-        .stars-container {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .star {
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #d1d5db;
-            transition: color 0.2s;
-        }
-
-        .star.selected {
-            color: #fbbf24;
-        }
-
         .candidat-list {
             margin-top: 1rem;
         }
@@ -286,578 +124,359 @@
             align-items: center;
             flex-wrap: wrap;
         }
-        .candidat-info {
-            font-weight: bold;
+        .detail-panel {
+            background: #fef9c3;
+            padding: 1rem;
+            border-radius: 1rem;
+            margin-top: 1rem;
+            display: none;
+            width: 100%;
         }
-        .candidat-actions button {
-            margin-left: 0.5rem;
-            background: #be185d;
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #6b21a5;
         }
         hr {
             margin: 1rem 0;
             border-color: #fbcfe8;
         }
-        .keywords-rh {
-            background: #fef9c3;
-            padding: 1rem;
-            border-radius: 1rem;
-            margin-top: 1rem;
-            border-left: 6px solid #eab308;
-        }
-
-        @media print {
-            body { background: white; padding: 0; margin: 0; }
-            .no-print, .nav-tabs, .flex-end, .timer, .progress-ia, .score-ai,
-            button, .candidat-actions, footer, #rhReportSection button,
-            #candidateSpace .card:first-child, .tab-btn, #saveAllBtn, #exportPdfBtn {
-                display: none !important;
-            }
-            .card, .rapport-rh { box-shadow: none; padding: 0; margin: 0; break-inside: avoid; }
-            .skill-bar-fill { background: #be185d !important; }
-            .badge-zcmc { background: #be185d !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        }
     </style>
 </head>
 <body>
-<div class="container" id="app">
-    <!-- Écran d'authentification double -->
+<div class="container">
+    <!-- ÉCRAN D'AUTHENTIFICATION -->
     <div id="authScreen" class="auth-card card">
         <div class="badge-zcmc">ZCMC Recrutement Vision</div>
-        <h1>🔐 Portail sécurisé</h1>
-        <div style="margin-bottom: 2rem;">
-            <h3>🧑‍💻 Espace candidat</h3>
-            <p>Code d'accès (ex: ZCMC001)</p>
-            <input type="text" id="collabName" placeholder="Prénom et nom" style="margin-bottom: 0.5rem;">
-            <input type="password" id="collabCode" placeholder="Code ZCMC + 3 chiffres" style="margin-bottom: 0.5rem;">
-            <button id="loginBtn">Accéder à mon espace</button>
-        </div>
+        <h1>🔐 Accès sécurisé</h1>
+        <input type="text" id="accessCode" placeholder="Code d'accès (ex: CCZCMC001)" autocomplete="off">
+        <input type="text" id="candidateName" placeholder="Votre prénom et nom">
+        <button id="loginBtn">🚀 Accéder à mon QCM</button>
         <hr>
-        <div>
-            <h3>👩‍💼 Responsable RH</h3>
-            <input type="password" id="rhPassword" placeholder="Mot de passe RH" style="margin-bottom: 0.5rem;">
-            <button id="rhLoginBtn">Accéder à l'espace RH</button>
-        </div>
-        <p style="margin-top: 1rem; font-size: 0.8rem;">Les données restent sur ce poste (stockage local).</p>
-    </div>
-
-    <!-- ==================== ESPACE CANDIDAT ==================== -->
-    <div id="candidateSpace" style="display: none;">
-        <div class="card" style="text-align: center;">
-            <div class="badge-zcmc">ZCMC Recrutement Vision</div>
-            <h1>📋 Évaluation intégrale 360°</h1>
-            <div class="timer" id="timerDisplay">⏱️ 45:00</div>
-            <div class="progress-ia"><div class="progress-fill" id="globalProgressFill"></div></div>
-            <p id="aiAdvice" class="score-ai">🧠 IA Analyse : en attente de réponses...</p>
-        </div>
-
-        <div class="card">
-            <div class="nav-tabs" id="tabButtons">
-                <button class="tab-btn active" data-volet="volet1">🎧 Conseiller Clientèle</button>
-                <button class="tab-btn" data-volet="volet2">📱 Social Media Manager</button>
-                <button class="tab-btn" data-volet="volet3">🎨 Graphiste / UI Motion</button>
-            </div>
-
-            <!-- VOLET 1 -->
-            <div id="volet1" class="volet active-volet">
-                <h3>🎯 Compétences & cas pratiques (Conseiller)</h3>
-                <div class="rh-section"><strong>📌 Cases RH (à cocher selon validation)</strong><br>
-                    <div class="checkbox-group" id="rhCases1">
-                        <label><input type="checkbox" value="gestion_kpi"> Gestion des KPI (NPS, AHT, CSAT)</label>
-                        <label><input type="checkbox" value="outils_crm"> Maîtrise outils omnicanaux (Salesforce / Zendesk)</label>
-                        <label><input type="checkbox" value="empathie"> Empathie & écoute active</label>
-                        <label><input type="checkbox" value="vente_add"> Techniques de vente / Upselling</label>
-                        <label><input type="checkbox" value="gestion_stress"> Gestion du stress & objections</label>
-                        <label><input type="checkbox" value="ponctualite"> Aisance digitale multicanale</label>
-                    </div>
-                </div>
-                <div class="question-block"><div class="question-label">🧠 Face à un client très en colère qui insulte, quelle est votre réaction ?</div><textarea rows="2" class="qtext" data-volet="1" data-qid="q1"></textarea></div>
-                <div class="question-block"><div class="question-label">📊 Décrivez votre méthode pour prioriser plusieurs demandes urgentes.</div><textarea rows="2" class="qtext" data-volet="1" data-qid="q2"></textarea></div>
-                <div class="question-block"><div class="question-label">🔍 Comment gérez-vous le feedback négatif d’un superviseur ?</div><textarea rows="2" class="qtext" data-volet="1" data-qid="q3"></textarea></div>
-                <div class="question-block"><div class="question-label">🎯 Mise en situation : client menace de résilier. Que faites-vous en 3 étapes ?</div><textarea rows="3" class="qtext" data-volet="1" data-qid="q4"></textarea></div>
-                <div class="question-block"><div class="question-label">📈 Aisance outils digitaux (1=faible,5=expert)</div><select class="qselect" data-volet="1" data-qid="q5"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
-            </div>
-
-            <!-- VOLET 2 -->
-            <div id="volet2" class="volet">
-                <h3>📱 Branding, engagement & stratégie cross-canal</h3>
-                <div class="rh-section"><strong>📌 Cases RH (SMM)</strong><div class="checkbox-group" id="rhCases2">
-                    <label><input type="checkbox" value="communaute"> Animation communauté & Social Listening</label>
-                    <label><input type="checkbox" value="crisis"> Gestion de crise e-réputation (multi-réseaux)</label>
-                    <label><input type="checkbox" value="analytics"> Maîtrise outils analytics (Meta, LinkedIn, TikTok)</label>
-                    <label><input type="checkbox" value="crea_tendance"> Création de contenu & veille tendances</label>
-                    <label><input type="checkbox" value="reporting"> Reporting stratégique & KPIs</label>
-                </div></div>
-                <div class="question-block"><div class="question-label">📢 Quel contenu viral pour ZCMC sur LinkedIn, Instagram et TikTok ?</div><textarea rows="2" class="qtext" data-volet="2" data-qid="q1"></textarea></div>
-                <div class="question-block"><div class="question-label">⚠️ Gestion de crise : un client insulte la marque sur un post public. Processus ?</div><textarea rows="2" class="qtext" data-volet="2" data-qid="q2"></textarea></div>
-                <div class="question-block"><div class="question-label">🧩 3 KPIs essentiels pour mesurer l'engagement sur LinkedIn et TikTok ?</div><textarea rows="2" class="qtext" data-volet="2" data-qid="q3"></textarea></div>
-                <div class="question-block"><div class="question-label">💥 Gérer 45 clients actifs par jour avec offres différentes : organisation ?</div><textarea rows="3" class="qtext" data-volet="2" data-qid="q4"></textarea></div>
-            </div>
-
-            <!-- VOLET 3 -->
-            <div id="volet3" class="volet">
-                <h3>🎨 Suite Adobe, Design system, Créativité & Contraintes métier</h3>
-                <div class="rh-section"><strong>📌 Cases RH (Design)</strong><div class="checkbox-group" id="rhCases3">
-                    <label><input type="checkbox" value="photoshop"> Photoshop avancé</label>
-                    <label><input type="checkbox" value="illustrator"> Illustrator / vectoriel</label>
-                    <label><input type="checkbox" value="after_effects"> After Effects / motion design</label>
-                    <label><input type="checkbox" value="ui_ux"> Notions UI/UX & maquettes</label>
-                    <label><input type="checkbox" value="brief"> Respect des briefs & gestion des versions</label>
-                </div></div>
-                <div class="question-block"><div class="question-label">🎬 Processus de création d'une identité visuelle jusqu'aux gabarits.</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q1"></textarea></div>
-                <div class="question-block"><div class="question-label">🖌️ Un médecin rejette 3 chartes graphiques. Réaction ?</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q2"></textarea></div>
-                <div class="question-block"><div class="question-label">⚡ Maîtrise Figma ? Intégration dans gabarits pour app médicale.</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q3"></textarea></div>
-                <div class="question-block"><div class="question-label">🧪 Délais serrés + changement brief 3h avant rendu. Méthode ?</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q4"></textarea></div>
-            </div>
-
-            <div class="flex-end">
-                <button id="saveAllBtn">💾 Sauvegarder progression</button>
-                <button id="exportPdfBtn">📄 Exporter mon rapport en PDF</button>
-            </div>
-        </div>
-
-        <div id="rhReportSection" class="rapport-rh card" style="display: none;">
-            <h2 style="color: #be185d;">📊 Mon bilan d'évaluation</h2>
-            <div id="rhReportContent"></div>
-            <div class="flex-end" style="margin-top: 1.5rem;">
-                <button id="printPdfBtn">🖨️ Sauvegarder en PDF</button>
-            </div>
-        </div>
-        <footer>🔒 Session privée – données locales. ZCMC Recrutement Vision · IA d'aide à la décision</footer>
-    </div>
-
-    <!-- ==================== ESPACE RH ==================== -->
-    <div id="rhSpace" style="display: none;">
-        <div class="card">
-            <div class="badge-zcmc">👩‍💼 Interface Responsable RH</div>
-            <h1>📋 Gestion des candidatures</h1>
-            <button id="refreshRhListBtn" style="margin-bottom: 1rem;">⟳ Actualiser la liste</button>
-            <div id="rhCandidatsList" class="candidat-list"></div>
-        </div>
-        <footer>🔐 Accès réservé – mot de passe requis</footer>
+        <h3>👩‍💼 Espace RH</h3>
+        <input type="password" id="rhPassword" placeholder="Mot de passe RH">
+        <button id="rhLoginBtn">🔐 Accéder à l'espace RH</button>
+        <p style="margin-top: 1rem; font-size: 0.75rem;">Codes : CCZCMC001 (Conseiller) | CMZCMC001 (CM) | GDZCMC001 (Graphiste)</p>
+        <p style="font-size: 0.7rem;">RH : mot de passe RH2026</p>
     </div>
 </div>
 
 <script>
-    // ---------- VARIABLES GLOBALES ----------
-    let currentUserKey = null;
-    let userData = {};
-    let currentReport = null;
-    let timerInterval = null;
-    let timeSeconds = 45 * 60;
+    // ==================== CONFIGURATION FIREBASE ====================
+    // 🔴 REMPLACEZ CES VALEURS PAR CELLES DE VOTRE PROJET FIREBASE 🔴
+    const firebaseConfig = {
+        apiKey: "VOTRE_API_KEY",
+        authDomain: "VOTRE_PROJECT.firebaseapp.com",
+        projectId: "VOTRE_PROJECT",
+        storageBucket: "VOTRE_PROJECT.appspot.com",
+        messagingSenderId: "VOTRE_NUMERO",
+        appId: "VOTRE_APP_ID"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-    // ---------- FONCTIONS CANDIDAT ----------
-    function loadUserData() {
-        if (!currentUserKey) return;
-        const raw = localStorage.getItem(`zcmc_${currentUserKey}`);
-        if (raw) { userData = JSON.parse(raw); } 
-        else {
-            userData = { rhCases: {1:[],2:[],3:[]}, answers: {1:{},2:{},3:{}}, starRatings: {}, lastUpdated: new Date().toISOString() };
+    // ==================== DONNÉES DES QCM ====================
+    const qcmData = {
+        CCZCMC: {
+            metier: "Conseiller Clientèle",
+            questions: [
+                { text: "Que signifie KPI ?", options: ["Indicateur clé de performance", "Kit de performance interne", "Knowledge Index", "Key Process Indicator"], correct: 0 },
+                { text: "Que faire face à un client en colère ?", options: ["Lui donner raison", "L'écouter sans l'interrompre", "Le transférer", "Raccrocher"], correct: 1 },
+                { text: "Le NPS mesure :", options: ["Le temps d'attente", "La satisfaction client", "Le nombre d'appels", "La qualité du réseau"], correct: 1 },
+                { text: "L'upselling consiste à :", options: ["Vendre moins cher", "Proposer un complément", "Baisser la qualité", "Raccourcir l'appel"], correct: 1 },
+                { text: "Pourquoi souhaitez-vous rejoindre ZCMC ?", options: [], isOpen: true },
+                { text: "Comment avez-vous entendu parler de ZCMC ?", options: ["LinkedIn", "Facebook", "Instagram", "Bouche-à-oreille", "Autre"], isSourcing: true }
+            ]
+        },
+        CMZCMC: {
+            metier: "Community Manager",
+            questions: [
+                { text: "Rôle principal du CM ?", options: ["Créer des visuels", "Animer la communauté", "Gérer la paie", "Coder"], correct: 1 },
+                { text: "Face à un commentaire négatif :", options: ["Supprimer", "Ignorer", "Répondre pro et proposer une solution", "Partager"], correct: 2 },
+                { text: "KPI d'engagement ?", options: ["Vues", "Taux d'interaction", "Temps de chargement", "Nombre de followers"], correct: 1 },
+                { text: "Fréquence idéale sur Instagram ?", options: ["10/jour", "1-2/jour", "1/mois", "5/semaine"], correct: 1 },
+                { text: "Pourquoi souhaitez-vous rejoindre ZCMC ?", options: [], isOpen: true },
+                { text: "Comment avez-vous entendu parler de ZCMC ?", options: ["LinkedIn", "Facebook", "Instagram", "Bouche-à-oreille", "Autre"], isSourcing: true }
+            ]
+        },
+        GDZCMC: {
+            metier: "Graphiste Designer",
+            questions: [
+                { text: "Logiciel pour vectoriel ?", options: ["Photoshop", "Illustrator", "InDesign", "After Effects"], correct: 1 },
+                { text: "Client rejette votre charte :", options: ["Abandonner", "Proposer une nouvelle version avec ses retours", "Imposer", "Augmenter prix"], correct: 1 },
+                { text: "Résolution pour impression ?", options: ["72 DPI", "150 DPI", "300 DPI", "600 DPI"], correct: 2 },
+                { text: "Qu'est-ce qu'un gabarit ?", options: ["Un filtre", "Un modèle réutilisable", "Une police", "Un raccourci"], correct: 1 },
+                { text: "Pourquoi souhaitez-vous rejoindre ZCMC ?", options: [], isOpen: true },
+                { text: "Comment avez-vous entendu parler de ZCMC ?", options: ["LinkedIn", "Facebook", "Instagram", "Bouche-à-oreille", "Autre"], isSourcing: true }
+            ]
         }
-        if (!userData.rhCases) userData.rhCases = {1:[],2:[],3:[]};
-        if (!userData.answers) userData.answers = {1:{},2:{},3:{}};
-        if (!userData.starRatings) userData.starRatings = {};
-        updateUIFromData();
-        updateGlobalProgressAndAI();
-    }
+    };
 
-    function saveUserData() {
-        if (!currentUserKey) return;
-        userData.lastUpdated = new Date().toISOString();
-        localStorage.setItem(`zcmc_${currentUserKey}`, JSON.stringify(userData));
-    }
+    let currentMetier = null;
+    let currentCandidateId = null;
+    let currentAnswers = [];
 
-    function updateUIFromData() {
-        for (let v=1; v<=3; v++) {
-            const savedChecks = userData.rhCases[v] || [];
-            const container = document.getElementById(`rhCases${v}`);
-            if (container) {
-                const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-                checkboxes.forEach(cb => { cb.checked = savedChecks.includes(cb.value); });
-            }
-            document.querySelectorAll(`.qtext[data-volet="${v}"]`).forEach(el => {
-                const qid = el.getAttribute('data-qid');
-                if (userData.answers[v] && userData.answers[v][qid] !== undefined) el.value = userData.answers[v][qid];
-                else el.value = '';
-            });
-            document.querySelectorAll(`.qselect[data-volet="${v}"]`).forEach(el => {
-                const qid = el.getAttribute('data-qid');
-                if (userData.answers[v] && userData.answers[v][qid]) el.value = userData.answers[v][qid];
-                else el.value = "3";
-            });
-        }
-    }
-
-    function collectUItoData() {
-        for (let v=1; v<=3; v++) {
-            const container = document.getElementById(`rhCases${v}`);
-            if (container) {
-                const checks = Array.from(container.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
-                userData.rhCases[v] = checks;
-            }
-            if (!userData.answers[v]) userData.answers[v] = {};
-            document.querySelectorAll(`.qtext[data-volet="${v}"]`).forEach(el => {
-                const qid = el.getAttribute('data-qid');
-                userData.answers[v][qid] = el.value;
-            });
-            document.querySelectorAll(`.qselect[data-volet="${v}"]`).forEach(el => {
-                const qid = el.getAttribute('data-qid');
-                userData.answers[v][qid] = el.value;
-            });
-        }
-        const stars = document.querySelectorAll('.star');
-        stars.forEach(star => {
-            const key = star.getAttribute('data-rating-key');
-            const value = parseInt(star.getAttribute('data-value'));
-            if (star.classList.contains('selected')) {
-                if (!userData.starRatings[key] || userData.starRatings[key] < value) userData.starRatings[key] = value;
-            }
-        });
-    }
-
-    function computeAIScore() {
-        let totalFill = 0, maxFill = 0;
-        for (let v=1; v<=3; v++) {
-            const answers = userData.answers[v] || {};
-            const textCount = Object.values(answers).filter(a => a && a.trim().length > 2).length;
-            const totalTexts = document.querySelectorAll(`.qtext[data-volet="${v}"]`).length + document.querySelectorAll(`.qselect[data-volet="${v}"]`).length;
-            totalFill += textCount;
-            maxFill += totalTexts;
-            const nbRh = (userData.rhCases[v] || []).length;
-            totalFill += nbRh * 0.8;
-            maxFill += (document.querySelectorAll(`#rhCases${v} input`).length) * 0.8;
-        }
-        let pourcent = maxFill > 0 ? (totalFill / maxFill) * 100 : 0;
-        pourcent = Math.min(100, pourcent);
-        return { pourcent, advice: pourcent < 30 ? "⚠️ Questionnaire partiel – IA recommande plus de détails." : (pourcent > 75 ? "✅ Excellent niveau de détail. Profil solide recommandé." : "🟡 En bonne voie. Complétez certains volets pour expertise.") };
-    }
-
-    function updateGlobalProgressAndAI() {
-        const { pourcent, advice } = computeAIScore();
-        const progressFill = document.getElementById('globalProgressFill');
-        if (progressFill) progressFill.style.width = pourcent + '%';
-        const aiDiv = document.getElementById('aiAdvice');
-        if (aiDiv) aiDiv.innerHTML = `🧠 IA Progression : ${Math.round(pourcent)}% complété<br>${advice}`;
-    }
-
-    function saveAndRefresh() {
-        collectUItoData();
-        saveUserData();
-        updateGlobalProgressAndAI();
-        alert("✅ Progression sauvegardée");
-    }
-
-    function startTimer() {
-        if (timerInterval) clearInterval(timerInterval);
-        timerInterval = setInterval(() => {
-            if (timeSeconds <= 0) {
-                clearInterval(timerInterval);
-                document.getElementById('timerDisplay').innerHTML = "⏱️ Temps écoulé !";
-                alert("Les 45 minutes sont écoulées.");
-                return;
-            }
-            timeSeconds--;
-            const mins = Math.floor(timeSeconds / 60);
-            const secs = timeSeconds % 60;
-            document.getElementById('timerDisplay').innerHTML = `⏱️ ${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-        }, 1000);
-    }
-
-    // Génération rapport avec mots-clés pour le RH
-    function generateRHReportFromData(data, nom) {
-        const rhCases = data.rhCases || {1:[],2:[],3:[]};
-        const answers = data.answers || {1:{},2:{},3:{}};
-        
-        // Scores pour barres
-        const softSkillsScore = (rhCases[1].includes('empathie') ? 20 : 0) + 
-                                (rhCases[1].includes('gestion_stress') ? 20 : 0) +
-                                (answers[1] && answers[1].q1?.length > 10 ? 20 : 0) +
-                                (answers[2] && answers[2].q2?.length > 10 ? 20 : 0) +
-                                (answers[3] && answers[3].q4?.length > 10 ? 20 : 0);
-        const autonomieScore = (answers[1] && answers[1].q2?.length > 15 ? 25 : 0) +
-                               (answers[2] && answers[2].q4?.length > 20 ? 25 : 0) +
-                               (answers[3] && answers[3].q1?.length > 15 ? 25 : 0) +
-                               (rhCases[1].length + rhCases[2].length + rhCases[3].length > 5 ? 25 : 0);
-        const softSkillsMetierScore = (rhCases[1].includes('outils_crm') ? 20 : 0) +
-                                      (rhCases[1].includes('vente_add') ? 20 : 0) +
-                                      (rhCases[2].includes('analytics') ? 20 : 0) +
-                                      (rhCases[2].includes('crea_tendance') ? 20 : 0) +
-                                      (rhCases[3].includes('ui_ux') ? 20 : 0);
-        const adequationScore = (answers[1] && answers[1].q5 ? parseInt(answers[1].q5) * 10 : 0) +
-                                (answers[2] && answers[2].q3?.length > 10 ? 20 : 0) +
-                                (answers[3] && answers[3].q2?.length > 15 ? 30 : 0);
-        
-        const finalScores = {
-            softSkills: Math.min(softSkillsScore, 100),
-            autonomie: Math.min(autonomieScore, 100),
-            softSkillsMetier: Math.min(softSkillsMetierScore, 100),
-            adequation: Math.min(adequationScore, 100)
-        };
-        
-        let totalFill = 0, maxFill = 0;
-        for (let v=1; v<=3; v++) {
-            const ans = answers[v] || {};
-            const textCount = Object.values(ans).filter(a => a && a.length > 2).length;
-            totalFill += textCount;
-            maxFill += 5;
-            totalFill += rhCases[v].length * 0.8;
-            maxFill += 5 * 0.8;
-        }
-        let iaPct = maxFill > 0 ? (totalFill / maxFill) * 100 : 0;
-        iaPct = Math.min(100, iaPct);
-        
-        // Extraction mots-clés pour aider le RH
-        const allText = Object.values(answers[1] || {}).join(' ') + ' ' + Object.values(answers[2] || {}).join(' ') + ' ' + Object.values(answers[3] || {}).join(' ');
-        const keywords = [];
-        if (allText.match(/relecture|validation|contr[ôo]le|vérif/i)) keywords.push('🔍 RIGUEUR');
-        if (allText.match(/prioriser|organiser|gérer seul|autonomie/i)) keywords.push('⚡ AUTONOMIE');
-        if (allText.match(/écouter|désamorcer|client en colère|empathie/i)) keywords.push('❤️ EMPATHIE');
-        if (allText.match(/charte|gabarit|brief rejeté|conformité/i)) keywords.push('🎨 CONFORMITÉ');
-        if (allText.match(/délai|urgence|45 clients|portefeuille/i)) keywords.push('⏱️ GESTION CHARGE');
-        if (keywords.length === 0) keywords.push('📌 Profil à analyser en entretien');
-        
-        // Points d'attention
-        const attentions = [];
-        if (!answers[2]?.q4 || answers[2].q4.length < 10) attentions.push('❓ Pas de stratégie claire pour 45 clients quotidiens');
-        if (!rhCases[1].includes('empathie')) attentions.push('❓ Empathie client non cochée');
-        if (!rhCases[3].includes('ui_ux')) attentions.push('❓ UI/UX non maîtrisé');
-        if (attentions.length === 0) attentions.push('✅ Aucun point d’attention majeur');
-        
-        return {
-            collaborateur: nom,
-            timestamp: new Date().toISOString(),
-            scores: finalScores,
-            details: { rhCases, reponses_cle: answers, notes_etoiles: data.starRatings || {} },
-            iaCompletion: iaPct,
-            recommandation_ia: iaPct < 30 ? "À approfondir" : (iaPct > 75 ? "Excellent" : "Correct"),
-            keywords: keywords,
-            attentions: attentions
-        };
-    }
-
-    function displayReportInContainer(report, containerId) {
+    function renderQCM(containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
-        container.innerHTML = `
-            <div style="margin-bottom: 1rem;">
-                <p><strong>Candidat :</strong> ${report.collaborateur}</p>
-                <p><strong>Date :</strong> ${new Date(report.timestamp).toLocaleString()}</p>
-                <p><strong>Score IA :</strong> ${Math.round(report.iaCompletion)}% - ${report.recommandation_ia}</p>
-            </div>
-            <div class="skill-bar-container">
-                <div class="skill-label"><span>🧠 Soft Skills</span><span>${report.scores.softSkills}%</span></div>
-                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.softSkills}%;"></div></div>
-            </div>
-            <div class="skill-bar-container">
-                <div class="skill-label"><span>⚡ Autonomie & Gestion charge</span><span>${report.scores.autonomie}%</span></div>
-                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.autonomie}%;"></div></div>
-            </div>
-            <div class="skill-bar-container">
-                <div class="skill-label"><span>💼 Soft Métier</span><span>${report.scores.softSkillsMetier}%</span></div>
-                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.softSkillsMetier}%;"></div></div>
-            </div>
-            <div class="skill-bar-container">
-                <div class="skill-label"><span>🎯 Adéquation</span><span>${report.scores.adequation}%</span></div>
-                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.adequation}%;"></div></div>
-            </div>
-            <div class="keywords-rh">
-                <strong>🔑 Mots-clés RH & analyse :</strong><br>
-                ${report.keywords.map(k => `🏷️ ${k}`).join(' · ')}<br><br>
-                <strong>⚠️ Points d’attention :</strong><br>
-                ${report.attentions.map(a => `• ${a}`).join('<br>')}
-            </div>
-            <hr>
-            <h3>⭐ Évaluation par compétence</h3>
-            <div class="question-block"><div class="question-label">Aisance digitale & outils CRM</div>
-                <div class="stars-container">${[1,2,3,4,5].map(i => `<span class="star ${(report.details.notes_etoiles.outils || 0) >= i ? 'selected' : ''}" data-rating-key="outils" data-value="${i}" style="cursor: pointer;">★</span>`).join('')}</div>
-            </div>
-            <div class="question-block"><div class="question-label">Créativité & adaptation</div>
-                <div class="stars-container">${[1,2,3,4,5].map(i => `<span class="star ${(report.details.notes_etoiles.creativite || 0) >= i ? 'selected' : ''}" data-rating-key="creativite" data-value="${i}" style="cursor: pointer;">★</span>`).join('')}</div>
-            </div>
-            <div class="question-block"><div class="question-label">Gestion du stress & objections</div>
-                <div class="stars-container">${[1,2,3,4,5].map(i => `<span class="star ${(report.details.notes_etoiles.stress || 0) >= i ? 'selected' : ''}" data-rating-key="stress" data-value="${i}" style="cursor: pointer;">★</span>`).join('')}</div>
-            </div>
-        `;
-        document.querySelectorAll(`#${containerId} .star`).forEach(star => {
-            star.addEventListener('click', function() {
-                const key = this.getAttribute('data-rating-key');
-                const value = parseInt(this.getAttribute('data-value'));
-                const stars = document.querySelectorAll(`#${containerId} .star[data-rating-key="${key}"]`);
-                stars.forEach((s, idx) => { if (idx < value) s.classList.add('selected'); else s.classList.remove('selected'); });
-                userData.starRatings[key] = value;
-                saveUserData();
-                const newReport = generateRHReportFromData(userData, currentUserKey.split('_')[0]);
-                displayReportInContainer(newReport, containerId);
-            });
-        });
-    }
-
-    function exportToPDF(report, title = "rapport_recrutement") {
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
-            <!DOCTYPE html>
-            <html>
-            <head><title>Rapport ZCMC - ${report.collaborateur}</title>
-            <style>
-                body { font-family: 'Segoe UI', sans-serif; padding: 2rem; max-width: 900px; margin: auto; }
-                h1 { color: #be185d; }
-                .badge { background: #be185d; color: white; display: inline-block; padding: 0.2rem 1rem; border-radius: 20px; }
-                .skill-bar-container { margin-bottom: 1.5rem; }
-                .skill-label { display: flex; justify-content: space-between; margin-bottom: 0.3rem; font-weight: bold; }
-                .skill-bar-bg { background: #e2e8f0; border-radius: 1rem; height: 0.8rem; overflow: hidden; }
-                .skill-bar-fill { background: linear-gradient(90deg, #f472b6, #a855f7); width: 0%; height: 100%; border-radius: 1rem; }
-                .keywords-rh { background: #fef9c3; padding: 1rem; border-radius: 1rem; margin: 1rem 0; }
-                hr { margin: 1rem 0; }
-            </style>
-            </head>
-            <body>
-                <div class="badge">ZCMC Recrutement Vision</div>
-                <h1>📊 Rapport d'évaluation</h1>
-                <p><strong>Candidat :</strong> ${report.collaborateur}</p>
-                <p><strong>Date :</strong> ${new Date(report.timestamp).toLocaleString()}</p>
-                <p><strong>Score IA :</strong> ${Math.round(report.iaCompletion)}% - ${report.recommandation_ia}</p>
-                <hr>
-                <div class="skill-bar-container"><div class="skill-label"><span>🧠 Soft Skills</span><span>${report.scores.softSkills}%</span></div>
-                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.softSkills}%;"></div></div></div>
-                <div class="skill-bar-container"><div class="skill-label"><span>⚡ Autonomie</span><span>${report.scores.autonomie}%</span></div>
-                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.autonomie}%;"></div></div></div>
-                <div class="skill-bar-container"><div class="skill-label"><span>💼 Soft Métier</span><span>${report.scores.softSkillsMetier}%</span></div>
-                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.softSkillsMetier}%;"></div></div></div>
-                <div class="skill-bar-container"><div class="skill-label"><span>🎯 Adéquation</span><span>${report.scores.adequation}%</span></div>
-                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.adequation}%;"></div></div></div>
-                <div class="keywords-rh"><strong>🔑 Mots-clés RH :</strong><br>${report.keywords.map(k => `🏷️ ${k}`).join(' · ')}<br><br>
-                <strong>⚠️ Points d’attention :</strong><br>${report.attentions.map(a => `• ${a}`).join('<br>')}</div>
-                <hr>
-                <h3>⭐ Évaluation détaillée</h3>
-                <div><strong>Aisance digitale & outils CRM :</strong> ${report.details.notes_etoiles.outils || 0} / 5 ★</div>
-                <div><strong>Créativité & adaptation :</strong> ${report.details.notes_etoiles.creativite || 0} / 5 ★</div>
-                <div><strong>Gestion du stress :</strong> ${report.details.notes_etoiles.stress || 0} / 5 ★</div>
-                <hr>
-                <h3>📋 Cases RH validées</h3>
-                <div><strong>Conseiller :</strong> ${(report.details.rhCases[1] || []).join(', ') || 'Aucune'}</div>
-                <div><strong>SMM :</strong> ${(report.details.rhCases[2] || []).join(', ') || 'Aucune'}</div>
-                <div><strong>Graphiste :</strong> ${(report.details.rhCases[3] || []).join(', ') || 'Aucune'}</div>
-                <footer style="margin-top:2rem;">Document généré par ZCMC Recrutement Vision</footer>
-            </body>
-            </html>
-        `);
-        printWindow.document.close();
-        printWindow.print();
-    }
-
-    // ---------- ESPACE RH ----------
-    function listAllCandidates() {
-        const candidates = [];
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key && key.startsWith('zcmc_')) {
-                const raw = localStorage.getItem(key);
-                try {
-                    const data = JSON.parse(raw);
-                    const candidateName = key.substring(5);
-                    candidates.push({ key, name: candidateName, data });
-                } catch(e) {}
+        const qs = qcmData[currentMetier].questions;
+        let html = "";
+        qs.forEach((q, idx) => {
+            if (q.isOpen) {
+                html += `<div class="question"><div class="question-text">${idx+1}. ${q.text}</div><textarea id="open_${idx}" rows="2" placeholder="Votre réponse..."></textarea></div>`;
+            } else if (q.isSourcing) {
+                html += `<div class="question"><div class="question-text">${idx+1}. ${q.text}</div><div class="options">${q.options.map(opt => `<label><input type="radio" name="sourcing" value="${opt}"> ${opt}</label>`).join("")}</div></div>`;
+            } else {
+                html += `<div class="question" data-qidx="${idx}"><div class="question-text">${idx+1}. ${q.text}</div><div class="options">${q.options.map((opt, optIdx) => `<label><input type="radio" name="q${idx}" value="${optIdx}"> ${opt}</label>`).join("")}</div></div>`;
             }
-        }
-        return candidates;
-    }
-
-    function refreshRHInterface() {
-        const container = document.getElementById('rhCandidatsList');
-        const candidates = listAllCandidates();
-        if (candidates.length === 0) { container.innerHTML = '<p>Aucun candidat pour le moment.</p>'; return; }
-        let html = '';
-        candidates.forEach(cand => {
-            const report = generateRHReportFromData(cand.data, cand.name);
-            html += `<div class="candidat-item" data-key="${cand.key}">
-                        <div class="candidat-info">👤 ${cand.name}</div>
-                        <div class="candidat-actions">
-                            <button class="viewReportBtn" data-key="${cand.key}">📄 Voir rapport</button>
-                            <button class="pdfReportBtn" data-key="${cand.key}" data-name="${cand.name}">📑 PDF</button>
-                            <button class="deleteCandidatBtn" data-key="${cand.key}">🗑 Supprimer</button>
-                        </div>
-                        <div id="report-${cand.key.replace(/[^a-zA-Z0-9]/g, '_')}" style="width:100%; margin-top:1rem; display:none;"></div>
-                    </div>`;
         });
         container.innerHTML = html;
-        document.querySelectorAll('.viewReportBtn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const key = btn.getAttribute('data-key');
-                const cand = candidates.find(c => c.key === key);
-                if (cand) {
-                    const report = generateRHReportFromData(cand.data, cand.name);
-                    const divId = `report-${key.replace(/[^a-zA-Z0-9]/g, '_')}`;
-                    const reportDiv = document.getElementById(divId);
-                    if (reportDiv) {
-                        displayReportInContainer(report, divId);
-                        reportDiv.style.display = 'block';
-                    }
+        attachQCMEvents();
+    }
+
+    function attachQCMEvents() {
+        const qs = qcmData[currentMetier].questions;
+        for (let i = 0; i < qs.length; i++) {
+            if (!qs[i].isOpen && !qs[i].isSourcing) {
+                const radios = document.querySelectorAll(`input[name="q${i}"]`);
+                radios.forEach(r => r.addEventListener("change", () => updateProgress()));
+            }
+        }
+        document.querySelectorAll('input[name="sourcing"]').forEach(r => r.addEventListener("change", () => updateProgress()));
+        for (let i = 0; i < qs.length; i++) {
+            if (qs[i].isOpen) {
+                const txt = document.getElementById(`open_${i}`);
+                if (txt) txt.addEventListener("input", () => updateProgress());
+            }
+        }
+        updateProgress();
+    }
+
+    function updateProgress() {
+        const qs = qcmData[currentMetier].questions;
+        let answered = 0;
+        for (let i = 0; i < qs.length; i++) {
+            if (!qs[i].isOpen && !qs[i].isSourcing) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected) answered++;
+            } else if (qs[i].isSourcing) {
+                const selected = document.querySelector('input[name="sourcing"]:checked');
+                if (selected) answered++;
+            } else if (qs[i].isOpen) {
+                const txt = document.getElementById(`open_${i}`);
+                if (txt && txt.value.trim().length > 5) answered++;
+            }
+        }
+        const percent = (answered / qs.length) * 100;
+        const fill = document.getElementById("qcmProgress");
+        if (fill) fill.style.width = percent + "%";
+    }
+
+    async function saveCandidate() {
+        const qs = qcmData[currentMetier].questions;
+        const answers = [];
+        let sourcing = "";
+        let whyZcmc = "";
+        
+        for (let i = 0; i < qs.length; i++) {
+            if (!qs[i].isOpen && !qs[i].isSourcing) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (!selected) return alert(`Veuillez répondre à la question ${i+1}`);
+                answers.push(parseInt(selected.value));
+            } else if (qs[i].isOpen) {
+                const txt = document.getElementById(`open_${i}`);
+                if (!txt || txt.value.trim().length < 5) return alert(`Veuillez répondre à la question ${i+1} (minimum 5 caractères)`);
+                if (i === qs.length-2) whyZcmc = txt.value.trim();
+            } else if (qs[i].isSourcing) {
+                const selected = document.querySelector('input[name="sourcing"]:checked');
+                if (!selected) return alert("Veuillez indiquer comment vous avez entendu parler de ZCMC");
+                sourcing = selected.value;
+            }
+        }
+        
+        let score = 0;
+        for (let i = 0; i < answers.length; i++) {
+            if (answers[i] === qs[i].correct) score++;
+        }
+        const total = answers.length;
+        
+        const data = {
+            nom: document.getElementById("candidateName").value,
+            code: document.getElementById("accessCode").value,
+            metier: qcmData[currentMetier].metier,
+            date: new Date().toISOString(),
+            score: `${score}/${total}`,
+            pourcentage: Math.round((score/total)*100),
+            reponses: answers,
+            sourcing: sourcing,
+            pourquoiZCMC: whyZcmc,
+            evaluationRH: null
+        };
+        
+        await db.collection("candidatures").doc(currentCandidateId).set(data);
+        alert("✅ Vos réponses ont été enregistrées. Merci !");
+        document.getElementById("submitBtn").disabled = true;
+    }
+
+    // ==================== ESPACE RH ====================
+    async function loadAllCandidates() {
+        const snapshot = await db.collection("candidatures").get();
+        const list = [];
+        snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+        return list;
+    }
+
+    async function refreshRHList() {
+        const container = document.getElementById("rhCandidatsList");
+        const candidates = await loadAllCandidates();
+        if (candidates.length === 0) { container.innerHTML = "<p>Aucun candidat.</p>"; return; }
+        let html = "";
+        for (const c of candidates) {
+            html += `
+                <div class="candidat-item">
+                    <div><strong>${c.nom}</strong> (${c.metier})<br>Score: ${c.score} (${c.pourcentage}%)<br>Sourcing: ${c.sourcing}</div>
+                    <div>
+                        <button class="detailBtn" data-id="${c.id}">📄 Détail</button>
+                        <button class="evalBtn" data-id="${c.id}">📝 Grille RH</button>
+                        <button class="deleteBtn" data-id="${c.id}">🗑</button>
+                    </div>
+                    <div id="detail-${c.id.replace(/[^a-zA-Z0-9]/g,'_')}" class="detail-panel"></div>
+                    <div id="eval-${c.id.replace(/[^a-zA-Z0-9]/g,'_')}" class="detail-panel" style="background:#e0f2fe;"></div>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+        attachRHEvents(candidates);
+    }
+
+    function attachRHEvents(candidates) {
+        document.querySelectorAll(".detailBtn").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const id = btn.getAttribute("data-id");
+                const docSnap = await db.collection("candidatures").doc(id).get();
+                if (!docSnap.exists) return;
+                const data = docSnap.data();
+                const qs = Object.values(qcmData).find(q => q.metier === data.metier)?.questions || [];
+                const detailDiv = document.getElementById(`detail-${id.replace(/[^a-zA-Z0-9]/g,'_')}`);
+                detailDiv.innerHTML = `<strong>Réponses :</strong><br>${qs.map((q, idx) => `<strong>${q.text}</strong> → ${q.options ? q.options[data.reponses[idx]] : data.reponses[idx]}<br>`).join("")}<strong>Pourquoi ZCMC ?</strong> ${data.pourquoiZCMC}<br><strong>Sourcing :</strong> ${data.sourcing}`;
+                detailDiv.style.display = "block";
+            });
+        });
+        
+        document.querySelectorAll(".evalBtn").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const id = btn.getAttribute("data-id");
+                const docSnap = await db.collection("candidatures").doc(id).get();
+                if (!docSnap.exists) return;
+                const data = docSnap.data();
+                const evalDiv = document.getElementById(`eval-${id.replace(/[^a-zA-Z0-9]/g,'_')}`);
+                evalDiv.innerHTML = `
+                    <h4>📋 Grille d'entretien comportemental</h4>
+                    <p><strong>À poser au candidat :</strong></p>
+                    <ul>
+                        <li><strong>Écoute active :</strong> "Parlez-moi d'une situation où vous avez calmé un client mécontent."<br>
+                        <em>Pourquoi :</em> Capacité à reformuler, ne pas couper la parole.<br>
+                        Note (1-5): <input type="number" id="noteEcoute" min="1" max="5" value="${data.evaluationRH?.ecoute || 3}"></li>
+                        <li><strong>Articulation / Clarté :</strong> "Expliquez-moi un processus complexe simplement."<br>
+                        Note: <input type="number" id="noteArticulation" min="1" max="5" value="${data.evaluationRH?.articulation || 3}"></li>
+                        <li><strong>Rigueur & Structure :</strong> "Comment organisez-vous vos priorités ?"<br>
+                        Note: <input type="number" id="noteRigueur" min="1" max="5" value="${data.evaluationRH?.rigueur || 3}"></li>
+                        <li><strong>Résilience :</strong> "Que faites-vous si on critique votre travail ?"<br>
+                        Note: <input type="number" id="noteResilience" min="1" max="5" value="${data.evaluationRH?.resilience || 3}"></li>
+                    </ul>
+                    <label>Appréciation générale :</label><br>
+                    <textarea id="rhComment" rows="2" style="width:100%;">${data.evaluationRH?.commentaire || ""}</textarea><br>
+                    <button class="saveEvalBtn" data-id="${id}">💾 Sauvegarder mon évaluation</button>
+                `;
+                evalDiv.style.display = "block";
+                evalDiv.querySelector(".saveEvalBtn")?.addEventListener("click", async (e) => {
+                    const ecoute = parseInt(evalDiv.querySelector("#noteEcoute").value);
+                    const articulation = parseInt(evalDiv.querySelector("#noteArticulation").value);
+                    const rigueur = parseInt(evalDiv.querySelector("#noteRigueur").value);
+                    const resilience = parseInt(evalDiv.querySelector("#noteResilience").value);
+                    const commentaire = evalDiv.querySelector("#rhComment").value;
+                    await db.collection("candidatures").doc(id).update({
+                        evaluationRH: { ecoute, articulation, rigueur, resilience, commentaire, dateEval: new Date().toISOString() }
+                    });
+                    alert("Évaluation RH sauvegardée.");
+                    refreshRHList();
+                });
+            });
+        });
+        
+        document.querySelectorAll(".deleteBtn").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                if (confirm("Supprimer ce candidat ?")) {
+                    await db.collection("candidatures").doc(btn.getAttribute("data-id")).delete();
+                    refreshRHList();
                 }
             });
         });
-        document.querySelectorAll('.pdfReportBtn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const key = btn.getAttribute('data-key');
-                const name = btn.getAttribute('data-name');
-                const cand = candidates.find(c => c.key === key);
-                if (cand) exportToPDF(generateRHReportFromData(cand.data, name), `rapport_${name}`);
-            });
-        });
-        document.querySelectorAll('.deleteCandidatBtn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const key = btn.getAttribute('data-key');
-                if (confirm(`Supprimer définitivement ce candidat ?`)) { localStorage.removeItem(key); refreshRHInterface(); }
-            });
-        });
     }
 
-    // ---------- AUTHENTIFICATION ----------
-    document.getElementById('loginBtn').addEventListener('click', () => {
-        const name = document.getElementById('collabName').value.trim();
-        const code = document.getElementById('collabCode').value.trim();
-        if (!name || !code) { alert("Nom et code requis"); return; }
-        if (!code.match(/^ZCMC\d{3}$/i) && code !== "RHMASTER") { alert("Code invalide. Format: ZCMC suivi de 3 chiffres."); return; }
-        currentUserKey = `${name}_${code}`;
-        loadUserData();
-        document.getElementById('authScreen').style.display = 'none';
-        document.getElementById('candidateSpace').style.display = 'block';
-        startTimer();
-        document.querySelectorAll('#candidateSpace input, #candidateSpace textarea, #candidateSpace select').forEach(el => {
-            el.addEventListener('change', () => { collectUItoData(); saveUserData(); updateGlobalProgressAndAI(); });
-            el.addEventListener('input', () => { collectUItoData(); saveUserData(); updateGlobalProgressAndAI(); });
-        });
-        document.getElementById('saveAllBtn').addEventListener('click', saveAndRefresh);
-        document.getElementById('exportPdfBtn').addEventListener('click', () => {
-            collectUItoData();
-            const report = generateRHReportFromData(userData, currentUserKey.split('_')[0]);
-            currentReport = report;
-            displayReportInContainer(report, 'rhReportContent');
-            document.getElementById('rhReportSection').style.display = 'block';
-        });
-        document.getElementById('printPdfBtn').addEventListener('click', () => {
-            if (!currentReport) { collectUItoData(); currentReport = generateRHReportFromData(userData, currentUserKey.split('_')[0]); }
-            exportToPDF(currentReport, `rapport_${currentReport.collaborateur}`);
-        });
-        document.querySelectorAll('#candidateSpace .tab-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const voletId = btn.getAttribute('data-volet');
-                document.querySelectorAll('#candidateSpace .volet').forEach(v => v.classList.remove('active-volet'));
-                document.getElementById(voletId).classList.add('active-volet');
-                document.querySelectorAll('#candidateSpace .tab-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
-        });
+    // ==================== CONNEXIONS ====================
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+        const code = document.getElementById("accessCode").value.trim().toUpperCase();
+        const nom = document.getElementById("candidateName").value.trim();
+        if (!code || !nom) return alert("Code et nom requis.");
+        let metier = null;
+        if (code.startsWith("CCZCMC")) metier = "CCZCMC";
+        else if (code.startsWith("CMZCMC")) metier = "CMZCMC";
+        else if (code.startsWith("GDZCMC")) metier = "GDZCMC";
+        else return alert("Code invalide. Utilisez CCZCMC001, CMZCMC001 ou GDZCMC001.");
+        
+        currentMetier = metier;
+        currentCandidateId = `${code}_${nom}`;
+        const existing = await db.collection("candidatures").doc(currentCandidateId).get();
+        if (existing.exists) return alert("Vous avez déjà répondu au QCM. Merci.");
+        
+        document.getElementById("authScreen").style.display = "none";
+        let qcmPanel = document.getElementById("qcmPanel");
+        if (!qcmPanel) {
+            qcmPanel = document.createElement("div");
+            qcmPanel.id = "qcmPanel";
+            qcmPanel.className = "card";
+            qcmPanel.innerHTML = `
+                <div class="badge-zcmc" id="qcmMetierBadge"></div>
+                <h1>QCM - <span id="qcmMetierName"></span></h1>
+                <div class="progress-bar"><div class="progress-fill" id="qcmProgress"></div></div>
+                <div id="questionsContainer"></div>
+                <button id="submitBtn">✅ Valider mes réponses</button>
+            `;
+            document.querySelector(".container").appendChild(qcmPanel);
+        }
+        document.getElementById("qcmMetierBadge").innerText = qcmData[metier].metier;
+        document.getElementById("qcmMetierName").innerText = qcmData[metier].metier;
+        renderQCM("questionsContainer");
+        document.getElementById("submitBtn").onclick = saveCandidate;
+        qcmPanel.style.display = "block";
     });
 
-    document.getElementById('rhLoginBtn').addEventListener('click', () => {
-        const pwd = document.getElementById('rhPassword').value;
-        if (pwd === "RH2026") {
-            document.getElementById('authScreen').style.display = 'none';
-            document.getElementById('rhSpace').style.display = 'block';
-            refreshRHInterface();
-        } else { alert("Mot de passe RH incorrect."); }
+    document.getElementById("rhLoginBtn").addEventListener("click", async () => {
+        const pwd = document.getElementById("rhPassword").value;
+        if (pwd !== "RH2026") return alert("Mot de passe RH incorrect.");
+        document.getElementById("authScreen").style.display = "none";
+        let rhPanel = document.getElementById("rhPanel");
+        if (!rhPanel) {
+            rhPanel = document.createElement("div");
+            rhPanel.id = "rhPanel";
+            rhPanel.className = "card";
+            rhPanel.innerHTML = `
+                <div class="badge-zcmc">Interface RH</div>
+                <h1>📋 Toutes les candidatures</h1>
+                <button id="refreshRhList">⟳ Actualiser</button>
+                <div id="rhCandidatsList" class="candidat-list"></div>
+            `;
+            document.querySelector(".container").appendChild(rhPanel);
+        }
+        rhPanel.style.display = "block";
+        await refreshRHList();
+        document.getElementById("refreshRhList").onclick = refreshRHList;
     });
-    document.getElementById('refreshRhListBtn')?.addEventListener('click', () => { refreshRHInterface(); });
 </script>
+<footer>Powered by Chaoui Meriem</footer>
 </body>
 </html>
 ```
