@@ -1,10 +1,11 @@
+
 ```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ZCMC Recrutement Vision – Portail candidat</title>
+    <title>ZCMC Recrutement Vision – Portail RH & Candidats</title>
     <style>
         * {
             margin: 0;
@@ -35,8 +36,8 @@
         }
 
         .auth-card {
-            max-width: 500px;
-            margin: 4rem auto;
+            max-width: 600px;
+            margin: 2rem auto;
             text-align: center;
         }
 
@@ -221,7 +222,6 @@
             margin-top: 2rem;
         }
 
-        /* Styles pour le rapport RH */
         .rapport-rh {
             background: white;
             border-radius: 2rem;
@@ -272,23 +272,76 @@
         .star.selected {
             color: #fbbf24;
         }
+
+        .candidat-list {
+            margin-top: 1rem;
+        }
+        .candidat-item {
+            background: #fff1f9;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .candidat-info {
+            font-weight: bold;
+        }
+        .candidat-actions button {
+            margin-left: 0.5rem;
+            background: #be185d;
+        }
+        hr {
+            margin: 1rem 0;
+            border-color: #fbcfe8;
+        }
+        .keywords-rh {
+            background: #fef9c3;
+            padding: 1rem;
+            border-radius: 1rem;
+            margin-top: 1rem;
+            border-left: 6px solid #eab308;
+        }
+
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .no-print, .nav-tabs, .flex-end, .timer, .progress-ia, .score-ai,
+            button, .candidat-actions, footer, #rhReportSection button,
+            #candidateSpace .card:first-child, .tab-btn, #saveAllBtn, #exportPdfBtn {
+                display: none !important;
+            }
+            .card, .rapport-rh { box-shadow: none; padding: 0; margin: 0; break-inside: avoid; }
+            .skill-bar-fill { background: #be185d !important; }
+            .badge-zcmc { background: #be185d !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
     </style>
 </head>
 <body>
 <div class="container" id="app">
-    <!-- Écran d'authentification (privé par collaborateur) -->
+    <!-- Écran d'authentification double -->
     <div id="authScreen" class="auth-card card">
-        <div class="badge-zcmc">ZCMC Recrutement Vision 🔒</div>
-        <h1>🔐 Espace confidentiel</h1>
-        <p style="margin-bottom: 1.5rem;">Chaque collaborateur possède un code unique.<br>Vos réponses restent privées et sauvegardées.</p>
-        <input type="text" id="collabName" placeholder="Prénom et nom du collaborateur" style="margin-bottom: 1rem;">
-        <input type="password" id="collabCode" placeholder="Code d'accès (fourni par RH, ex: ZCMC001)" style="margin-bottom: 1.5rem;">
-        <button id="loginBtn">🔓 Accéder à mon espace</button>
-        <p style="margin-top: 1rem; font-size: 0.8rem;">🔹 Le RH génère les codes (ex: ZCMC001).<br>Les données restent sur ce poste.</p>
+        <div class="badge-zcmc">ZCMC Recrutement Vision</div>
+        <h1>🔐 Portail sécurisé</h1>
+        <div style="margin-bottom: 2rem;">
+            <h3>🧑‍💻 Espace candidat</h3>
+            <p>Code d'accès (ex: ZCMC001)</p>
+            <input type="text" id="collabName" placeholder="Prénom et nom" style="margin-bottom: 0.5rem;">
+            <input type="password" id="collabCode" placeholder="Code ZCMC + 3 chiffres" style="margin-bottom: 0.5rem;">
+            <button id="loginBtn">Accéder à mon espace</button>
+        </div>
+        <hr>
+        <div>
+            <h3>👩‍💼 Responsable RH</h3>
+            <input type="password" id="rhPassword" placeholder="Mot de passe RH" style="margin-bottom: 0.5rem;">
+            <button id="rhLoginBtn">Accéder à l'espace RH</button>
+        </div>
+        <p style="margin-top: 1rem; font-size: 0.8rem;">Les données restent sur ce poste (stockage local).</p>
     </div>
 
-    <!-- Espace principal (masqué tant que non authentifié) -->
-    <div id="mainSpace" style="display: none;">
+    <!-- ==================== ESPACE CANDIDAT ==================== -->
+    <div id="candidateSpace" style="display: none;">
         <div class="card" style="text-align: center;">
             <div class="badge-zcmc">ZCMC Recrutement Vision</div>
             <h1>📋 Évaluation intégrale 360°</h1>
@@ -297,7 +350,6 @@
             <p id="aiAdvice" class="score-ai">🧠 IA Analyse : en attente de réponses...</p>
         </div>
 
-        <!-- Navigation par volet = métiers -->
         <div class="card">
             <div class="nav-tabs" id="tabButtons">
                 <button class="tab-btn active" data-volet="volet1">🎧 Conseiller Clientèle</button>
@@ -305,13 +357,12 @@
                 <button class="tab-btn" data-volet="volet3">🎨 Graphiste / UI Motion</button>
             </div>
 
-            <!-- VOLET 1 : Conseiller Clientèle -->
+            <!-- VOLET 1 -->
             <div id="volet1" class="volet active-volet">
                 <h3>🎯 Compétences & cas pratiques (Conseiller)</h3>
-                <div class="rh-section">
-                    <strong>📌 Cases RH (à cocher selon validation)</strong><br>
+                <div class="rh-section"><strong>📌 Cases RH (à cocher selon validation)</strong><br>
                     <div class="checkbox-group" id="rhCases1">
-                        <label><input type="checkbox" value="gestion_kpi"> Gestion des KPI (taux satisfaction, NPS)</label>
+                        <label><input type="checkbox" value="gestion_kpi"> Gestion des KPI (NPS, AHT, CSAT)</label>
                         <label><input type="checkbox" value="outils_crm"> Maîtrise outils omnicanaux (Salesforce / Zendesk)</label>
                         <label><input type="checkbox" value="empathie"> Empathie & écoute active</label>
                         <label><input type="checkbox" value="vente_add"> Techniques de vente / Upselling</label>
@@ -319,88 +370,88 @@
                         <label><input type="checkbox" value="ponctualite"> Aisance digitale multicanale</label>
                     </div>
                 </div>
-                <div class="question-block"><div class="question-label">🧠 Question 1 : Face à un client très en colère qui insulte, quelle est votre réaction ?</div><textarea rows="2" class="qtext" data-volet="1" data-qid="q1"></textarea></div>
-                <div class="question-block"><div class="question-label">📊 Question 2 : Décrivez votre méthode pour prioriser plusieurs demandes urgentes.</div><textarea rows="2" class="qtext" data-volet="1" data-qid="q2"></textarea></div>
-                <div class="question-block"><div class="question-label">🔍 Question 3 : Comment gérez-vous le feedback négatif d’un superviseur ?</div><textarea rows="2" class="qtext" data-volet="1" data-qid="q3"></textarea></div>
-                <div class="question-block"><div class="question-label">🎯 Mise en situation : Vous avez un client qui menace de résilier. Que faites-vous en 3 étapes ?</div><textarea rows="3" class="qtext" data-volet="1" data-qid="q4"></textarea></div>
-                <div class="question-block"><div class="question-label">📈 Évaluez votre aisance avec les outils digitaux (1 = faible, 5 = expert)</div><select class="qselect" data-volet="1" data-qid="q5"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+                <div class="question-block"><div class="question-label">🧠 Face à un client très en colère qui insulte, quelle est votre réaction ?</div><textarea rows="2" class="qtext" data-volet="1" data-qid="q1"></textarea></div>
+                <div class="question-block"><div class="question-label">📊 Décrivez votre méthode pour prioriser plusieurs demandes urgentes.</div><textarea rows="2" class="qtext" data-volet="1" data-qid="q2"></textarea></div>
+                <div class="question-block"><div class="question-label">🔍 Comment gérez-vous le feedback négatif d’un superviseur ?</div><textarea rows="2" class="qtext" data-volet="1" data-qid="q3"></textarea></div>
+                <div class="question-block"><div class="question-label">🎯 Mise en situation : client menace de résilier. Que faites-vous en 3 étapes ?</div><textarea rows="3" class="qtext" data-volet="1" data-qid="q4"></textarea></div>
+                <div class="question-block"><div class="question-label">📈 Aisance outils digitaux (1=faible,5=expert)</div><select class="qselect" data-volet="1" data-qid="q5"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
             </div>
 
-            <!-- VOLET 2 : Social Media Manager -->
+            <!-- VOLET 2 -->
             <div id="volet2" class="volet">
                 <h3>📱 Branding, engagement & stratégie cross-canal</h3>
-                <div class="rh-section">
-                    <strong>📌 Cases RH (SMM)</strong><div class="checkbox-group" id="rhCases2">
-                        <label><input type="checkbox" value="communaute"> Animation communauté & Social Listening</label>
-                        <label><input type="checkbox" value="crisis"> Gestion de crise e-réputation (multi-réseaux)</label>
-                        <label><input type="checkbox" value="analytics"> Maîtrise outils analytics (Meta, LinkedIn, TikTok)</label>
-                        <label><input type="checkbox" value="crea_tendance"> Création de contenu & veille tendances</label>
-                        <label><input type="checkbox" value="reporting"> Reporting stratégique & KPIs</label>
-                    </div>
-                </div>
-                <div class="question-block"><div class="question-label">📢 Stratégie : Quel contenu viral proposeriez-vous pour ZCMC sur LinkedIn, Instagram et TikTok ?</div><textarea rows="2" class="qtext" data-volet="2" data-qid="q1"></textarea></div>
-                <div class="question-block"><div class="question-label">⚠️ Gestion de crise : Un client insulte la marque sur un post public. Décrivez votre processus de réponse sur chaque réseau.</div><textarea rows="2" class="qtext" data-volet="2" data-qid="q2"></textarea></div>
-                <div class="question-block"><div class="question-label">🧩 Outils & méthodes : Quels sont selon vous les 3 KPIs essentiels pour mesurer l'engagement sur LinkedIn et TikTok ?</div><textarea rows="2" class="qtext" data-volet="2" data-qid="q3"></textarea></div>
-                <div class="question-block"><div class="question-label">💡 Question stratégique : Imaginez que vous ayez à gérer un portefeuille de 45 clients actifs chaque jour, avec des offres différentes. Comment organiseriez-vous votre travail pour maintenir qualité et réactivité ?</div><textarea rows="3" class="qtext" data-volet="2" data-qid="q4"></textarea></div>
+                <div class="rh-section"><strong>📌 Cases RH (SMM)</strong><div class="checkbox-group" id="rhCases2">
+                    <label><input type="checkbox" value="communaute"> Animation communauté & Social Listening</label>
+                    <label><input type="checkbox" value="crisis"> Gestion de crise e-réputation (multi-réseaux)</label>
+                    <label><input type="checkbox" value="analytics"> Maîtrise outils analytics (Meta, LinkedIn, TikTok)</label>
+                    <label><input type="checkbox" value="crea_tendance"> Création de contenu & veille tendances</label>
+                    <label><input type="checkbox" value="reporting"> Reporting stratégique & KPIs</label>
+                </div></div>
+                <div class="question-block"><div class="question-label">📢 Quel contenu viral pour ZCMC sur LinkedIn, Instagram et TikTok ?</div><textarea rows="2" class="qtext" data-volet="2" data-qid="q1"></textarea></div>
+                <div class="question-block"><div class="question-label">⚠️ Gestion de crise : un client insulte la marque sur un post public. Processus ?</div><textarea rows="2" class="qtext" data-volet="2" data-qid="q2"></textarea></div>
+                <div class="question-block"><div class="question-label">🧩 3 KPIs essentiels pour mesurer l'engagement sur LinkedIn et TikTok ?</div><textarea rows="2" class="qtext" data-volet="2" data-qid="q3"></textarea></div>
+                <div class="question-block"><div class="question-label">💥 Gérer 45 clients actifs par jour avec offres différentes : organisation ?</div><textarea rows="3" class="qtext" data-volet="2" data-qid="q4"></textarea></div>
             </div>
 
-            <!-- VOLET 3 : Graphiste / UI Motion -->
+            <!-- VOLET 3 -->
             <div id="volet3" class="volet">
                 <h3>🎨 Suite Adobe, Design system, Créativité & Contraintes métier</h3>
-                <div class="rh-section">
-                    <strong>📌 Cases RH (Design)</strong><div class="checkbox-group" id="rhCases3">
-                        <label><input type="checkbox" value="photoshop"> Photoshop avancé</label>
-                        <label><input type="checkbox" value="illustrator"> Illustrator / vectoriel</label>
-                        <label><input type="checkbox" value="after_effects"> After Effects / motion design</label>
-                        <label><input type="checkbox" value="ui_ux"> Notions UI/UX & maquettes</label>
-                        <label><input type="checkbox" value="brief"> Respect des briefs & gestion des versions</label>
-                    </div>
-                </div>
-                <div class="question-block"><div class="question-label">🎬 Créativité & rigueur : Décrivez votre processus de création d'une identité visuelle, de la prise de brief à la livraison des gabarits.</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q1"></textarea></div>
-                <div class="question-block"><div class="question-label">🖌️ Feedback client : Comment réagissez-vous si un médecin vous demande une charte graphique complète mais rejette vos 3 premières propositions ?</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q2"></textarea></div>
-                <div class="question-block"><div class="question-label">⚡ Outils & collaboration : Maîtrisez-vous Figma ? Décrivez comment vous intégreriez une charte graphique dans des gabarits prédéfinis pour une application médicale.</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q3"></textarea></div>
-                <div class="question-block"><div class="question-label">🧪 Test psychologique & gestion projet : Délais très serrés et changement de brief 3h avant rendu pour un client exigeant. Quelle est votre méthode ?</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q4"></textarea></div>
+                <div class="rh-section"><strong>📌 Cases RH (Design)</strong><div class="checkbox-group" id="rhCases3">
+                    <label><input type="checkbox" value="photoshop"> Photoshop avancé</label>
+                    <label><input type="checkbox" value="illustrator"> Illustrator / vectoriel</label>
+                    <label><input type="checkbox" value="after_effects"> After Effects / motion design</label>
+                    <label><input type="checkbox" value="ui_ux"> Notions UI/UX & maquettes</label>
+                    <label><input type="checkbox" value="brief"> Respect des briefs & gestion des versions</label>
+                </div></div>
+                <div class="question-block"><div class="question-label">🎬 Processus de création d'une identité visuelle jusqu'aux gabarits.</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q1"></textarea></div>
+                <div class="question-block"><div class="question-label">🖌️ Un médecin rejette 3 chartes graphiques. Réaction ?</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q2"></textarea></div>
+                <div class="question-block"><div class="question-label">⚡ Maîtrise Figma ? Intégration dans gabarits pour app médicale.</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q3"></textarea></div>
+                <div class="question-block"><div class="question-label">🧪 Délais serrés + changement brief 3h avant rendu. Méthode ?</div><textarea rows="2" class="qtext" data-volet="3" data-qid="q4"></textarea></div>
             </div>
 
             <div class="flex-end">
                 <button id="saveAllBtn">💾 Sauvegarder progression</button>
-                <button id="exportRHBtn">📎 Générer le Rapport RH</button>
+                <button id="exportPdfBtn">📄 Exporter mon rapport en PDF</button>
             </div>
         </div>
 
-        <!-- SECTION RAPPORT RH -->
         <div id="rhReportSection" class="rapport-rh card" style="display: none;">
-            <h2 style="color: #be185d;">📊 Rapport d'évaluation - ZCMC Vision</h2>
+            <h2 style="color: #be185d;">📊 Mon bilan d'évaluation</h2>
             <div id="rhReportContent"></div>
             <div class="flex-end" style="margin-top: 1.5rem;">
-                <button id="downloadReportBtn">📥 Télécharger le rapport (JSON)</button>
+                <button id="printPdfBtn">🖨️ Sauvegarder en PDF</button>
             </div>
         </div>
+        <footer>🔒 Session privée – données locales. ZCMC Recrutement Vision · IA d'aide à la décision</footer>
+    </div>
 
-        <footer>🔒 Session privée – données enregistrées localement. ZCMC Recrutement Vision · IA d'aide à la décision</footer>
+    <!-- ==================== ESPACE RH ==================== -->
+    <div id="rhSpace" style="display: none;">
+        <div class="card">
+            <div class="badge-zcmc">👩‍💼 Interface Responsable RH</div>
+            <h1>📋 Gestion des candidatures</h1>
+            <button id="refreshRhListBtn" style="margin-bottom: 1rem;">⟳ Actualiser la liste</button>
+            <div id="rhCandidatsList" class="candidat-list"></div>
+        </div>
+        <footer>🔐 Accès réservé – mot de passe requis</footer>
     </div>
 </div>
 
 <script>
-    // ---------- GESTION SESSION PRIVEE ----------
+    // ---------- VARIABLES GLOBALES ----------
     let currentUserKey = null;
     let userData = {};
     let currentReport = null;
     let timerInterval = null;
-    let timeSeconds = 45 * 60; // 45 minutes
+    let timeSeconds = 45 * 60;
 
+    // ---------- FONCTIONS CANDIDAT ----------
     function loadUserData() {
         if (!currentUserKey) return;
         const raw = localStorage.getItem(`zcmc_${currentUserKey}`);
-        if (raw) {
-            userData = JSON.parse(raw);
-        } else {
-            userData = {
-                rhCases: {1:[],2:[],3:[]},
-                answers: {1:{},2:{},3:{}},
-                starRatings: {},
-                lastUpdated: new Date().toISOString()
-            };
+        if (raw) { userData = JSON.parse(raw); } 
+        else {
+            userData = { rhCases: {1:[],2:[],3:[]}, answers: {1:{},2:{},3:{}}, starRatings: {}, lastUpdated: new Date().toISOString() };
         }
         if (!userData.rhCases) userData.rhCases = {1:[],2:[],3:[]};
         if (!userData.answers) userData.answers = {1:{},2:{},3:{}};
@@ -421,9 +472,7 @@
             const container = document.getElementById(`rhCases${v}`);
             if (container) {
                 const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-                checkboxes.forEach(cb => {
-                    cb.checked = savedChecks.includes(cb.value);
-                });
+                checkboxes.forEach(cb => { cb.checked = savedChecks.includes(cb.value); });
             }
             document.querySelectorAll(`.qtext[data-volet="${v}"]`).forEach(el => {
                 const qid = el.getAttribute('data-qid');
@@ -436,7 +485,6 @@
                 else el.value = "3";
             });
         }
-        // Restauration étoiles si nécessaires (pour rapport)
     }
 
     function collectUItoData() {
@@ -456,22 +504,18 @@
                 userData.answers[v][qid] = el.value;
             });
         }
-        // Récupération des étoiles si présentes dans le rapport
         const stars = document.querySelectorAll('.star');
         stars.forEach(star => {
             const key = star.getAttribute('data-rating-key');
             const value = parseInt(star.getAttribute('data-value'));
             if (star.classList.contains('selected')) {
-                if (!userData.starRatings[key] || userData.starRatings[key] < value) {
-                    userData.starRatings[key] = value;
-                }
+                if (!userData.starRatings[key] || userData.starRatings[key] < value) userData.starRatings[key] = value;
             }
         });
     }
 
     function computeAIScore() {
-        let totalFill = 0;
-        let maxFill = 0;
+        let totalFill = 0, maxFill = 0;
         for (let v=1; v<=3; v++) {
             const answers = userData.answers[v] || {};
             const textCount = Object.values(answers).filter(a => a && a.trim().length > 2).length;
@@ -499,17 +543,16 @@
         collectUItoData();
         saveUserData();
         updateGlobalProgressAndAI();
-        alert("✅ Progression sauvegardée (privée pour ce collaborateur)");
+        alert("✅ Progression sauvegardée");
     }
 
-    // Timer 45 min
     function startTimer() {
         if (timerInterval) clearInterval(timerInterval);
         timerInterval = setInterval(() => {
             if (timeSeconds <= 0) {
                 clearInterval(timerInterval);
                 document.getElementById('timerDisplay').innerHTML = "⏱️ Temps écoulé !";
-                alert("Les 45 minutes sont écoulées. Veuillez finaliser avec le RH.");
+                alert("Les 45 minutes sont écoulées.");
                 return;
             }
             timeSeconds--;
@@ -519,161 +562,301 @@
         }, 1000);
     }
 
-    // Génération du rapport RH avec barres de progression
-    function generateRHReport() {
-        collectUItoData();
-        const nomCollaborateur = currentUserKey.split('_')[0];
-        // Calcul des scores pour les barres (exemples basés sur les réponses)
-        const softSkillsScore = (userData.rhCases[1].includes('empathie') ? 20 : 0) + 
-                                (userData.rhCases[1].includes('gestion_stress') ? 20 : 0) +
-                                (userData.answers[1] && userData.answers[1].q1 && userData.answers[1].q1.length > 10 ? 20 : 0) +
-                                (userData.answers[2] && userData.answers[2].q2 && userData.answers[2].q2.length > 10 ? 20 : 0) +
-                                (userData.answers[3] && userData.answers[3].q4 && userData.answers[3].q4.length > 10 ? 20 : 0);
-        const autonomieScore = (userData.answers[1] && userData.answers[1].q2 && userData.answers[1].q2.length > 15 ? 25 : 0) +
-                               (userData.answers[2] && userData.answers[2].q4 && userData.answers[2].q4.length > 20 ? 25 : 0) +
-                               (userData.answers[3] && userData.answers[3].q1 && userData.answers[3].q1.length > 15 ? 25 : 0) +
-                               (userData.rhCases[1].length + userData.rhCases[2].length + userData.rhCases[3].length > 5 ? 25 : 0);
-        const softSkillsMetierScore = (userData.rhCases[1].includes('outils_crm') ? 20 : 0) +
-                                      (userData.rhCases[1].includes('vente_add') ? 20 : 0) +
-                                      (userData.rhCases[2].includes('analytics') ? 20 : 0) +
-                                      (userData.rhCases[2].includes('crea_tendance') ? 20 : 0) +
-                                      (userData.rhCases[3].includes('ui_ux') ? 20 : 0);
-        const adequationScore = (userData.answers[1] && userData.answers[1].q5 ? parseInt(userData.answers[1].q5) * 10 : 0) +
-                                (userData.answers[2] && userData.answers[2].q3 && userData.answers[2].q3.length > 10 ? 20 : 0) +
-                                (userData.answers[3] && userData.answers[3].q2 && userData.answers[3].q2.length > 15 ? 30 : 0);
+    // Génération rapport avec mots-clés pour le RH
+    function generateRHReportFromData(data, nom) {
+        const rhCases = data.rhCases || {1:[],2:[],3:[]};
+        const answers = data.answers || {1:{},2:{},3:{}};
+        
+        // Scores pour barres
+        const softSkillsScore = (rhCases[1].includes('empathie') ? 20 : 0) + 
+                                (rhCases[1].includes('gestion_stress') ? 20 : 0) +
+                                (answers[1] && answers[1].q1?.length > 10 ? 20 : 0) +
+                                (answers[2] && answers[2].q2?.length > 10 ? 20 : 0) +
+                                (answers[3] && answers[3].q4?.length > 10 ? 20 : 0);
+        const autonomieScore = (answers[1] && answers[1].q2?.length > 15 ? 25 : 0) +
+                               (answers[2] && answers[2].q4?.length > 20 ? 25 : 0) +
+                               (answers[3] && answers[3].q1?.length > 15 ? 25 : 0) +
+                               (rhCases[1].length + rhCases[2].length + rhCases[3].length > 5 ? 25 : 0);
+        const softSkillsMetierScore = (rhCases[1].includes('outils_crm') ? 20 : 0) +
+                                      (rhCases[1].includes('vente_add') ? 20 : 0) +
+                                      (rhCases[2].includes('analytics') ? 20 : 0) +
+                                      (rhCases[2].includes('crea_tendance') ? 20 : 0) +
+                                      (rhCases[3].includes('ui_ux') ? 20 : 0);
+        const adequationScore = (answers[1] && answers[1].q5 ? parseInt(answers[1].q5) * 10 : 0) +
+                                (answers[2] && answers[2].q3?.length > 10 ? 20 : 0) +
+                                (answers[3] && answers[3].q2?.length > 15 ? 30 : 0);
+        
         const finalScores = {
             softSkills: Math.min(softSkillsScore, 100),
             autonomie: Math.min(autonomieScore, 100),
             softSkillsMetier: Math.min(softSkillsMetierScore, 100),
             adequation: Math.min(adequationScore, 100)
         };
+        
+        let totalFill = 0, maxFill = 0;
+        for (let v=1; v<=3; v++) {
+            const ans = answers[v] || {};
+            const textCount = Object.values(ans).filter(a => a && a.length > 2).length;
+            totalFill += textCount;
+            maxFill += 5;
+            totalFill += rhCases[v].length * 0.8;
+            maxFill += 5 * 0.8;
+        }
+        let iaPct = maxFill > 0 ? (totalFill / maxFill) * 100 : 0;
+        iaPct = Math.min(100, iaPct);
+        
+        // Extraction mots-clés pour aider le RH
+        const allText = Object.values(answers[1] || {}).join(' ') + ' ' + Object.values(answers[2] || {}).join(' ') + ' ' + Object.values(answers[3] || {}).join(' ');
+        const keywords = [];
+        if (allText.match(/relecture|validation|contr[ôo]le|vérif/i)) keywords.push('🔍 RIGUEUR');
+        if (allText.match(/prioriser|organiser|gérer seul|autonomie/i)) keywords.push('⚡ AUTONOMIE');
+        if (allText.match(/écouter|désamorcer|client en colère|empathie/i)) keywords.push('❤️ EMPATHIE');
+        if (allText.match(/charte|gabarit|brief rejeté|conformité/i)) keywords.push('🎨 CONFORMITÉ');
+        if (allText.match(/délai|urgence|45 clients|portefeuille/i)) keywords.push('⏱️ GESTION CHARGE');
+        if (keywords.length === 0) keywords.push('📌 Profil à analyser en entretien');
+        
+        // Points d'attention
+        const attentions = [];
+        if (!answers[2]?.q4 || answers[2].q4.length < 10) attentions.push('❓ Pas de stratégie claire pour 45 clients quotidiens');
+        if (!rhCases[1].includes('empathie')) attentions.push('❓ Empathie client non cochée');
+        if (!rhCases[3].includes('ui_ux')) attentions.push('❓ UI/UX non maîtrisé');
+        if (attentions.length === 0) attentions.push('✅ Aucun point d’attention majeur');
+        
         return {
-            collaborateur: nomCollaborateur,
-            codeSession: currentUserKey,
+            collaborateur: nom,
             timestamp: new Date().toISOString(),
             scores: finalScores,
-            details: {
-                rhCases: userData.rhCases,
-                reponses_cle: userData.answers,
-                notes_etoiles: userData.starRatings
-            },
-            iaCompletion: computeAIScore().pourcent,
-            recommandation_ia: computeAIScore().advice
+            details: { rhCases, reponses_cle: answers, notes_etoiles: data.starRatings || {} },
+            iaCompletion: iaPct,
+            recommandation_ia: iaPct < 30 ? "À approfondir" : (iaPct > 75 ? "Excellent" : "Correct"),
+            keywords: keywords,
+            attentions: attentions
         };
     }
 
-    function displayRHReport() {
-        const report = generateRHReport();
-        currentReport = report;
-        const container = document.getElementById('rhReportContent');
+    function displayReportInContainer(report, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
         container.innerHTML = `
             <div style="margin-bottom: 1rem;">
                 <p><strong>Candidat :</strong> ${report.collaborateur}</p>
                 <p><strong>Date :</strong> ${new Date(report.timestamp).toLocaleString()}</p>
-                <p><strong>Score IA :</strong> ${report.iaCompletion}% - ${report.recommandation_ia}</p>
+                <p><strong>Score IA :</strong> ${Math.round(report.iaCompletion)}% - ${report.recommandation_ia}</p>
             </div>
             <div class="skill-bar-container">
-                <div class="skill-label"><span>🧠 Soft Skills (Communication, Empathie)</span><span>${report.scores.softSkills}%</span></div>
+                <div class="skill-label"><span>🧠 Soft Skills</span><span>${report.scores.softSkills}%</span></div>
                 <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.softSkills}%;"></div></div>
             </div>
             <div class="skill-bar-container">
-                <div class="skill-label"><span>⚡ Autonomie & Gestion de charge</span><span>${report.scores.autonomie}%</span></div>
+                <div class="skill-label"><span>⚡ Autonomie & Gestion charge</span><span>${report.scores.autonomie}%</span></div>
                 <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.autonomie}%;"></div></div>
             </div>
             <div class="skill-bar-container">
-                <div class="skill-label"><span>💼 Soft Skills Métier (Outils, KPI)</span><span>${report.scores.softSkillsMetier}%</span></div>
+                <div class="skill-label"><span>💼 Soft Métier</span><span>${report.scores.softSkillsMetier}%</span></div>
                 <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.softSkillsMetier}%;"></div></div>
             </div>
             <div class="skill-bar-container">
-                <div class="skill-label"><span>🎯 Adéquation & Proactivité</span><span>${report.scores.adequation}%</span></div>
+                <div class="skill-label"><span>🎯 Adéquation</span><span>${report.scores.adequation}%</span></div>
                 <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.adequation}%;"></div></div>
             </div>
-            <hr style="margin: 1rem 0; border-color: #fbcfe8;">
-            <h3>⭐ Évaluation détaillée par compétence</h3>
-            <div class="question-block">
-                <div class="question-label">Aisance digitale & outils CRM</div>
-                <div class="stars-container" id="rating-outils">
-                    ${[1,2,3,4,5].map(i => `<span class="star ${(report.details.notes_etoiles.outils || 0) >= i ? 'selected' : ''}" data-rating-key="outils" data-value="${i}" style="cursor: pointer;">★</span>`).join('')}
-                </div>
+            <div class="keywords-rh">
+                <strong>🔑 Mots-clés RH & analyse :</strong><br>
+                ${report.keywords.map(k => `🏷️ ${k}`).join(' · ')}<br><br>
+                <strong>⚠️ Points d’attention :</strong><br>
+                ${report.attentions.map(a => `• ${a}`).join('<br>')}
             </div>
-            <div class="question-block">
-                <div class="question-label">Créativité & adaptation</div>
-                <div class="stars-container" id="rating-creativite">
-                    ${[1,2,3,4,5].map(i => `<span class="star ${(report.details.notes_etoiles.creativite || 0) >= i ? 'selected' : ''}" data-rating-key="creativite" data-value="${i}" style="cursor: pointer;">★</span>`).join('')}
-                </div>
+            <hr>
+            <h3>⭐ Évaluation par compétence</h3>
+            <div class="question-block"><div class="question-label">Aisance digitale & outils CRM</div>
+                <div class="stars-container">${[1,2,3,4,5].map(i => `<span class="star ${(report.details.notes_etoiles.outils || 0) >= i ? 'selected' : ''}" data-rating-key="outils" data-value="${i}" style="cursor: pointer;">★</span>`).join('')}</div>
             </div>
-            <div class="question-block">
-                <div class="question-label">Gestion du stress & objections</div>
-                <div class="stars-container" id="rating-stress">
-                    ${[1,2,3,4,5].map(i => `<span class="star ${(report.details.notes_etoiles.stress || 0) >= i ? 'selected' : ''}" data-rating-key="stress" data-value="${i}" style="cursor: pointer;">★</span>`).join('')}
-                </div>
+            <div class="question-block"><div class="question-label">Créativité & adaptation</div>
+                <div class="stars-container">${[1,2,3,4,5].map(i => `<span class="star ${(report.details.notes_etoiles.creativite || 0) >= i ? 'selected' : ''}" data-rating-key="creativite" data-value="${i}" style="cursor: pointer;">★</span>`).join('')}</div>
+            </div>
+            <div class="question-block"><div class="question-label">Gestion du stress & objections</div>
+                <div class="stars-container">${[1,2,3,4,5].map(i => `<span class="star ${(report.details.notes_etoiles.stress || 0) >= i ? 'selected' : ''}" data-rating-key="stress" data-value="${i}" style="cursor: pointer;">★</span>`).join('')}</div>
             </div>
         `;
-        // Ajouter les événements pour les étoiles
-        document.querySelectorAll('.star').forEach(star => {
+        document.querySelectorAll(`#${containerId} .star`).forEach(star => {
             star.addEventListener('click', function() {
                 const key = this.getAttribute('data-rating-key');
                 const value = parseInt(this.getAttribute('data-value'));
-                const stars = document.querySelectorAll(`.star[data-rating-key="${key}"]`);
-                stars.forEach((s, idx) => {
-                    if (idx < value) s.classList.add('selected');
-                    else s.classList.remove('selected');
-                });
+                const stars = document.querySelectorAll(`#${containerId} .star[data-rating-key="${key}"]`);
+                stars.forEach((s, idx) => { if (idx < value) s.classList.add('selected'); else s.classList.remove('selected'); });
                 userData.starRatings[key] = value;
                 saveUserData();
-                displayRHReport(); // rafraîchir
+                const newReport = generateRHReportFromData(userData, currentUserKey.split('_')[0]);
+                displayReportInContainer(newReport, containerId);
             });
         });
-        document.getElementById('rhReportSection').style.display = 'block';
-        document.getElementById('rhReportSection').scrollIntoView({ behavior: 'smooth' });
     }
 
-    function downloadReport() {
-        if (!currentReport) currentReport = generateRHReport();
-        const dataStr = JSON.stringify(currentReport, null, 2);
-        const blob = new Blob([dataStr], {type: "application/json"});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `rapport_ZCMC_${currentReport.collaborateur}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-        alert("Rapport téléchargé.");
+    function exportToPDF(report, title = "rapport_recrutement") {
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head><title>Rapport ZCMC - ${report.collaborateur}</title>
+            <style>
+                body { font-family: 'Segoe UI', sans-serif; padding: 2rem; max-width: 900px; margin: auto; }
+                h1 { color: #be185d; }
+                .badge { background: #be185d; color: white; display: inline-block; padding: 0.2rem 1rem; border-radius: 20px; }
+                .skill-bar-container { margin-bottom: 1.5rem; }
+                .skill-label { display: flex; justify-content: space-between; margin-bottom: 0.3rem; font-weight: bold; }
+                .skill-bar-bg { background: #e2e8f0; border-radius: 1rem; height: 0.8rem; overflow: hidden; }
+                .skill-bar-fill { background: linear-gradient(90deg, #f472b6, #a855f7); width: 0%; height: 100%; border-radius: 1rem; }
+                .keywords-rh { background: #fef9c3; padding: 1rem; border-radius: 1rem; margin: 1rem 0; }
+                hr { margin: 1rem 0; }
+            </style>
+            </head>
+            <body>
+                <div class="badge">ZCMC Recrutement Vision</div>
+                <h1>📊 Rapport d'évaluation</h1>
+                <p><strong>Candidat :</strong> ${report.collaborateur}</p>
+                <p><strong>Date :</strong> ${new Date(report.timestamp).toLocaleString()}</p>
+                <p><strong>Score IA :</strong> ${Math.round(report.iaCompletion)}% - ${report.recommandation_ia}</p>
+                <hr>
+                <div class="skill-bar-container"><div class="skill-label"><span>🧠 Soft Skills</span><span>${report.scores.softSkills}%</span></div>
+                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.softSkills}%;"></div></div></div>
+                <div class="skill-bar-container"><div class="skill-label"><span>⚡ Autonomie</span><span>${report.scores.autonomie}%</span></div>
+                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.autonomie}%;"></div></div></div>
+                <div class="skill-bar-container"><div class="skill-label"><span>💼 Soft Métier</span><span>${report.scores.softSkillsMetier}%</span></div>
+                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.softSkillsMetier}%;"></div></div></div>
+                <div class="skill-bar-container"><div class="skill-label"><span>🎯 Adéquation</span><span>${report.scores.adequation}%</span></div>
+                <div class="skill-bar-bg"><div class="skill-bar-fill" style="width: ${report.scores.adequation}%;"></div></div></div>
+                <div class="keywords-rh"><strong>🔑 Mots-clés RH :</strong><br>${report.keywords.map(k => `🏷️ ${k}`).join(' · ')}<br><br>
+                <strong>⚠️ Points d’attention :</strong><br>${report.attentions.map(a => `• ${a}`).join('<br>')}</div>
+                <hr>
+                <h3>⭐ Évaluation détaillée</h3>
+                <div><strong>Aisance digitale & outils CRM :</strong> ${report.details.notes_etoiles.outils || 0} / 5 ★</div>
+                <div><strong>Créativité & adaptation :</strong> ${report.details.notes_etoiles.creativite || 0} / 5 ★</div>
+                <div><strong>Gestion du stress :</strong> ${report.details.notes_etoiles.stress || 0} / 5 ★</div>
+                <hr>
+                <h3>📋 Cases RH validées</h3>
+                <div><strong>Conseiller :</strong> ${(report.details.rhCases[1] || []).join(', ') || 'Aucune'}</div>
+                <div><strong>SMM :</strong> ${(report.details.rhCases[2] || []).join(', ') || 'Aucune'}</div>
+                <div><strong>Graphiste :</strong> ${(report.details.rhCases[3] || []).join(', ') || 'Aucune'}</div>
+                <footer style="margin-top:2rem;">Document généré par ZCMC Recrutement Vision</footer>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+
+    // ---------- ESPACE RH ----------
+    function listAllCandidates() {
+        const candidates = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('zcmc_')) {
+                const raw = localStorage.getItem(key);
+                try {
+                    const data = JSON.parse(raw);
+                    const candidateName = key.substring(5);
+                    candidates.push({ key, name: candidateName, data });
+                } catch(e) {}
+            }
+        }
+        return candidates;
+    }
+
+    function refreshRHInterface() {
+        const container = document.getElementById('rhCandidatsList');
+        const candidates = listAllCandidates();
+        if (candidates.length === 0) { container.innerHTML = '<p>Aucun candidat pour le moment.</p>'; return; }
+        let html = '';
+        candidates.forEach(cand => {
+            const report = generateRHReportFromData(cand.data, cand.name);
+            html += `<div class="candidat-item" data-key="${cand.key}">
+                        <div class="candidat-info">👤 ${cand.name}</div>
+                        <div class="candidat-actions">
+                            <button class="viewReportBtn" data-key="${cand.key}">📄 Voir rapport</button>
+                            <button class="pdfReportBtn" data-key="${cand.key}" data-name="${cand.name}">📑 PDF</button>
+                            <button class="deleteCandidatBtn" data-key="${cand.key}">🗑 Supprimer</button>
+                        </div>
+                        <div id="report-${cand.key.replace(/[^a-zA-Z0-9]/g, '_')}" style="width:100%; margin-top:1rem; display:none;"></div>
+                    </div>`;
+        });
+        container.innerHTML = html;
+        document.querySelectorAll('.viewReportBtn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const key = btn.getAttribute('data-key');
+                const cand = candidates.find(c => c.key === key);
+                if (cand) {
+                    const report = generateRHReportFromData(cand.data, cand.name);
+                    const divId = `report-${key.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                    const reportDiv = document.getElementById(divId);
+                    if (reportDiv) {
+                        displayReportInContainer(report, divId);
+                        reportDiv.style.display = 'block';
+                    }
+                }
+            });
+        });
+        document.querySelectorAll('.pdfReportBtn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const key = btn.getAttribute('data-key');
+                const name = btn.getAttribute('data-name');
+                const cand = candidates.find(c => c.key === key);
+                if (cand) exportToPDF(generateRHReportFromData(cand.data, name), `rapport_${name}`);
+            });
+        });
+        document.querySelectorAll('.deleteCandidatBtn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const key = btn.getAttribute('data-key');
+                if (confirm(`Supprimer définitivement ce candidat ?`)) { localStorage.removeItem(key); refreshRHInterface(); }
+            });
+        });
     }
 
     // ---------- AUTHENTIFICATION ----------
     document.getElementById('loginBtn').addEventListener('click', () => {
         const name = document.getElementById('collabName').value.trim();
         const code = document.getElementById('collabCode').value.trim();
-        if (!name || !code) { alert("Veuillez saisir votre nom et le code fourni par RH"); return; }
-        if (!code.match(/^ZCMC\d{3}$/i) && code !== "RHMASTER") {
-            alert("Code invalide. Format: ZCMC suivi de 3 chiffres (ex: ZCMC007). Contactez RH.");
-            return;
-        }
+        if (!name || !code) { alert("Nom et code requis"); return; }
+        if (!code.match(/^ZCMC\d{3}$/i) && code !== "RHMASTER") { alert("Code invalide. Format: ZCMC suivi de 3 chiffres."); return; }
         currentUserKey = `${name}_${code}`;
         loadUserData();
         document.getElementById('authScreen').style.display = 'none';
-        document.getElementById('mainSpace').style.display = 'block';
+        document.getElementById('candidateSpace').style.display = 'block';
         startTimer();
-        // Événements auto-save
-        document.querySelectorAll('input, textarea, select').forEach(el => {
+        document.querySelectorAll('#candidateSpace input, #candidateSpace textarea, #candidateSpace select').forEach(el => {
             el.addEventListener('change', () => { collectUItoData(); saveUserData(); updateGlobalProgressAndAI(); });
             el.addEventListener('input', () => { collectUItoData(); saveUserData(); updateGlobalProgressAndAI(); });
         });
         document.getElementById('saveAllBtn').addEventListener('click', saveAndRefresh);
-        document.getElementById('exportRHBtn').addEventListener('click', () => { displayRHReport(); });
-        document.getElementById('downloadReportBtn').addEventListener('click', downloadReport);
-        // Navigation onglets
-        document.querySelectorAll('.tab-btn').forEach(btn => {
+        document.getElementById('exportPdfBtn').addEventListener('click', () => {
+            collectUItoData();
+            const report = generateRHReportFromData(userData, currentUserKey.split('_')[0]);
+            currentReport = report;
+            displayReportInContainer(report, 'rhReportContent');
+            document.getElementById('rhReportSection').style.display = 'block';
+        });
+        document.getElementById('printPdfBtn').addEventListener('click', () => {
+            if (!currentReport) { collectUItoData(); currentReport = generateRHReportFromData(userData, currentUserKey.split('_')[0]); }
+            exportToPDF(currentReport, `rapport_${currentReport.collaborateur}`);
+        });
+        document.querySelectorAll('#candidateSpace .tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const voletId = btn.getAttribute('data-volet');
-                document.querySelectorAll('.volet').forEach(v => v.classList.remove('active-volet'));
+                document.querySelectorAll('#candidateSpace .volet').forEach(v => v.classList.remove('active-volet'));
                 document.getElementById(voletId).classList.add('active-volet');
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('#candidateSpace .tab-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
             });
         });
     });
+
+    document.getElementById('rhLoginBtn').addEventListener('click', () => {
+        const pwd = document.getElementById('rhPassword').value;
+        if (pwd === "RH2026") {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('rhSpace').style.display = 'block';
+            refreshRHInterface();
+        } else { alert("Mot de passe RH incorrect."); }
+    });
+    document.getElementById('refreshRhListBtn')?.addEventListener('click', () => { refreshRHInterface(); });
 </script>
 </body>
 </html>
