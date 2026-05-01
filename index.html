@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>ZCMC Recrutement Vision - Version Complète</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         * {
             margin: 0;
@@ -16,44 +17,37 @@
         body {
             background: linear-gradient(145deg, #fdf2f8 0%, #f3e8ff 100%);
             min-height: 100vh;
-            padding: 2rem 1rem;
+            padding: 1rem;
         }
         .container {
-            max-width: 1300px;
+            max-width: 1000px;
             margin: 0 auto;
         }
         .card {
-            background: rgba(255,255,255,0.96);
-            backdrop-filter: blur(2px);
-            border-radius: 2rem;
-            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
-            padding: 1.8rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(255,255,255,0.8);
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
         }
-        .badge-zcmc {
+        .badge {
             background: linear-gradient(95deg, #be185d, #7c3aed);
             color: white;
+            display: inline-block;
             padding: 0.25rem 1rem;
             border-radius: 40px;
-            font-size: 0.8rem;
-            display: inline-block;
+            font-size: 0.75rem;
             margin-bottom: 1rem;
-            font-weight: bold;
         }
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #be185d, #7c3aed);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 0.5rem;
+        h1, h2 {
+            color: #be185d;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
         }
         .progress-bar {
             background: #f1f5f9;
             border-radius: 40px;
-            height: 12px;
+            height: 10px;
             margin: 1rem 0;
             overflow: hidden;
         }
@@ -69,6 +63,7 @@
             padding: 1rem;
             margin-bottom: 1rem;
             border-left: 4px solid #ec4899;
+            position: relative;
         }
         .question-text {
             font-weight: bold;
@@ -120,7 +115,74 @@
             font-size: 0.9rem;
         }
         hr { margin: 1rem 0; border-color: #fbcfe8; }
-        footer { text-align: center; margin-top: 2rem; font-size: 0.8rem; color: #6b21a5; }
+        footer { text-align: center; margin-top: 1.5rem; font-size: 0.7rem; color: #6b21a5; }
+        
+        /* Styles pour l'IA et la correction */
+        .ia-btn {
+            background: #a855f7;
+            border: none;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-left: 10px;
+            color: white;
+        }
+        .ia-reponse {
+            background: #fce7f3;
+            padding: 8px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-size: 13px;
+            display: none;
+            color: #831843;
+        }
+        .correction-finale {
+            background: rgba(0,0,0,0.05);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .correct {
+            color: #10b981;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        .progress-bars-final {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .progress-item-final {
+            flex: 1;
+            min-width: 150px;
+        }
+        .progress-label-final {
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+        .progress-bar-final {
+            background: #f1f5f9;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+        }
+        .progress-fill-final {
+            background: linear-gradient(95deg, #ec4899, #8b5cf6);
+            height: 100%;
+            width: 0%;
+            border-radius: 10px;
+        }
+        .motivation-pdf {
+            background: #fce7f3;
+            border-left: 5px solid #ec4899;
+            padding: 15px;
+            margin: 20px 0;
+        }
         @media (max-width: 700px) {
             .card { padding: 1rem; }
         }
@@ -128,9 +190,8 @@
 </head>
 <body>
 <div class="container" id="app">
-    <!-- ÉCRAN D'AUTHENTIFICATION -->
     <div id="authScreen" class="card">
-        <div class="badge-zcmc">ZCMC Recrutement Vision</div>
+        <div class="badge">ZCMC Recrutement Vision</div>
         <h1>🔐 Accès sécurisé</h1>
         <input type="text" id="accessCode" placeholder="Code d'accès (CCZCMC001, CMZCMC001, GDZCMC001)">
         <input type="text" id="candidateName" placeholder="Votre prénom et nom">
@@ -142,92 +203,35 @@
         <p style="font-size:0.7rem; margin-top:0.5rem;">Codes : CCZCMC001 (Conseiller) | CMZCMC001 (CM) | GDZCMC001 (Graphiste)<br>RH : RH2026</p>
     </div>
 </div>
-<footer>Powered by Chaoui Meriem</footer>
 
 <script>
-// ==================== SCRIPT COMPLET ZCMC ====================
-(function() {
-    // Données des QCM par métier (20 questions chacun)
+    // ==================== QCM PAR MÉTIER ====================
     const qcmData = {
         CCZCMC: {
             metier: "Conseiller Clientèle",
-            seuil: { bon: 75, moyen: 40 },
             questions: [
-                { text: "Que signifie KPI ?", options: ["Indicateur clé de performance", "Kit de performance interne", "Knowledge Index", "Key Process Indicator"], correct: 0 },
-                { text: "Face à un client en colère, votre première action :", options: ["L'écouter sans l'interrompre", "Lui donner raison", "Le transférer au supérieur", "Raccrocher"], correct: 0 },
-                { text: "Que mesure le NPS ?", options: ["La satisfaction client", "Le temps d'attente", "Le nombre d'appels", "La qualité du réseau"], correct: 0 },
-                { text: "L'upselling consiste à :", options: ["Proposer un produit complémentaire", "Vendre moins cher", "Baisser la qualité", "Raccourcir l'appel"], correct: 0 },
-                { text: "Comment gérez-vous un appel très long ?", options: ["Restez professionnel et patient", "Raccourcissez le client", "Transferez", "Notez d'appeler plus tard"], correct: 0 },
-                { text: "Que faire si vous ne connaissez pas la réponse ?", options: ["Dire que vous allez vérifier", "Inventer une réponse", "Transférer", "Raccrocher"], correct: 0 },
-                { text: "Un client veut résilier. Votre réaction :", options: ["Comprendre la raison et proposer une solution", "Accepter immédiatement", "Le faire attendre", "Le transférer"], correct: 0 },
-                { text: "Qu'est-ce que l'empathie en centre d'appel ?", options: ["Comprendre les émotions du client", "Parler plus fort", "Parler vite", "Utiliser des phrases types"], correct: 0 },
-                { text: "Comment gérez-vous le stress pendant une forte affluence ?", options: ["Priorisation et respiration", "Prendre plus de pauses", "Accélérer le discours", "Répondre moins précisément"], correct: 0 },
-                { text: "Que faire après avoir commis une erreur avec un client ?", options: ["S'excuser et corriger", "Cacher l'erreur", "Accuser le système", "Ignorer"], correct: 0 },
-                // 10 questions psycho
-                { text: "Comment réagissez-vous face à la critique ?", options: ["Je l'analyse pour m'améliorer", "Je me braque", "Je culpabilise", "Je cherche un coupable"], correct: 0 },
-                { text: "Préférez-vous travailler seul ou en équipe ?", options: ["Les deux, en fonction des situations", "Seul uniquement", "En équipe uniquement", "Cela m'est égal"], correct: 0 },
-                { text: "Que faites-vous si un collègue vous demande de l'aide en urgence ?", options: ["Je l'aide si possible", "Je refuse systématiquement", "Je l'ignore", "Je le signale au supérieur"], correct: 0 },
-                { text: "Comment gérez-vous les délais serrés ?", options: ["Je m'organise par priorité", "Je panique", "Je demande des délais supplémentaires", "Je bâcle le travail"], correct: 0 },
-                { text: "Que faites-vous si vous êtes en désaccord avec votre manager ?", options: ["J'en discute respectueusement", "Je fais semblant d'accepter", "Je conteste devant tout le monde", "Je démissionne"], correct: 0 },
-                { text: "Comment réagissez-vous après un échec professionnel ?", options: ["J'en tire une leçon", "Je l'oublie", "Je me démotive", "Je cherche un responsable"], correct: 0 },
-                { text: "Êtes-vous à l'aise avec les objectifs chiffrés ?", options: ["Oui, cela me motive", "Non, je trouve ça stressant", "Cela dépend", "Je les ignore"], correct: 0 },
-                { text: "Que feriez-vous face à une nouvelle technologie ?", options: ["Je me forme rapidement", "Je résiste au changement", "Je demande à un collègue", "J'attends qu'on m'explique"], correct: 0 },
-                { text: "Comment gérez-vous la pression des appels répétitifs ?", options: ["Je prends des micro-pauses", "Je fatigue rapidement", "Je me plains", "Je me déconnecte mentalement"], correct: 0 },
-                { text: "Que feriez-vous si un client vous insulte ?", options: ["Je reste calme et professionnel", "Je raccroche", "Je lui rends la pareille", "J'appelle mon supérieur"], correct: 0 }
+                { text: "Que signifie KPI ?", options: ["Indicateur clé de performance", "Kit de performance interne"], correct: 0 },
+                { text: "Face à un client en colère :", options: ["L'écouter sans l'interrompre", "Lui donner raison immédiatement"], correct: 0 },
+                { text: "Le NPS mesure :", options: ["La satisfaction client", "Le temps d'attente"], correct: 0 },
+                { text: "L'upselling consiste à :", options: ["Proposer un produit complémentaire", "Vendre moins cher"], correct: 0 }
             ]
         },
         CMZCMC: {
             metier: "Community Manager",
-            seuil: { bon: 75, moyen: 40 },
             questions: [
-                { text: "Rôle principal du CM ?", options: ["Animer la communauté", "Créer des visuels", "Gérer la paie", "Coder"], correct: 0 },
-                { text: "Face à un commentaire négatif :", options: ["Répondre professionnellement", "Supprimer", "Ignorer", "Partager"], correct: 0 },
-                { text: "KPI d'engagement principal ?", options: ["Taux d'interaction", "Nombre de vues", "Temps de chargement", "Nombre de followers"], correct: 0 },
-                { text: "Fréquence idéale sur Instagram ?", options: ["1-2 par jour", "10 par jour", "1 par mois", "5 par semaine"], correct: 0 },
-                { text: "Que faire en cas de crise e-réputation ?", options: ["Communiquer rapidement et sincèrement", "Supprimer les commentaires", "Attendre que ça passe", "Publier plus souvent"], correct: 0 },
-                { text: "Quel outil utilisez-vous pour la veille ?", options: ["Hootsuite, Meltwater, Brand24", "Photoshop", "Excel", "Word"], correct: 0 },
-                { text: "Que publier sur LinkedIn ?", options: ["Contenu professionnel et valeur ajoutée", "Mèmes", "Photos personnelles", "Pubs agressives"], correct: 0 },
-                { text: "Quand publier sur TikTok ?", options: ["Contenu court et créatif", "Longs discours", "Visuels statiques", "Flyers"], correct: 0 },
-                { text: "Comment mesurer le ROI social media ?", options: ["Taux de conversion, trafic, engagement", "Nombre de likes", "Nombre de posts", "Temps passé"], correct: 0 },
-                { text: "Que faire si votre contenu est mal reçu ?", options: ["Analyser les retours et ajuster", "Supprimer", "Publier la même chose", "Ne plus publier"], correct: 0 },
-                // 10 psycho
-                { text: "Comment réagissez-vous face à la critique de votre contenu ?", options: ["Je l'analyse pour m'améliorer", "Je me braque", "Je supprime la critique", "Je réponds agressivement"], correct: 0 },
-                { text: "Préférez-vous travailler sur des campagnes longues ou courtes ?", options: ["Les deux, selon le contexte", "Uniquement courtes", "Uniquement longues", "Je n'ai pas de préférence"], correct: 0 },
-                { text: "Que faites-vous si une publication contient une erreur ?", options: ["Je corrige et communique", "J'ignore", "Je supprime", "Je blâme le graphiste"], correct: 0 },
-                { text: "Comment gérez-vous les pics de travail (plusieurs comptes) ?", options: ["Priorisation et outils de planification", "Panique", "Délai systématique", "Sous-traitance personnelle"], correct: 0 },
-                { text: "Que faites-vous si votre stratégie ne fonctionne pas ?", options: ["Je réanalyse les données", "Je change radicalement", "J'abandonne", "Je copie la concurrence"], correct: 0 },
-                { text: "Comment réagissez-vous si un client refuse votre proposition ?", options: ["Je cherche à comprendre ses besoins", "Je m'énerve", "J'abandonne", "Je propose la même chose"], correct: 0 },
-                { text: "Êtes-vous à l'aise avec les chiffres et KPIs ?", options: ["Oui, c'est essentiel", "Non, je préfère le qualitatif", "Cela dépend", "Je les ignore"], correct: 0 },
-                { text: "Que feriez-vous face à un changement d'algorithme ?", options: ["Je me forme aux nouvelles pratiques", "Je résiste", "J'attends que ça passe", "Je publie moins"], correct: 0 },
-                { text: "Comment gérez-vous les semaines à très fort volume ?", options: ["Organisation et demandes de priorisation", "Stress", "Erreurs fréquentes", "Démission"], correct: 0 },
-                { text: "Que faire si un influenceur vous critique publiquement ?", options: ["Dialoguer en privé professionnellement", "L'attaquer publiquement", "L'ignorer", "Supprimer ses posts"], correct: 0 }
+                { text: "Rôle principal du CM ?", options: ["Animer la communauté", "Créer des visuels"], correct: 0 },
+                { text: "Comment réagir face à un commentaire négatif ?", options: ["Répondre professionnellement", "Supprimer le commentaire"], correct: 0 },
+                { text: "KPI d'engagement principal ?", options: ["Taux d'interaction", "Nombre de vues"], correct: 0 },
+                { text: "Fréquence idéale sur Instagram ?", options: ["1-2 par jour", "10 par jour"], correct: 0 }
             ]
         },
         GDZCMC: {
             metier: "Graphiste Designer",
-            seuil: { bon: 75, moyen: 40 },
             questions: [
-                { text: "Logiciel pour le vectoriel ?", options: ["Illustrator", "Photoshop", "InDesign", "After Effects"], correct: 0 },
-                { text: "Client rejette votre charte :", options: ["Proposer nouvelle version avec ses retours", "Abandonner", "Imposer", "Augmenter prix"], correct: 0 },
-                { text: "Résolution pour impression ?", options: ["300 DPI", "72 DPI", "150 DPI", "600 DPI"], correct: 0 },
-                { text: "Qu'est-ce qu'un gabarit ?", options: ["Un modèle réutilisable", "Un filtre", "Une police", "Un raccourci"], correct: 0 },
-                { text: "Que faire si le directeur artistique est surchargé ?", options: ["Apprendre à vérifier ses propres livrables", "Attendre", "Publier sans validation", "Demander à un collègue"], correct: 0 },
-                { text: "Quelle police pour un site médical ?", options: ["Sobre et professionnelle", "Fantaisie", "Script", "Comic"], correct: 0 },
-                { text: "Que faire si on vous donne un brief incomplet ?", options: ["Demander les infos manquantes", "Commencer avec ce qu'on a", "Refuser", "Faire au pif"], correct: 0 },
-                { text: "Comment optimiser vos livrables pour le web ?", options: ["Poids léger, responsive, accessible", "Haute résolution systématique", "Fichiers bruts", "Sans compression"], correct: 0 },
-                { text: "Que faire en cas de bug logiciel en urgence ?", options: ["Avoir une alternative / sauvegarde", "Attendre", "Ne rien faire", "Abandonner"], correct: 0 },
-                { text: "Comment gérez-vous les demandes de modifications intempestives ?", options: ["Cadrer le périmètre dès le brief", "Accepter tout", "Refuser systématiquement", "Augmenter le prix"], correct: 0 },
-                // 10 psycho
-                { text: "Comment réagissez-vous face à une critique sur votre style ?", options: ["Je l'analyse pour m'améliorer", "Je me braque", "Je l'ignore", "Je réplique"], correct: 0 },
-                { text: "Préférez-vous travailler sur des projets longs ou courts ?", options: ["Les deux, selon la complexité", "Uniquement courts", "Uniquement longs", "Cela m'est égal"], correct: 0 },
-                { text: "Que faites-vous si un client vous presse en dehors des délais ?", options: ["Je communique et je priorise", "Je bâcle", "Je refuse", "Je facture plus"], correct: 0 },
-                { text: "Comment gérez-vous les modifications de dernière minute ?", options: ["Je garde des marges dans ma planification", "Je stresse", "Je les repousse", "Je les ignore"], correct: 0 },
-                { text: "Que faites-vous si vous êtes bloqué créativement ?", options: ["Je change d'environnement, je cherche des références", "J'attends", "Je rends quand même", "Je demande à l'IA"], correct: 0 },
-                { text: "Comment réagissez-vous si un collègue graphiste utilise votre travail sans vous créditer ?", options: ["J'en discute calmement", "Je m'énerve", "Je fais pareil", "Je le signale"], correct: 0 },
-                { text: "Êtes-vous à l'aise avec les contraintes techniques (CMS, dev) ?", options: ["Oui, je prends le temps de comprendre", "Non, je reste sur le design", "Cela dépend", "Je les évite"], correct: 0 },
-                { text: "Que feriez-vous si votre maquette est rejetée plusieurs fois ?", options: ["Je reviens au brief et je pose des questions", "Je refuse", "Je copie un autre design", "Je me démotive"], correct: 0 },
-                { text: "Comment gérez-vous les retours contradictoires de plusieurs personnes ?", options: ["Je priorise le donneur d'ordre final", "Je les mélange", "Je fais à ma façon", "Je refuse"], correct: 0 },
-                { text: "Que faire si un livrable a une erreur après envoi ?", options: ["Je corrige et renvoie vite", "J'attends qu'on me le signale", "Je l'ignore", "Je le laisse"], correct: 0 }
+                { text: "Logiciel pour le vectoriel ?", options: ["Illustrator", "Photoshop"], correct: 0 },
+                { text: "Client rejette votre charte :", options: ["Proposer une nouvelle version", "Abandonner"], correct: 0 },
+                { text: "Résolution pour impression ?", options: ["300 DPI", "72 DPI"], correct: 0 },
+                { text: "Qu'est-ce qu'un gabarit ?", options: ["Un modèle réutilisable", "Un filtre"], correct: 0 }
             ]
         }
     };
@@ -239,184 +243,296 @@
         { text: "Comment avez-vous entendu parler de ZCMC ?", type: "radio", options: ["LinkedIn", "Facebook", "Instagram", "Bouche-à-oreille", "Autre"] }
     ];
 
-    const competencesRH = [
-        { nom: "Écoute active", question: "Décrivez une situation où vous avez calmé un client mécontent." },
-        { nom: "Articulation / Clarté", question: "Expliquez-moi un processus complexe simplement." },
-        { nom: "Rigueur & Structure", question: "Comment organisez-vous vos priorités ?" },
-        { nom: "Résilience & Gestion du stress", question: "Que faites-vous si on critique votre travail ?" },
-        { nom: "Culture ZCMC & Motivation", question: "Que savez-vous de notre activité médicale ?" },
-        { nom: "Mise en situation métier", question: "Décrivez comment vous géreriez une urgence de dernière minute." }
-    ];
-
     let currentMetier = null;
     let currentNom = null;
-    let currentCode = null;
     let currentId = null;
     let qcmReponses = [];
     let extraReponses = [];
-    let timerInterval = null;
-    let timeSeconds = 30 * 60;
 
     function sauvegarderCandidat() {
-        const q = qcmData[currentMetier];
         let score = 0;
-        for (let i = 0; i < q.questions.length; i++) {
-            if (qcmReponses[i] === q.questions[i].correct) score++;
+        for (let i = 0; i < qcmData[currentMetier].questions.length; i++) {
+            if (qcmReponses[i] === qcmData[currentMetier].questions[i].correct) score++;
         }
-        const pourcentage = Math.round((score / q.questions.length) * 100);
-        let messageIA = "";
-        if (pourcentage >= q.seuil.bon) {
-            messageIA = `Bravo ${currentNom} ! Vous êtes sur la bonne voie. (${pourcentage}%)`;
-        } else if (pourcentage >= q.seuil.moyen) {
-            messageIA = `Bonne progression, ${currentNom}. Des axes d'amélioration sont à travailler. (${pourcentage}%)`;
-        } else {
-            messageIA = `Un accompagnement intense est recommandé pour ${currentNom}. (${pourcentage}%)`;
-        }
+        const pourcentage = Math.round((score / qcmData[currentMetier].questions.length) * 100);
+        
+        let messageMotivation = "";
+        if (pourcentage >= 80) messageMotivation = `🎉 Félicitations ${currentNom} ! Tu es sur la bonne voie, ton profil est très prometteur. 🎉`;
+        else if (pourcentage >= 50) messageMotivation = `💪 ${currentNom}, tu as de bonnes bases ! Avec un peu de révision, tu brilles. 💪`;
+        else messageMotivation = `🌱 ${currentNom}, ne lâche rien. Chaque erreur est une leçon. On croit en toi ! 🌱`;
+        
         const data = {
-            id: currentId, nom: currentNom, code: currentCode, metier: q.metier,
-            date: new Date().toISOString(), qcmReponses: qcmReponses, extraReponses: extraReponses,
-            score: `${score}/${q.questions.length}`, pourcentage: pourcentage, messageIA: messageIA,
-            evaluationRH: null, tempsRestant: timeSeconds
+            id: currentId,
+            nom: currentNom,
+            metier: qcmData[currentMetier].metier,
+            date: new Date().toISOString(),
+            qcmReponses: qcmReponses,
+            extraReponses: extraReponses,
+            evaluationRH: null,
+            score: `${score}/${qcmData[currentMetier].questions.length}`,
+            pourcentage: pourcentage,
+            messageMotivation: messageMotivation,
+            details: null
         };
+        
+        // Génération des détails pour correction
+        const details = [];
+        for (let i = 0; i < qcmData[currentMetier].questions.length; i++) {
+            details.push({
+                question: qcmData[currentMetier].questions[i].text,
+                reponseDonnee: qcmReponses[i] !== undefined ? qcmData[currentMetier].questions[i].options[qcmReponses[i]] : "Pas de réponse",
+                bonneReponse: qcmData[currentMetier].questions[i].options[qcmData[currentMetier].questions[i].correct],
+                estCorrect: qcmReponses[i] === qcmData[currentMetier].questions[i].correct
+            });
+        }
+        data.details = details;
+        
         localStorage.setItem(`candidat_${currentId}`, JSON.stringify(data));
         let all = JSON.parse(localStorage.getItem('liste_candidats') || '[]');
         if (!all.includes(currentId)) all.push(currentId);
         localStorage.setItem('liste_candidats', JSON.stringify(all));
-        return messageIA;
+        
+        return { score, pourcentage, messageMotivation, details };
     }
 
-    function mettreAJourProgression() {
+    function afficherResultats(resultat) {
         const q = qcmData[currentMetier];
-        let total = q.questions.length + extraQuestions.length;
-        let repondu = 0;
-        for (let i = 0; i < q.questions.length; i++) if (qcmReponses[i] !== undefined) repondu++;
-        for (let i = 0; i < extraQuestions.length; i++) if (extraReponses[i] && extraReponses[i].trim() !== '') repondu++;
-        let pourcentageProgression = Math.round((repondu / total) * 100);
-        const fill = document.getElementById('progressFill');
-        if (fill) fill.style.width = pourcentageProgression + '%';
-        let msg = "";
-        if (pourcentageProgression >= 75) {
-            msg = `🎉 Bravo ${currentNom} ! Excellente progression, vous êtes sur la bonne voie. (${pourcentageProgression}%)`;
-        } else if (pourcentageProgression >= 40) {
-            msg = `📈 Bonne progression ${currentNom}, continuez comme ça ! (${pourcentageProgression}%)`;
-        } else {
-            msg = `⚠️ ${currentNom}, un accompagnement intense est recommandé. (${pourcentageProgression}%)`;
-        }
-        const msgDiv = document.getElementById('iaProgressMessage');
-        if (msgDiv) msgDiv.innerHTML = msg;
+        
+        let correctionHTML = `<div class="correction-finale"><h3>📖 Correction détaillée (Vert = juste / Rose = faux)</h3>`;
+        resultat.details.forEach((det, idx) => {
+            const colorClass = det.estCorrect ? "correct" : "incorrect";
+            correctionHTML += `
+                <div style="margin-top: 12px; border-top:1px solid #fbcfe8; padding-top:8px;">
+                    <strong>${idx+1}. ${det.question}</strong><br>
+                    <span class="${colorClass}">Votre réponse : ${det.reponseDonnee}</span><br>
+                    <span class="correct">✅ Bonne réponse : ${det.bonneReponse}</span>
+                </div>
+            `;
+        });
+        correctionHTML += `</div>`;
+        
+        const progressHTML = `
+            <div class="progress-bars-final">
+                <div class="progress-item-final"><div class="progress-label-final">📞 Relation client</div><div class="progress-bar-final"><div class="progress-fill-final" style="width: ${Math.min(100, resultat.pourcentage+10)}%;"></div></div></div>
+                <div class="progress-item-final"><div class="progress-label-final">💡 Technique métier</div><div class="progress-bar-final"><div class="progress-fill-final" style="width: ${resultat.pourcentage}%;"></div></div></div>
+                <div class="progress-item-final"><div class="progress-label-final">🎯 Résolution</div><div class="progress-bar-final"><div class="progress-fill-final" style="width: ${Math.max(10, resultat.pourcentage-10)}%;"></div></div></div>
+                <div class="progress-item-final"><div class="progress-label-final">🧠 Adaptabilité</div><div class="progress-bar-final"><div class="progress-fill-final" style="width: ${Math.min(100, resultat.pourcentage+5)}%;"></div></div></div>
+            </div>
+        `;
+        
+        let html = `<div class="card" id="resultatPanel">
+            <div class="badge">${q.metier}</div>
+            <h1>📊 Vos résultats, ${currentNom}</h1>
+            <h2>Score : ${resultat.score} / ${q.questions.length} (${resultat.pourcentage}%)</h2>
+            <div class="motivation-pdf">${resultat.messageMotivation}</div>
+            ${progressHTML}
+            ${correctionHTML}
+            <div class="flex">
+                <button id="telechargerPDF">📄 Télécharger mon rapport (PDF rose & violet)</button>
+                <button id="retourAccueil">🏠 Retour à l'accueil</button>
+            </div>
+        </div>`;
+        
+        const container = document.querySelector('.container');
+        let oldResult = document.getElementById('resultatPanel');
+        if (oldResult) oldResult.remove();
+        let qcmPanel = document.getElementById('qcmPanel');
+        if (qcmPanel) qcmPanel.remove();
+        container.insertAdjacentHTML('beforeend', html);
+        
+        document.getElementById('telechargerPDF').addEventListener('click', () => telechargerPDF(resultat));
+        document.getElementById('retourAccueil').addEventListener('click', () => location.reload());
+        
+        window.currentResultat = resultat;
+    }
+    
+    function telechargerPDF(resultat) {
+        const q = qcmData[currentMetier];
+        let detailsHTML = "";
+        resultat.details.forEach((det, idx) => {
+            detailsHTML += `
+                <div style="margin-bottom: 12px;">
+                    <strong>${idx+1}. ${det.question}</strong><br>
+                    <span style="color:${det.estCorrect ? '#10b981' : '#ef4444'}">Votre réponse : ${det.reponseDonnee}</span><br>
+                    <span style="color:#8b5cf6">Bonne réponse : ${det.bonneReponse}</span>
+                </div>
+            `;
+        });
+        
+        const contenuPDF = `
+            <div style="padding: 30px; background: white; font-family: 'Segoe UI', Arial, sans-serif;">
+                <h1 style="color: #a855f7; text-align: center;">🌸 ZCMC Recruitment Vision 🌸</h1>
+                <h2 style="color: #ec4899; text-align: center;">Rapport d'évaluation</h2>
+                <p><strong>Candidat :</strong> ${currentNom}</p>
+                <p><strong>Métier :</strong> ${q.metier}</p>
+                <p><strong>Date :</strong> ${new Date().toLocaleString()}</p>
+                <p><strong>Score :</strong> ${resultat.score} / ${q.questions.length} (${resultat.pourcentage}%)</p>
+                <div style="background: #fce7f3; border-left: 5px solid #ec4899; padding: 15px; margin: 20px 0;">
+                    ${resultat.messageMotivation}
+                </div>
+                <h3 style="color: #a855f7;">📖 Détail des réponses :</h3>
+                ${detailsHTML}
+                <p style="margin-top: 30px; font-size: 12px; text-align: center; color: #6b21a5;">Document généré par ZCMC Recruitment Vision - Bravo pour ton parcours !</p>
+            </div>
+        `;
+        
+        const element = document.createElement("div");
+        element.innerHTML = contenuPDF;
+        document.body.appendChild(element);
+        html2pdf().from(element).set({
+            margin: 0.5,
+            filename: `Evaluation_${currentNom.replace(/\s/g, '_')}.pdf`,
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
+        }).save().then(() => {
+            document.body.removeChild(element);
+        });
     }
 
-    function demarrerMinuteur() {
-        if (timerInterval) clearInterval(timerInterval);
-        timerInterval = setInterval(() => {
-            if (timeSeconds <= 0) {
-                clearInterval(timerInterval);
-                const timerDiv = document.getElementById('timerDisplay');
-                if (timerDiv) timerDiv.innerHTML = "⏱️ Temps écoulé !";
-                alert("Les 30 minutes sont écoulées.");
-                return;
-            }
-            timeSeconds--;
-            const mins = Math.floor(timeSeconds / 60);
-            const secs = timeSeconds % 60;
-            const timerDiv = document.getElementById('timerDisplay');
-            if (timerDiv) timerDiv.innerHTML = `⏱️ ${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-        }, 1000);
+    function aideIA(questionIndex, question, options, correctIndex) {
+        const bonneReponse = options[correctIndex];
+        const iaDiv = document.getElementById(`ia-${questionIndex}`);
+        if (iaDiv) {
+            iaDiv.innerHTML = `🤖 IA : La bonne réponse est "${bonneReponse}". Conseil : Relisez bien l'énoncé pour comprendre le contexte.`;
+            iaDiv.style.display = "block";
+            setTimeout(() => {
+                iaDiv.style.display = "none";
+            }, 5000);
+        }
     }
 
     function afficherQCM() {
         const q = qcmData[currentMetier];
-        const authScreen = document.getElementById('authScreen');
-        if (authScreen) authScreen.style.display = 'none';
-        const oldPanel = document.getElementById('qcmPanel');
-        if (oldPanel) oldPanel.remove();
         let html = `<div class="card" id="qcmPanel">
-            <div class="badge-zcmc" style="background: linear-gradient(95deg, #be185d, #7c3aed);">${q.metier} - QCM</div>
+            <div class="badge">${q.metier}</div>
             <h1>Bonjour ${currentNom}</h1>
-            <div id="timerDisplay" style="background: #11212E; color: #FFD966; font-size: 1.5rem; font-weight: bold; padding: 0.3rem 1rem; border-radius: 60px; display: inline-block; margin-bottom: 1rem;">⏱️ 30:00</div>
-            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-            <div id="iaProgressMessage" style="background: #fae8ff; padding: 0.5rem; border-radius: 1rem; text-align: center; margin-bottom: 1rem;"></div>`;
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>`;
+        
         q.questions.forEach((question, idx) => {
-            html += `<div class="question"><div class="question-text">${idx+1}. ${question.text}</div>
-                <div class="options">${question.options.map((opt, optIdx) => `<label><input type="radio" name="q${idx}" value="${optIdx}" ${qcmReponses[idx] === optIdx ? 'checked' : ''}> ${opt}</label>`).join('')}</div>
+            html += `<div class="question">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+                    <div class="question-text">${idx+1}. ${question.text}</div>
+                    <button type="button" class="ia-btn" onclick="aideIA(${idx}, ${JSON.stringify(question.text).replace(/"/g, '&quot;')}, ${JSON.stringify(question.options).replace(/"/g, '&quot;')}, ${question.correct})">🤖 Aide IA</button>
+                </div>
+                <div class="options">
+                    ${question.options.map((opt, optIdx) => `<label><input type="radio" name="q${idx}" value="${optIdx}" ${qcmReponses[idx] === optIdx ? 'checked' : ''}> ${opt}</label>`).join('')}
+                </div>
+                <div id="ia-${idx}" class="ia-reponse"></div>
             </div>`;
         });
+        
         extraQuestions.forEach((eq, idx) => {
             if (eq.type === 'text') {
-                html += `<div class="question"><div class="question-text">${eq.text}</div><textarea id="extra_${idx}" rows="2" placeholder="Votre réponse...">${extraReponses[idx] || ''}</textarea></div>`;
+                html += `<div class="question">
+                    <div class="question-text">${eq.text}</div>
+                    <textarea id="extra_${idx}" rows="2" placeholder="Votre réponse...">${extraReponses[idx] || ''}</textarea>
+                </div>`;
             } else if (eq.type === 'radio') {
-                html += `<div class="question"><div class="question-text">${eq.text}</div><div class="options">${eq.options.map(opt => `<label><input type="radio" name="extra_${idx}" value="${opt}" ${extraReponses[idx] === opt ? 'checked' : ''}> ${opt}</label>`).join('')}</div></div>`;
+                html += `<div class="question">
+                    <div class="question-text">${eq.text}</div>
+                    <div class="options">
+                        ${eq.options.map(opt => `<label><input type="radio" name="extra_${idx}" value="${opt}" ${extraReponses[idx] === opt ? 'checked' : ''}> ${opt}</label>`).join('')}
+                    </div>
+                </div>`;
             }
         });
-        html += `<button id="validerQCM">✅ Valider et envoyer mes réponses</button>
-                 <div id="feedbackMsg" style="margin-top:1rem;"></div>
-                 <button id="fermerQCM" style="background: #6c757d; margin-left: 1rem;">❌ Fermer</button>
-                 </div>`;
-        document.querySelector('.container').insertAdjacentHTML('beforeend', html);
-        demarrerMinuteur();
+        
+        html += `<button id="validerQCM">✅ Valider et voir mes résultats</button>
+                 <div id="feedbackMsg" style="margin-top:1rem;"></div></div>`;
+        
+        document.getElementById('authScreen').style.display = 'none';
+        const container = document.querySelector('.container');
+        let existing = document.getElementById('qcmPanel');
+        if (existing) existing.remove();
+        container.insertAdjacentHTML('beforeend', html);
+        
         for (let i = 0; i < q.questions.length; i++) {
             document.querySelectorAll(`input[name="q${i}"]`).forEach(radio => {
-                radio.addEventListener('change', (e) => { qcmReponses[i] = parseInt(e.target.value); mettreAJourProgression(); });
+                radio.addEventListener('change', (e) => {
+                    qcmReponses[i] = parseInt(e.target.value);
+                    mettreAJourProgression();
+                });
             });
         }
         for (let i = 0; i < extraQuestions.length; i++) {
             if (extraQuestions[i].type === 'text') {
-                const txt = document.getElementById(`extra_${i}`);
-                if (txt) txt.addEventListener('input', (e) => { extraReponses[i] = e.target.value; mettreAJourProgression(); });
+                document.getElementById(`extra_${i}`).addEventListener('input', (e) => {
+                    extraReponses[i] = e.target.value;
+                    mettreAJourProgression();
+                });
             } else if (extraQuestions[i].type === 'radio') {
                 document.querySelectorAll(`input[name="extra_${i}"]`).forEach(radio => {
-                    radio.addEventListener('change', (e) => { extraReponses[i] = e.target.value; mettreAJourProgression(); });
+                    radio.addEventListener('change', (e) => {
+                        extraReponses[i] = e.target.value;
+                        mettreAJourProgression();
+                    });
                 });
             }
         }
+        
         document.getElementById('validerQCM').addEventListener('click', () => {
             let ok = true;
             for (let i = 0; i < q.questions.length; i++) {
                 if (qcmReponses[i] === undefined) { alert(`Répondez à la question ${i+1}`); ok = false; break; }
             }
             for (let i = 0; i < extraQuestions.length; i++) {
-                if (!extraReponses[i] || extraReponses[i].trim() === '') { alert(`Répondez à : ${extraQuestions[i].text}`); ok = false; break; }
+                if (!extraReponses[i] || extraReponses[i].trim() === '') {
+                    alert(`Répondez à : ${extraQuestions[i].text}`); ok = false; break;
+                }
             }
             if (ok) {
-                const msg = sauvegarderCandidat();
-                document.getElementById('feedbackMsg').innerHTML = `<div style="background:#d4edda; padding:0.8rem; border-radius:1rem;">✅ Merci ! ${msg}</div>`;
-                document.getElementById('validerQCM').disabled = true;
-                if (timerInterval) clearInterval(timerInterval);
+                const resultat = sauvegarderCandidat();
+                afficherResultats(resultat);
             }
         });
-        document.getElementById('fermerQCM').addEventListener('click', () => {
-            if (timerInterval) clearInterval(timerInterval);
-            document.getElementById('qcmPanel').remove();
-            if (authScreen) authScreen.style.display = 'block';
-        });
+        
         mettreAJourProgression();
+    }
+    
+    function mettreAJourProgression() {
+        const q = qcmData[currentMetier];
+        let total = q.questions.length + extraQuestions.length;
+        let repondu = 0;
+        for (let i = 0; i < q.questions.length; i++) if (qcmReponses[i] !== undefined) repondu++;
+        for (let i = 0; i < extraQuestions.length; i++) if (extraReponses[i] && extraReponses[i].trim() !== '') repondu++;
+        const percent = (repondu / total) * 100;
+        const fill = document.getElementById('progressFill');
+        if (fill) fill.style.width = percent + '%';
     }
 
     function afficherEspaceRH() {
         const listeIds = JSON.parse(localStorage.getItem('liste_candidats') || '[]');
-        const authScreen = document.getElementById('authScreen');
-        if (authScreen) authScreen.style.display = 'none';
-        const oldPanel = document.getElementById('rhPanel');
-        if (oldPanel) oldPanel.remove();
-        let html = `<div class="card" id="rhPanel"><div class="badge-zcmc">Interface RH</div><h1>📋 Tous les candidats</h1>
-            <div class="flex"><button id="refreshRH">⟳ Actualiser</button><button id="exportAllCSV" style="background: #28a745;">📊 Exporter tous les résultats (CSV)</button></div>
-            <div id="candidatsList" style="margin-top:1rem;">`;
-        if (listeIds.length === 0) html += "<p>Aucun candidat pour le moment.</p>";
-        else {
+        let html = `<div class="card" id="rhPanel">
+            <div class="badge">Interface RH</div>
+            <h1>📋 Tous les candidats</h1>
+            <button id="refreshRH">⟳ Actualiser</button>
+            <div id="candidatsList">`;
+        
+        if (listeIds.length === 0) {
+            html += "<p>Aucun candidat pour le moment.</p>";
+        } else {
             for (let id of listeIds) {
                 const data = JSON.parse(localStorage.getItem(`candidat_${id}`) || '{}');
                 if (!data.nom) continue;
-                const barreLargeur = data.pourcentage || 0;
-                html += `<div class="candidat-item"><div><strong>${data.nom}</strong> - ${data.metier}<br>Score: ${data.score} (${data.pourcentage}%)<br>Sourcing: ${data.extraReponses ? data.extraReponses[3] : '?'}<br>
-                    <div style="margin-top:0.5rem;"><div style="background:#e2e8f0; border-radius:1rem; height:8px;"><div style="background:linear-gradient(90deg,#f472b6,#a855f7); width:${barreLargeur}%; height:8px; border-radius:1rem;"></div></div>
-                    <span style="font-size:0.8rem;">Progression: ${barreLargeur}%</span></div></div>
-                    <div class="flex" style="margin-top:0.5rem;"><button class="btnDetail" data-id="${id}">📄 Détail QCM</button><button class="btnEval" data-id="${id}">📝 Grille RH</button><button class="btnExportPDF" data-id="${id}">📑 Export PDF</button><button class="btnDelete" data-id="${id}">🗑 Supprimer</button></div>
-                    <div id="detail-${id}" class="detail-panel"></div><div id="eval-${id}" class="detail-panel" style="background:#e6f7ff;"></div>
+                html += `<div class="candidat-item" data-id="${id}">
+                    <div><strong>${data.nom}</strong> - ${data.metier}<br>Score: ${data.score} (${data.pourcentage}%)<br>Sourcing: ${data.extraReponses ? data.extraReponses[3] : '?'}</div>
+                    <div class="flex">
+                        <button class="btnDetail" data-id="${id}">📄 Détail QCM</button>
+                        <button class="btnEval" data-id="${id}">📝 Grille RH</button>
+                        <button class="btnDelete" data-id="${id}">🗑 Supprimer</button>
+                    </div>
+                    <div id="detail-${id}" class="detail-panel"></div>
+                    <div id="eval-${id}" class="detail-panel" style="background:#e6f7ff;"></div>
                 </div>`;
             }
         }
-        html += `<button id="fermerRH" style="background:#6c757d; margin-top:1rem;">❌ Fermer</button></div>`;
-        document.querySelector('.container').insertAdjacentHTML('beforeend', html);
+        html += `</div></div>`;
+        
+        document.getElementById('authScreen').style.display = 'none';
+        const container = document.querySelector('.container');
+        let existing = document.getElementById('rhPanel');
+        if (existing) existing.remove();
+        container.insertAdjacentHTML('beforeend', html);
         
         document.querySelectorAll('.btnDetail').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -429,14 +545,13 @@
                     q.questions.forEach((question, idx) => {
                         const reponse = data.qcmReponses[idx];
                         const estCorrect = reponse === question.correct;
-                        detail += `${idx+1}. ${question.text}<br>→ ${question.options[reponse]} ${estCorrect ? '✅' : '❌'}<br><br>`;
+                        detail += `${idx+1}. ${question.text} → ${question.options[reponse]} ${estCorrect ? '✅' : '❌'}<br>`;
                     });
                 }
                 detail += `<br><strong>Réponses complémentaires :</strong><br>`;
                 extraQuestions.forEach((eq, idx) => {
                     detail += `<strong>${eq.text}</strong> → ${data.extraReponses ? data.extraReponses[idx] : '-'}<br>`;
                 });
-                detail += `<br><strong>Message IA :</strong> ${data.messageIA || ''}`;
                 document.getElementById(`detail-${id}`).innerHTML = detail;
                 document.getElementById(`detail-${id}`).style.display = 'block';
             });
@@ -447,19 +562,38 @@
                 const id = btn.getAttribute('data-id');
                 const data = JSON.parse(localStorage.getItem(`candidat_${id}`) || '{}');
                 const evalData = data.evaluationRH || {};
-                let evalHtml = `<h4>📋 Grille d'entretien RH</h4><table style="width:100%; border-collapse:collapse;"><tr style="background:#f0f0f0;"><th>Compétence</th><th>Note (1-5)</th><th>Commentaire</th></tr>`;
-                competencesRH.forEach((comp, idx) => {
-                    evalHtml += `<tr><td><strong>${comp.nom}</strong><br><small>${comp.question}</small></td>
-                        <td><input type="number" class="note-${idx}" min="1" max="5" value="${evalData.notes ? evalData.notes[idx] || 3 : 3}" style="width:80px;"></td>
-                        <td><input type="text" class="comm-${idx}" placeholder="Optionnel" value="${evalData.commentaires ? evalData.commentaires[idx] || '' : ''}" style="width:100%;"></td></tr>`;
+                
+                let evalHtml = `<h4>📋 Grille d'entretien RH</h4>
+                    <table style="width:100%; border-collapse:collapse;">
+                        <tr style="background:#f0f0f0;"><th>Compétence</th><th>Questions à poser</th><th>Note (1-5)</th><th>Commentaire</th></tr>`;
+                
+                const competences = [
+                    { nom: "Écoute active", question: "Décrivez une situation où vous avez calmé un client mécontent." },
+                    { nom: "Articulation", question: "Expliquez-moi un processus complexe simplement." },
+                    { nom: "Rigueur", question: "Comment organisez-vous vos priorités ?" },
+                    { nom: "Résilience", question: "Que faites-vous si on critique votre travail ?" },
+                    { nom: "Culture ZCMC", question: "Que savez-vous de notre activité médicale ?" }
+                ];
+                
+                competences.forEach((comp, idx) => {
+                    evalHtml += `<tr>
+                        <td><strong>${comp.nom}</strong><br><small>${comp.question}</small></td>
+                        <td><input type="number" class="note-${idx}" min="1" max="5" value="${evalData.notes ? evalData.notes[idx] || 3 : 3}" style="width:70px;"></td>
+                        <td><input type="text" class="comm-${idx}" placeholder="Optionnel" value="${evalData.commentaires ? evalData.commentaires[idx] || '' : ''}" style="width:100%;"></td>
+                    </tr>`;
                 });
-                evalHtml += `</table><label>Appréciation générale :</label><textarea id="evalGlobal" rows="2">${evalData.global || ''}</textarea>
-                    <button id="saveEval-${id}" style="background:#28a745; margin-top:0.5rem;">💾 Sauvegarder mon évaluation</button>`;
+                
+                evalHtml += `<tr>
+                    <label>Appréciation générale :</label><textarea id="evalGlobal" rows="2">${evalData.global || ''}</textarea>
+                    <button id="saveEval-${id}">💾 Sauvegarder mon évaluation</button>`;
+                
                 document.getElementById(`eval-${id}`).innerHTML = evalHtml;
                 document.getElementById(`eval-${id}`).style.display = 'block';
+                
                 document.getElementById(`saveEval-${id}`).addEventListener('click', () => {
-                    const notes = [], commentaires = [];
-                    for (let i = 0; i < competencesRH.length; i++) {
+                    const notes = [];
+                    const commentaires = [];
+                    for (let i = 0; i < competences.length; i++) {
                         notes.push(parseInt(document.querySelector(`.note-${i}`).value) || 3);
                         commentaires.push(document.querySelector(`.comm-${i}`).value);
                     }
@@ -468,34 +602,6 @@
                     localStorage.setItem(`candidat_${id}`, JSON.stringify(data));
                     alert("Évaluation RH sauvegardée.");
                 });
-            });
-        });
-        
-        document.querySelectorAll('.btnExportPDF').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-id');
-                const data = JSON.parse(localStorage.getItem(`candidat_${id}`) || '{}');
-                const evalData = data.evaluationRH || {};
-                let content = `<html><head><title>Rapport ${data.nom}</title><style>body{font-family:Arial;padding:2rem;} h1{color:#be185d;} .badge{background:#be185d;color:white;display:inline-block;padding:0.2rem 1rem;border-radius:20px;} table{border-collapse:collapse;width:100%;margin:1rem 0;} th,td{border:1px solid #ddd;padding:0.5rem;text-align:left;} th{background:#f0f0f0;}</style></head><body>
-                    <div class="badge">ZCMC Recrutement Vision</div><h1>Rapport d'évaluation - ${data.nom}</h1>
-                    <p><strong>Métier :</strong> ${data.metier}</p><p><strong>Date :</strong> ${new Date(data.date).toLocaleString()}</p>
-                    <p><strong>Score QCM :</strong> ${data.score} (${data.pourcentage}%)</p><p><strong>Message IA :</strong> ${data.messageIA || ''}</p>
-                    <h2>Réponses complémentaires</h2><ul>
-                    <li><strong>Rôle chez ZCMC :</strong> ${data.extraReponses ? data.extraReponses[0] : '-'}</li>
-                    <li><strong>Apport personnel :</strong> ${data.extraReponses ? data.extraReponses[1] : '-'}</li>
-                    <li><strong>Pourquoi ZCMC :</strong> ${data.extraReponses ? data.extraReponses[2] : '-'}</li>
-                    <li><strong>Sourcing :</strong> ${data.extraReponses ? data.extraReponses[3] : '-'}</li></ul>
-                    <h2>Grille d'évaluation RH</h2><table><tr><th>Compétence</th><th>Note (1-5)</th><th>Commentaire</th></tr>
-                    ${competencesRH.map((comp, idx) => `<tr><td>${comp.nom}</td><td>${evalData.notes ? evalData.notes[idx] : '-'}</td><td>${evalData.commentaires ? evalData.commentaires[idx] : '-'}</td></tr>`).join('')}
-                    <tr><td colspan="3"><strong>Appréciation générale :</strong> ${evalData.global || '-'}</td></tr></table>
-                    <p style="margin-top:2rem;">Document généré automatiquement par ZCMC Recrutement Vision</p></body></html>`;
-                const blob = new Blob([content], { type: 'text/html' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `rapport_${data.nom}.html`;
-                a.click();
-                URL.revokeObjectURL(url);
             });
         });
         
@@ -512,47 +618,29 @@
             });
         });
         
-        document.getElementById('exportAllCSV')?.addEventListener('click', () => {
-            let csv = "Nom,Métier,Score,Pourcentage,Sourcing,Note Écoute,Note Articulation,Note Rigueur,Note Résilience,Note Culture,Note Mise en situation,Appréciation RH\n";
-            for (let id of listeIds) {
-                const data = JSON.parse(localStorage.getItem(`candidat_${id}`) || '{}');
-                if (!data.nom) continue;
-                const evalData = data.evaluationRH || {};
-                csv += `"${data.nom}","${data.metier}","${data.score}","${data.pourcentage}","${data.extraReponses ? data.extraReponses[3] : ''}",`;
-                csv += `${evalData.notes ? evalData.notes[0] || '' : ''},${evalData.notes ? evalData.notes[1] || '' : ''},${evalData.notes ? evalData.notes[2] || '' : ''},${evalData.notes ? evalData.notes[3] || '' : ''},${evalData.notes ? evalData.notes[4] || '' : ''},${evalData.notes ? evalData.notes[5] || '' : ''},"${evalData.global || ''}"\n`;
-            }
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `tous_resultats_${new Date().toISOString().slice(0,19)}.csv`;
-            a.click();
-            URL.revokeObjectURL(url);
-        });
-        
         document.getElementById('refreshRH')?.addEventListener('click', () => afficherEspaceRH());
-        document.getElementById('fermerRH')?.addEventListener('click', () => {
-            document.getElementById('rhPanel').remove();
-            if (authScreen) authScreen.style.display = 'block';
-        });
     }
 
     document.getElementById('loginBtn').addEventListener('click', () => {
         const code = document.getElementById('accessCode').value.trim().toUpperCase();
         const nom = document.getElementById('candidateName').value.trim();
         if (!code || !nom) { alert("Code et nom requis."); return; }
+        
         let metier = null;
         if (code.startsWith("CCZCMC")) metier = "CCZCMC";
         else if (code.startsWith("CMZCMC")) metier = "CMZCMC";
         else if (code.startsWith("GDZCMC")) metier = "GDZCMC";
         else { alert("Code invalide. Utilisez CCZCMC001, CMZCMC001 ou GDZCMC001."); return; }
+        
         currentMetier = metier;
         currentNom = nom;
-        currentCode = code;
         currentId = `${code}_${nom}`;
-        if (localStorage.getItem(`candidat_${currentId}`)) { alert("Vous avez déjà répondu au QCM. Merci."); return; }
-        qcmReponses = new Array(qcmData[currentMetier].questions.length).fill(undefined);
-        extraReponses = new Array(extraQuestions.length).fill('');
+        
+        const existing = localStorage.getItem(`candidat_${currentId}`);
+        if (existing) { alert("Vous avez déjà répondu au QCM. Merci."); return; }
+        
+        qcmReponses = [];
+        extraReponses = [];
         afficherQCM();
     });
     
@@ -561,8 +649,8 @@
         if (mdp !== "RH2026") { alert("Mot de passe RH incorrect."); return; }
         afficherEspaceRH();
     });
-})();
 </script>
+<footer>Powered by Chaoui Meriem</footer>
 </body>
 </html>
 ```
