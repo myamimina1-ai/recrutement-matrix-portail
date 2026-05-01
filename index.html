@@ -1,13 +1,11 @@
 
+```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ZCMC Recrutement Vision – Portail complet</title>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <title>ZCMC Recrutement Vision - Version Complète</title>
     <style>
         * {
             margin: 0;
@@ -18,44 +16,37 @@
         body {
             background: linear-gradient(145deg, #fdf2f8 0%, #f3e8ff 100%);
             min-height: 100vh;
-            padding: 2rem 1rem;
+            padding: 1rem;
         }
         .container {
-            max-width: 1300px;
+            max-width: 1000px;
             margin: 0 auto;
         }
         .card {
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(2px);
-            border-radius: 2rem;
-            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
-            padding: 1.8rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
         }
-        .badge-zcmc {
+        .badge {
             background: linear-gradient(95deg, #be185d, #7c3aed);
             color: white;
+            display: inline-block;
             padding: 0.25rem 1rem;
             border-radius: 40px;
-            font-size: 0.8rem;
-            display: inline-block;
+            font-size: 0.75rem;
             margin-bottom: 1rem;
-            font-weight: bold;
         }
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #be185d, #7c3aed);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 0.5rem;
+        h1, h2 {
+            color: #be185d;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
         }
         .progress-bar {
             background: #f1f5f9;
             border-radius: 40px;
-            height: 12px;
+            height: 10px;
             margin: 1rem 0;
             overflow: hidden;
         }
@@ -63,18 +54,17 @@
             background: linear-gradient(90deg, #ec4899, #8b5cf6);
             width: 0%;
             height: 100%;
-            border-radius: 40px;
             transition: width 0.3s;
         }
         .question {
             background: #fff5fc;
-            border-radius: 1.5rem;
+            border-radius: 1rem;
             padding: 1rem;
             margin-bottom: 1rem;
-            border-left: 6px solid #ec4899;
+            border-left: 4px solid #ec4899;
         }
         .question-text {
-            font-weight: 700;
+            font-weight: bold;
             margin-bottom: 0.5rem;
             color: #831843;
         }
@@ -83,397 +73,394 @@
             align-items: center;
             gap: 0.5rem;
             background: white;
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 0.8rem;
             border-radius: 2rem;
             border: 1px solid #fbcfe8;
             margin: 0.3rem 0;
             cursor: pointer;
         }
-        button {
-            background: linear-gradient(95deg, #be185d, #7c3aed);
-            color: white;
-            border: none;
-            padding: 0.7rem 1.5rem;
-            border-radius: 2rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 1rem;
-        }
-        input, textarea {
+        input, select, textarea {
             width: 100%;
             padding: 0.7rem;
             border-radius: 1rem;
             border: 1px solid #fbcfe8;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
         }
-        .auth-card {
-            max-width: 550px;
-            margin: 2rem auto;
-            text-align: center;
+        button {
+            background: linear-gradient(95deg, #be185d, #7c3aed);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.2rem;
+            border-radius: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0.5rem 0;
         }
-        .candidat-list {
-            margin-top: 1rem;
-        }
+        button:active { transform: scale(0.98); }
+        .flex { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
         .candidat-item {
             background: #fff1f9;
             border-radius: 1rem;
             padding: 1rem;
             margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
         }
         .detail-panel {
             background: #fef9c3;
-            padding: 1rem;
+            padding: 0.8rem;
             border-radius: 1rem;
-            margin-top: 1rem;
+            margin-top: 0.8rem;
             display: none;
-            width: 100%;
+            font-size: 0.9rem;
         }
-        footer {
-            text-align: center;
-            margin-top: 2rem;
-            font-size: 0.8rem;
-            color: #6b21a5;
-        }
-        hr {
-            margin: 1rem 0;
-            border-color: #fbcfe8;
+        hr { margin: 1rem 0; border-color: #fbcfe8; }
+        footer { text-align: center; margin-top: 1.5rem; font-size: 0.7rem; color: #6b21a5; }
+        @media (max-width: 700px) {
+            .card { padding: 1rem; }
         }
     </style>
 </head>
 <body>
-<div class="container">
+<div class="container" id="app">
     <!-- ÉCRAN D'AUTHENTIFICATION -->
-    <div id="authScreen" class="auth-card card">
-        <div class="badge-zcmc">ZCMC Recrutement Vision</div>
+    <div id="authScreen" class="card">
+        <div class="badge">ZCMC Recrutement Vision</div>
         <h1>🔐 Accès sécurisé</h1>
-        <input type="text" id="accessCode" placeholder="Code d'accès (ex: CCZCMC001)" autocomplete="off">
+        <input type="text" id="accessCode" placeholder="Code d'accès (CCZCMC001, CMZCMC001, GDZCMC001)">
         <input type="text" id="candidateName" placeholder="Votre prénom et nom">
         <button id="loginBtn">🚀 Accéder à mon QCM</button>
         <hr>
-        <h3>👩‍💼 Espace RH</h3>
+        <h2>👩‍💼 Espace RH</h2>
         <input type="password" id="rhPassword" placeholder="Mot de passe RH">
         <button id="rhLoginBtn">🔐 Accéder à l'espace RH</button>
-        <p style="margin-top: 1rem; font-size: 0.75rem;">Codes : CCZCMC001 (Conseiller) | CMZCMC001 (CM) | GDZCMC001 (Graphiste)</p>
-        <p style="font-size: 0.7rem;">RH : mot de passe RH2026</p>
+        <p style="font-size:0.7rem; margin-top:0.5rem;">Codes : CCZCMC001 (Conseiller) | CMZCMC001 (CM) | GDZCMC001 (Graphiste)<br>RH : RH2026</p>
     </div>
 </div>
 
 <script>
-    // ==================== CONFIGURATION FIREBASE ====================
-    // 🔴 REMPLACEZ CES VALEURS PAR CELLES DE VOTRE PROJET FIREBASE 🔴
-    const firebaseConfig = {
-        apiKey: "VOTRE_API_KEY",
-        authDomain: "VOTRE_PROJECT.firebaseapp.com",
-        projectId: "VOTRE_PROJECT",
-        storageBucket: "VOTRE_PROJECT.appspot.com",
-        messagingSenderId: "VOTRE_NUMERO",
-        appId: "VOTRE_APP_ID"
-    };
-    
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    // ==================== DONNÉES DES QCM ====================
+    // ==================== QCM PAR MÉTIER ====================
     const qcmData = {
         CCZCMC: {
             metier: "Conseiller Clientèle",
             questions: [
-                { text: "Que signifie KPI ?", options: ["Indicateur clé de performance", "Kit de performance interne", "Knowledge Index", "Key Process Indicator"], correct: 0 },
-                { text: "Que faire face à un client en colère ?", options: ["Lui donner raison", "L'écouter sans l'interrompre", "Le transférer", "Raccrocher"], correct: 1 },
-                { text: "Le NPS mesure :", options: ["Le temps d'attente", "La satisfaction client", "Le nombre d'appels", "La qualité du réseau"], correct: 1 },
-                { text: "L'upselling consiste à :", options: ["Vendre moins cher", "Proposer un complément", "Baisser la qualité", "Raccourcir l'appel"], correct: 1 },
-                { text: "Pourquoi souhaitez-vous rejoindre ZCMC ?", options: [], isOpen: true },
-                { text: "Comment avez-vous entendu parler de ZCMC ?", options: ["LinkedIn", "Facebook", "Instagram", "Bouche-à-oreille", "Autre"], isSourcing: true }
+                { text: "Que signifie KPI ?", options: ["Indicateur clé de performance", "Kit de performance interne"], correct: 0 },
+                { text: "Face à un client en colère :", options: ["L'écouter sans l'interrompre", "Lui donner raison immédiatement"], correct: 0 },
+                { text: "Le NPS mesure :", options: ["La satisfaction client", "Le temps d'attente"], correct: 0 },
+                { text: "L'upselling consiste à :", options: ["Proposer un produit complémentaire", "Vendre moins cher"], correct: 0 }
             ]
         },
         CMZCMC: {
             metier: "Community Manager",
             questions: [
-                { text: "Rôle principal du CM ?", options: ["Créer des visuels", "Animer la communauté", "Gérer la paie", "Coder"], correct: 1 },
-                { text: "Face à un commentaire négatif :", options: ["Supprimer", "Ignorer", "Répondre pro et proposer une solution", "Partager"], correct: 2 },
-                { text: "KPI d'engagement ?", options: ["Vues", "Taux d'interaction", "Temps de chargement", "Nombre de followers"], correct: 1 },
-                { text: "Fréquence idéale sur Instagram ?", options: ["10/jour", "1-2/jour", "1/mois", "5/semaine"], correct: 1 },
-                { text: "Pourquoi souhaitez-vous rejoindre ZCMC ?", options: [], isOpen: true },
-                { text: "Comment avez-vous entendu parler de ZCMC ?", options: ["LinkedIn", "Facebook", "Instagram", "Bouche-à-oreille", "Autre"], isSourcing: true }
+                { text: "Rôle principal du CM ?", options: ["Animer la communauté", "Créer des visuels"], correct: 0 },
+                { text: "Comment réagir face à un commentaire négatif ?", options: ["Répondre professionnellement", "Supprimer le commentaire"], correct: 0 },
+                { text: "KPI d'engagement principal ?", options: ["Taux d'interaction", "Nombre de vues"], correct: 0 },
+                { text: "Fréquence idéale sur Instagram ?", options: ["1-2 par jour", "10 par jour"], correct: 0 }
             ]
         },
         GDZCMC: {
             metier: "Graphiste Designer",
             questions: [
-                { text: "Logiciel pour vectoriel ?", options: ["Photoshop", "Illustrator", "InDesign", "After Effects"], correct: 1 },
-                { text: "Client rejette votre charte :", options: ["Abandonner", "Proposer une nouvelle version avec ses retours", "Imposer", "Augmenter prix"], correct: 1 },
-                { text: "Résolution pour impression ?", options: ["72 DPI", "150 DPI", "300 DPI", "600 DPI"], correct: 2 },
-                { text: "Qu'est-ce qu'un gabarit ?", options: ["Un filtre", "Un modèle réutilisable", "Une police", "Un raccourci"], correct: 1 },
-                { text: "Pourquoi souhaitez-vous rejoindre ZCMC ?", options: [], isOpen: true },
-                { text: "Comment avez-vous entendu parler de ZCMC ?", options: ["LinkedIn", "Facebook", "Instagram", "Bouche-à-oreille", "Autre"], isSourcing: true }
+                { text: "Logiciel pour le vectoriel ?", options: ["Illustrator", "Photoshop"], correct: 0 },
+                { text: "Client rejette votre charte :", options: ["Proposer une nouvelle version", "Abandonner"], correct: 0 },
+                { text: "Résolution pour impression ?", options: ["300 DPI", "72 DPI"], correct: 0 },
+                { text: "Qu'est-ce qu'un gabarit ?", options: ["Un modèle réutilisable", "Un filtre"], correct: 0 }
             ]
         }
     };
 
+    // Questions supplémentaires (communes à tous)
+    const extraQuestions = [
+        { text: "Quel sera votre rôle chez ZCMC ?", type: "text" },
+        { text: "Qu'apporterez-vous en tant que collaborateur chez ZCMC ?", type: "text" },
+        { text: "Pourquoi souhaitez-vous rejoindre ZCMC ?", type: "text" },
+        { text: "Comment avez-vous entendu parler de ZCMC ?", type: "radio", options: ["LinkedIn", "Facebook", "Instagram", "Bouche-à-oreille", "Autre"] }
+    ];
+
+    // ==================== VARIABLES GLOBALES ====================
     let currentMetier = null;
-    let currentCandidateId = null;
-    let currentAnswers = [];
+    let currentNom = null;
+    let currentId = null;
+    let qcmReponses = [];
+    let extraReponses = [];
 
-    function renderQCM(containerId) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-        const qs = qcmData[currentMetier].questions;
-        let html = "";
-        qs.forEach((q, idx) => {
-            if (q.isOpen) {
-                html += `<div class="question"><div class="question-text">${idx+1}. ${q.text}</div><textarea id="open_${idx}" rows="2" placeholder="Votre réponse..."></textarea></div>`;
-            } else if (q.isSourcing) {
-                html += `<div class="question"><div class="question-text">${idx+1}. ${q.text}</div><div class="options">${q.options.map(opt => `<label><input type="radio" name="sourcing" value="${opt}"> ${opt}</label>`).join("")}</div></div>`;
-            } else {
-                html += `<div class="question" data-qidx="${idx}"><div class="question-text">${idx+1}. ${q.text}</div><div class="options">${q.options.map((opt, optIdx) => `<label><input type="radio" name="q${idx}" value="${optIdx}"> ${opt}</label>`).join("")}</div></div>`;
-            }
-        });
-        container.innerHTML = html;
-        attachQCMEvents();
-    }
-
-    function attachQCMEvents() {
-        const qs = qcmData[currentMetier].questions;
-        for (let i = 0; i < qs.length; i++) {
-            if (!qs[i].isOpen && !qs[i].isSourcing) {
-                const radios = document.querySelectorAll(`input[name="q${i}"]`);
-                radios.forEach(r => r.addEventListener("change", () => updateProgress()));
-            }
-        }
-        document.querySelectorAll('input[name="sourcing"]').forEach(r => r.addEventListener("change", () => updateProgress()));
-        for (let i = 0; i < qs.length; i++) {
-            if (qs[i].isOpen) {
-                const txt = document.getElementById(`open_${i}`);
-                if (txt) txt.addEventListener("input", () => updateProgress());
-            }
-        }
-        updateProgress();
-    }
-
-    function updateProgress() {
-        const qs = qcmData[currentMetier].questions;
-        let answered = 0;
-        for (let i = 0; i < qs.length; i++) {
-            if (!qs[i].isOpen && !qs[i].isSourcing) {
-                const selected = document.querySelector(`input[name="q${i}"]:checked`);
-                if (selected) answered++;
-            } else if (qs[i].isSourcing) {
-                const selected = document.querySelector('input[name="sourcing"]:checked');
-                if (selected) answered++;
-            } else if (qs[i].isOpen) {
-                const txt = document.getElementById(`open_${i}`);
-                if (txt && txt.value.trim().length > 5) answered++;
-            }
-        }
-        const percent = (answered / qs.length) * 100;
-        const fill = document.getElementById("qcmProgress");
-        if (fill) fill.style.width = percent + "%";
-    }
-
-    async function saveCandidate() {
-        const qs = qcmData[currentMetier].questions;
-        const answers = [];
-        let sourcing = "";
-        let whyZcmc = "";
-        
-        for (let i = 0; i < qs.length; i++) {
-            if (!qs[i].isOpen && !qs[i].isSourcing) {
-                const selected = document.querySelector(`input[name="q${i}"]:checked`);
-                if (!selected) return alert(`Veuillez répondre à la question ${i+1}`);
-                answers.push(parseInt(selected.value));
-            } else if (qs[i].isOpen) {
-                const txt = document.getElementById(`open_${i}`);
-                if (!txt || txt.value.trim().length < 5) return alert(`Veuillez répondre à la question ${i+1} (minimum 5 caractères)`);
-                if (i === qs.length-2) whyZcmc = txt.value.trim();
-            } else if (qs[i].isSourcing) {
-                const selected = document.querySelector('input[name="sourcing"]:checked');
-                if (!selected) return alert("Veuillez indiquer comment vous avez entendu parler de ZCMC");
-                sourcing = selected.value;
-            }
-        }
-        
-        let score = 0;
-        for (let i = 0; i < answers.length; i++) {
-            if (answers[i] === qs[i].correct) score++;
-        }
-        const total = answers.length;
-        
+    // ==================== FONCTIONS CANDIDAT ====================
+    function sauvegarderCandidat() {
         const data = {
-            nom: document.getElementById("candidateName").value,
-            code: document.getElementById("accessCode").value,
+            id: currentId,
+            nom: currentNom,
             metier: qcmData[currentMetier].metier,
             date: new Date().toISOString(),
-            score: `${score}/${total}`,
-            pourcentage: Math.round((score/total)*100),
-            reponses: answers,
-            sourcing: sourcing,
-            pourquoiZCMC: whyZcmc,
+            qcmReponses: qcmReponses,
+            extraReponses: extraReponses,
             evaluationRH: null
         };
+        // Calcul du score
+        let score = 0;
+        for (let i = 0; i < qcmData[currentMetier].questions.length; i++) {
+            if (qcmReponses[i] === qcmData[currentMetier].questions[i].correct) score++;
+        }
+        data.score = `${score}/${qcmData[currentMetier].questions.length}`;
+        data.pourcentage = Math.round((score / qcmData[currentMetier].questions.length) * 100);
         
-        await db.collection("candidatures").doc(currentCandidateId).set(data);
-        alert("✅ Vos réponses ont été enregistrées. Merci !");
-        document.getElementById("submitBtn").disabled = true;
+        localStorage.setItem(`candidat_${currentId}`, JSON.stringify(data));
+        
+        // Mettre à jour la liste des candidats
+        let all = JSON.parse(localStorage.getItem('liste_candidats') || '[]');
+        if (!all.includes(currentId)) all.push(currentId);
+        localStorage.setItem('liste_candidats', JSON.stringify(all));
+    }
+
+    function afficherQCM() {
+        const q = qcmData[currentMetier];
+        let html = `<div class="card" id="qcmPanel">
+            <div class="badge">${q.metier}</div>
+            <h1>Bonjour ${currentNom}</h1>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>`;
+        
+        // Questions QCM
+        q.questions.forEach((question, idx) => {
+            html += `<div class="question">
+                <div class="question-text">${idx+1}. ${question.text}</div>
+                <div class="options">
+                    ${question.options.map((opt, optIdx) => `<label><input type="radio" name="q${idx}" value="${optIdx}" ${qcmReponses[idx] === optIdx ? 'checked' : ''}> ${opt}</label>`).join('')}
+                </div>
+            </div>`;
+        });
+        
+        // Questions supplémentaires
+        extraQuestions.forEach((eq, idx) => {
+            if (eq.type === 'text') {
+                html += `<div class="question">
+                    <div class="question-text">${eq.text}</div>
+                    <textarea id="extra_${idx}" rows="2" placeholder="Votre réponse...">${extraReponses[idx] || ''}</textarea>
+                </div>`;
+            } else if (eq.type === 'radio') {
+                html += `<div class="question">
+                    <div class="question-text">${eq.text}</div>
+                    <div class="options">
+                        ${eq.options.map(opt => `<label><input type="radio" name="extra_${idx}" value="${opt}" ${extraReponses[idx] === opt ? 'checked' : ''}> ${opt}</label>`).join('')}
+                    </div>
+                </div>`;
+            }
+        });
+        
+        html += `<button id="validerQCM">✅ Valider et envoyer mes réponses</button>
+                 <div id="feedbackMsg" style="margin-top:1rem;"></div></div>`;
+        
+        document.getElementById('authScreen').style.display = 'none';
+        const container = document.querySelector('.container');
+        let existing = document.getElementById('qcmPanel');
+        if (existing) existing.remove();
+        container.insertAdjacentHTML('beforeend', html);
+        
+        // Événements
+        for (let i = 0; i < q.questions.length; i++) {
+            document.querySelectorAll(`input[name="q${i}"]`).forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    qcmReponses[i] = parseInt(e.target.value);
+                    mettreAJourProgression();
+                });
+            });
+        }
+        for (let i = 0; i < extraQuestions.length; i++) {
+            if (extraQuestions[i].type === 'text') {
+                document.getElementById(`extra_${i}`).addEventListener('input', (e) => {
+                    extraReponses[i] = e.target.value;
+                    mettreAJourProgression();
+                });
+            } else if (extraQuestions[i].type === 'radio') {
+                document.querySelectorAll(`input[name="extra_${i}"]`).forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        extraReponses[i] = e.target.value;
+                        mettreAJourProgression();
+                    });
+                });
+            }
+        }
+        
+        document.getElementById('validerQCM').addEventListener('click', () => {
+            // Vérifier que tout est rempli
+            let ok = true;
+            for (let i = 0; i < q.questions.length; i++) {
+                if (qcmReponses[i] === undefined) { alert(`Répondez à la question ${i+1}`); ok = false; break; }
+            }
+            for (let i = 0; i < extraQuestions.length; i++) {
+                if (!extraReponses[i] || extraReponses[i].trim() === '') {
+                    alert(`Répondez à : ${extraQuestions[i].text}`); ok = false; break;
+                }
+            }
+            if (ok) {
+                sauvegarderCandidat();
+                document.getElementById('feedbackMsg').innerHTML = '<div style="background:#d4edda; padding:0.8rem; border-radius:1rem;">✅ Merci ! Vos réponses ont été enregistrées.</div>';
+                document.getElementById('validerQCM').disabled = true;
+            }
+        });
+        
+        mettreAJourProgression();
+    }
+    
+    function mettreAJourProgression() {
+        const q = qcmData[currentMetier];
+        let total = q.questions.length + extraQuestions.length;
+        let repondu = 0;
+        for (let i = 0; i < q.questions.length; i++) if (qcmReponses[i] !== undefined) repondu++;
+        for (let i = 0; i < extraQuestions.length; i++) if (extraReponses[i] && extraReponses[i].trim() !== '') repondu++;
+        const percent = (repondu / total) * 100;
+        const fill = document.getElementById('progressFill');
+        if (fill) fill.style.width = percent + '%';
     }
 
     // ==================== ESPACE RH ====================
-    async function loadAllCandidates() {
-        const snapshot = await db.collection("candidatures").get();
-        const list = [];
-        snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
-        return list;
-    }
-
-    async function refreshRHList() {
-        const container = document.getElementById("rhCandidatsList");
-        const candidates = await loadAllCandidates();
-        if (candidates.length === 0) { container.innerHTML = "<p>Aucun candidat.</p>"; return; }
-        let html = "";
-        for (const c of candidates) {
-            html += `
-                <div class="candidat-item">
-                    <div><strong>${c.nom}</strong> (${c.metier})<br>Score: ${c.score} (${c.pourcentage}%)<br>Sourcing: ${c.sourcing}</div>
-                    <div>
-                        <button class="detailBtn" data-id="${c.id}">📄 Détail</button>
-                        <button class="evalBtn" data-id="${c.id}">📝 Grille RH</button>
-                        <button class="deleteBtn" data-id="${c.id}">🗑</button>
+    function afficherEspaceRH() {
+        const listeIds = JSON.parse(localStorage.getItem('liste_candidats') || '[]');
+        let html = `<div class="card" id="rhPanel">
+            <div class="badge">Interface RH</div>
+            <h1>📋 Tous les candidats</h1>
+            <button id="refreshRH">⟳ Actualiser</button>
+            <div id="candidatsList">`;
+        
+        if (listeIds.length === 0) {
+            html += "<p>Aucun candidat pour le moment.</p>";
+        } else {
+            for (let id of listeIds) {
+                const data = JSON.parse(localStorage.getItem(`candidat_${id}`) || '{}');
+                if (!data.nom) continue;
+                html += `<div class="candidat-item" data-id="${id}">
+                    <div><strong>${data.nom}</strong> - ${data.metier}<br>Score: ${data.score} (${data.pourcentage}%)<br>Sourcing: ${data.extraReponses ? data.extraReponses[3] : '?'}</div>
+                    <div class="flex">
+                        <button class="btnDetail" data-id="${id}">📄 Détail QCM</button>
+                        <button class="btnEval" data-id="${id}">📝 Grille RH</button>
+                        <button class="btnDelete" data-id="${id}">🗑 Supprimer</button>
                     </div>
-                    <div id="detail-${c.id.replace(/[^a-zA-Z0-9]/g,'_')}" class="detail-panel"></div>
-                    <div id="eval-${c.id.replace(/[^a-zA-Z0-9]/g,'_')}" class="detail-panel" style="background:#e0f2fe;"></div>
-                </div>
-            `;
+                    <div id="detail-${id}" class="detail-panel"></div>
+                    <div id="eval-${id}" class="detail-panel" style="background:#e6f7ff;"></div>
+                </div>`;
+            }
         }
-        container.innerHTML = html;
-        attachRHEvents(candidates);
-    }
-
-    function attachRHEvents(candidates) {
-        document.querySelectorAll(".detailBtn").forEach(btn => {
-            btn.addEventListener("click", async () => {
-                const id = btn.getAttribute("data-id");
-                const docSnap = await db.collection("candidatures").doc(id).get();
-                if (!docSnap.exists) return;
-                const data = docSnap.data();
-                const qs = Object.values(qcmData).find(q => q.metier === data.metier)?.questions || [];
-                const detailDiv = document.getElementById(`detail-${id.replace(/[^a-zA-Z0-9]/g,'_')}`);
-                detailDiv.innerHTML = `<strong>Réponses :</strong><br>${qs.map((q, idx) => `<strong>${q.text}</strong> → ${q.options ? q.options[data.reponses[idx]] : data.reponses[idx]}<br>`).join("")}<strong>Pourquoi ZCMC ?</strong> ${data.pourquoiZCMC}<br><strong>Sourcing :</strong> ${data.sourcing}`;
-                detailDiv.style.display = "block";
+        html += `</div></div>`;
+        
+        document.getElementById('authScreen').style.display = 'none';
+        const container = document.querySelector('.container');
+        let existing = document.getElementById('rhPanel');
+        if (existing) existing.remove();
+        container.insertAdjacentHTML('beforeend', html);
+        
+        // Événements des boutons
+        document.querySelectorAll('.btnDetail').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                const data = JSON.parse(localStorage.getItem(`candidat_${id}`) || '{}');
+                const metierKey = Object.keys(qcmData).find(k => qcmData[k].metier === data.metier);
+                const q = qcmData[metierKey];
+                let detail = `<strong>Réponses QCM :</strong><br>`;
+                if (q && data.qcmReponses) {
+                    q.questions.forEach((question, idx) => {
+                        const reponse = data.qcmReponses[idx];
+                        const estCorrect = reponse === question.correct;
+                        detail += `${idx+1}. ${question.text} → ${question.options[reponse]} ${estCorrect ? '✅' : '❌'}<br>`;
+                    });
+                }
+                detail += `<br><strong>Réponses complémentaires :</strong><br>`;
+                extraQuestions.forEach((eq, idx) => {
+                    detail += `<strong>${eq.text}</strong> → ${data.extraReponses ? data.extraReponses[idx] : '-'}<br>`;
+                });
+                document.getElementById(`detail-${id}`).innerHTML = detail;
+                document.getElementById(`detail-${id}`).style.display = 'block';
             });
         });
         
-        document.querySelectorAll(".evalBtn").forEach(btn => {
-            btn.addEventListener("click", async () => {
-                const id = btn.getAttribute("data-id");
-                const docSnap = await db.collection("candidatures").doc(id).get();
-                if (!docSnap.exists) return;
-                const data = docSnap.data();
-                const evalDiv = document.getElementById(`eval-${id.replace(/[^a-zA-Z0-9]/g,'_')}`);
-                evalDiv.innerHTML = `
-                    <h4>📋 Grille d'entretien comportemental</h4>
-                    <p><strong>À poser au candidat :</strong></p>
-                    <ul>
-                        <li><strong>Écoute active :</strong> "Parlez-moi d'une situation où vous avez calmé un client mécontent."<br>
-                        <em>Pourquoi :</em> Capacité à reformuler, ne pas couper la parole.<br>
-                        Note (1-5): <input type="number" id="noteEcoute" min="1" max="5" value="${data.evaluationRH?.ecoute || 3}"></li>
-                        <li><strong>Articulation / Clarté :</strong> "Expliquez-moi un processus complexe simplement."<br>
-                        Note: <input type="number" id="noteArticulation" min="1" max="5" value="${data.evaluationRH?.articulation || 3}"></li>
-                        <li><strong>Rigueur & Structure :</strong> "Comment organisez-vous vos priorités ?"<br>
-                        Note: <input type="number" id="noteRigueur" min="1" max="5" value="${data.evaluationRH?.rigueur || 3}"></li>
-                        <li><strong>Résilience :</strong> "Que faites-vous si on critique votre travail ?"<br>
-                        Note: <input type="number" id="noteResilience" min="1" max="5" value="${data.evaluationRH?.resilience || 3}"></li>
-                    </ul>
-                    <label>Appréciation générale :</label><br>
-                    <textarea id="rhComment" rows="2" style="width:100%;">${data.evaluationRH?.commentaire || ""}</textarea><br>
-                    <button class="saveEvalBtn" data-id="${id}">💾 Sauvegarder mon évaluation</button>
-                `;
-                evalDiv.style.display = "block";
-                evalDiv.querySelector(".saveEvalBtn")?.addEventListener("click", async (e) => {
-                    const ecoute = parseInt(evalDiv.querySelector("#noteEcoute").value);
-                    const articulation = parseInt(evalDiv.querySelector("#noteArticulation").value);
-                    const rigueur = parseInt(evalDiv.querySelector("#noteRigueur").value);
-                    const resilience = parseInt(evalDiv.querySelector("#noteResilience").value);
-                    const commentaire = evalDiv.querySelector("#rhComment").value;
-                    await db.collection("candidatures").doc(id).update({
-                        evaluationRH: { ecoute, articulation, rigueur, resilience, commentaire, dateEval: new Date().toISOString() }
-                    });
+        document.querySelectorAll('.btnEval').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                const data = JSON.parse(localStorage.getItem(`candidat_${id}`) || '{}');
+                const evalData = data.evaluationRH || {};
+                
+                let evalHtml = `<h4>📋 Grille d'entretien RH</h4>
+                    <table style="width:100%; border-collapse:collapse;">
+                        <tr style="background:#f0f0f0;"><th>Compétence</th><th>Questions à poser</th><th>Note (1-5)</th><th>Commentaire</th></tr>`;
+                
+                const competences = [
+                    { nom: "Écoute active", question: "Décrivez une situation où vous avez calmé un client mécontent." },
+                    { nom: "Articulation", question: "Expliquez-moi un processus complexe simplement." },
+                    { nom: "Rigueur", question: "Comment organisez-vous vos priorités ?" },
+                    { nom: "Résilience", question: "Que faites-vous si on critique votre travail ?" },
+                    { nom: "Culture ZCMC", question: "Que savez-vous de notre activité médicale ?" }
+                ];
+                
+                competences.forEach((comp, idx) => {
+                    evalHtml += `<tr>
+                        <td><strong>${comp.nom}</strong><br><small>${comp.question}</small></td>
+                        <td><input type="number" class="note-${idx}" min="1" max="5" value="${evalData.notes ? evalData.notes[idx] || 3 : 3}" style="width:70px;"></td>
+                        <td><input type="text" class="comm-${idx}" placeholder="Optionnel" value="${evalData.commentaires ? evalData.commentaires[idx] || '' : ''}" style="width:100%;"></td>
+                    </tr>`;
+                });
+                
+                evalHtml += `</table>
+                    <label>Appréciation générale :</label><textarea id="evalGlobal" rows="2">${evalData.global || ''}</textarea>
+                    <button id="saveEval-${id}">💾 Sauvegarder mon évaluation</button>`;
+                
+                document.getElementById(`eval-${id}`).innerHTML = evalHtml;
+                document.getElementById(`eval-${id}`).style.display = 'block';
+                
+                document.getElementById(`saveEval-${id}`).addEventListener('click', () => {
+                    const notes = [];
+                    const commentaires = [];
+                    for (let i = 0; i < competences.length; i++) {
+                        notes.push(parseInt(document.querySelector(`.note-${i}`).value) || 3);
+                        commentaires.push(document.querySelector(`.comm-${i}`).value);
+                    }
+                    const global = document.getElementById('evalGlobal').value;
+                    data.evaluationRH = { notes, commentaires, global, date: new Date().toISOString() };
+                    localStorage.setItem(`candidat_${id}`, JSON.stringify(data));
                     alert("Évaluation RH sauvegardée.");
-                    refreshRHList();
                 });
             });
         });
         
-        document.querySelectorAll(".deleteBtn").forEach(btn => {
-            btn.addEventListener("click", async () => {
-                if (confirm("Supprimer ce candidat ?")) {
-                    await db.collection("candidatures").doc(btn.getAttribute("data-id")).delete();
-                    refreshRHList();
+        document.querySelectorAll('.btnDelete').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                if (confirm("Supprimer définitivement ce candidat ?")) {
+                    localStorage.removeItem(`candidat_${id}`);
+                    let liste = JSON.parse(localStorage.getItem('liste_candidats') || '[]');
+                    liste = liste.filter(i => i !== id);
+                    localStorage.setItem('liste_candidats', JSON.stringify(liste));
+                    afficherEspaceRH();
                 }
             });
         });
+        
+        document.getElementById('refreshRH')?.addEventListener('click', () => afficherEspaceRH());
     }
 
     // ==================== CONNEXIONS ====================
-    document.getElementById("loginBtn").addEventListener("click", async () => {
-        const code = document.getElementById("accessCode").value.trim().toUpperCase();
-        const nom = document.getElementById("candidateName").value.trim();
-        if (!code || !nom) return alert("Code et nom requis.");
+    document.getElementById('loginBtn').addEventListener('click', () => {
+        const code = document.getElementById('accessCode').value.trim().toUpperCase();
+        const nom = document.getElementById('candidateName').value.trim();
+        if (!code || !nom) { alert("Code et nom requis."); return; }
+        
         let metier = null;
         if (code.startsWith("CCZCMC")) metier = "CCZCMC";
         else if (code.startsWith("CMZCMC")) metier = "CMZCMC";
         else if (code.startsWith("GDZCMC")) metier = "GDZCMC";
-        else return alert("Code invalide. Utilisez CCZCMC001, CMZCMC001 ou GDZCMC001.");
+        else { alert("Code invalide. Utilisez CCZCMC001, CMZCMC001 ou GDZCMC001."); return; }
         
         currentMetier = metier;
-        currentCandidateId = `${code}_${nom}`;
-        const existing = await db.collection("candidatures").doc(currentCandidateId).get();
-        if (existing.exists) return alert("Vous avez déjà répondu au QCM. Merci.");
+        currentNom = nom;
+        currentId = `${code}_${nom}`;
         
-        document.getElementById("authScreen").style.display = "none";
-        let qcmPanel = document.getElementById("qcmPanel");
-        if (!qcmPanel) {
-            qcmPanel = document.createElement("div");
-            qcmPanel.id = "qcmPanel";
-            qcmPanel.className = "card";
-            qcmPanel.innerHTML = `
-                <div class="badge-zcmc" id="qcmMetierBadge"></div>
-                <h1>QCM - <span id="qcmMetierName"></span></h1>
-                <div class="progress-bar"><div class="progress-fill" id="qcmProgress"></div></div>
-                <div id="questionsContainer"></div>
-                <button id="submitBtn">✅ Valider mes réponses</button>
-            `;
-            document.querySelector(".container").appendChild(qcmPanel);
-        }
-        document.getElementById("qcmMetierBadge").innerText = qcmData[metier].metier;
-        document.getElementById("qcmMetierName").innerText = qcmData[metier].metier;
-        renderQCM("questionsContainer");
-        document.getElementById("submitBtn").onclick = saveCandidate;
-        qcmPanel.style.display = "block";
+        const existing = localStorage.getItem(`candidat_${currentId}`);
+        if (existing) { alert("Vous avez déjà répondu au QCM. Merci."); return; }
+        
+        qcmReponses = [];
+        extraReponses = [];
+        afficherQCM();
     });
-
-    document.getElementById("rhLoginBtn").addEventListener("click", async () => {
-        const pwd = document.getElementById("rhPassword").value;
-        if (pwd !== "RH2026") return alert("Mot de passe RH incorrect.");
-        document.getElementById("authScreen").style.display = "none";
-        let rhPanel = document.getElementById("rhPanel");
-        if (!rhPanel) {
-            rhPanel = document.createElement("div");
-            rhPanel.id = "rhPanel";
-            rhPanel.className = "card";
-            rhPanel.innerHTML = `
-                <div class="badge-zcmc">Interface RH</div>
-                <h1>📋 Toutes les candidatures</h1>
-                <button id="refreshRhList">⟳ Actualiser</button>
-                <div id="rhCandidatsList" class="candidat-list"></div>
-            `;
-            document.querySelector(".container").appendChild(rhPanel);
-        }
-        rhPanel.style.display = "block";
-        await refreshRHList();
-        document.getElementById("refreshRhList").onclick = refreshRHList;
+    
+    document.getElementById('rhLoginBtn').addEventListener('click', () => {
+        const mdp = document.getElementById('rhPassword').value;
+        if (mdp !== "RH2026") { alert("Mot de passe RH incorrect."); return; }
+        afficherEspaceRH();
     });
 </script>
 <footer>Powered by Chaoui Meriem</footer>
