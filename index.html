@@ -1,12 +1,11 @@
-
 ```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ZCMC Recrutement Vision - Version Complète</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>ZCMC Recrutement Vision - 20 Questions par Métier</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -63,7 +62,6 @@
             padding: 1rem;
             margin-bottom: 1rem;
             border-left: 4px solid #ec4899;
-            position: relative;
         }
         .question-text {
             font-weight: bold;
@@ -116,8 +114,6 @@
         }
         hr { margin: 1rem 0; border-color: #fbcfe8; }
         footer { text-align: center; margin-top: 1.5rem; font-size: 0.7rem; color: #6b21a5; }
-        
-        /* Styles pour l'IA et la correction */
         .ia-btn {
             background: #a855f7;
             border: none;
@@ -143,14 +139,8 @@
             padding: 15px;
             margin-top: 20px;
         }
-        .correct {
-            color: #10b981;
-            font-weight: bold;
-        }
-        .incorrect {
-            color: #ef4444;
-            font-weight: bold;
-        }
+        .correct { color: #10b981; font-weight: bold; }
+        .incorrect { color: #ef4444; font-weight: bold; }
         .progress-bars-final {
             display: flex;
             gap: 15px;
@@ -205,33 +195,91 @@
 </div>
 
 <script>
-    // ==================== QCM PAR MÉTIER ====================
+    // ==================== 20 QUESTIONS POUR CHAQUE MÉTIER ====================
     const qcmData = {
         CCZCMC: {
             metier: "Conseiller Clientèle",
             questions: [
-                { text: "Que signifie KPI ?", options: ["Indicateur clé de performance", "Kit de performance interne"], correct: 0 },
-                { text: "Face à un client en colère :", options: ["L'écouter sans l'interrompre", "Lui donner raison immédiatement"], correct: 0 },
-                { text: "Le NPS mesure :", options: ["La satisfaction client", "Le temps d'attente"], correct: 0 },
-                { text: "L'upselling consiste à :", options: ["Proposer un produit complémentaire", "Vendre moins cher"], correct: 0 }
+                { text: "Que signifie KPI ?", options: ["Indicateur clé de performance", "Kit de performance interne", "Knowledge Process Improvement", "Key Personnel Indicator"], correct: 0 },
+                { text: "Face à un client en colère, quelle est la première chose à faire ?", options: ["L'interrompre pour le calmer", "L'écouter activement sans l'interrompre", "Le transférer à son supérieur", "Raccrocher et rappeler plus tard"], correct: 1 },
+                { text: "Le NPS mesure quoi ?", options: ["La satisfaction client", "Le temps d'attente moyen", "Le nombre d'appels traités", "Le taux de vente"], correct: 0 },
+                { text: "L'upselling consiste à :", options: ["Proposer un produit complémentaire", "Vendre moins cher", "Fidéliser un client", "Résoudre une réclamation"], correct: 0 },
+                { text: "Quel est le délai recommandé pour répondre à un email client ?", options: ["24h maximum", "1 semaine", "Dans l'heure", "48h maximum"], correct: 0 },
+                { text: "Que faire si vous ne connaissez pas la réponse à une question client ?", options: ["Inventer une réponse", "Dire je ne sais pas et se renseigner", "Transférer sans explication", "Raccrocher"], correct: 1 },
+                { text: "Le taux de résolution au premier appel (FCR) est important car :", options: ["Il réduit les coûts", "Il améliore la satisfaction client", "Les deux", "Ni l'un ni l'autre"], correct: 2 },
+                { text: "Quelle est la qualité la plus importante pour un conseiller clientèle ?", options: ["L'empathie", "La vitesse", "La technique", "L'humour"], correct: 0 },
+                { text: "Que signifie CRM ?", options: ["Customer Relationship Management", "Client Report Manager", "Customer Response Method", "Central Record Maintenance"], correct: 0 },
+                { text: "Comment gérer un client qui demande un supérieur ?", options: ["Le transférer immédiatement", "L'écouter et essayer de résoudre d'abord", "Lui dire non", "Raccrocher"], correct: 1 },
+                { text: "Le taux de satisfaction client se calcule comment ?", options: ["(Clients satisfaits / Total clients) x 100", "(Total clients / Clients satisfaits) x 100", "Clients satisfaits - Clients insatisfaits", "Total des appels / Nombre de réclamations"], correct: 0 },
+                { text: "Qu'est-ce qu'un script d'appel ?", options: ["Un guide pour le conseiller", "Une obligation légale", "Un enregistrement", "Un logiciel"], correct: 0 },
+                { text: "Pourquoi est-il important de reformuler la demande du client ?", options: ["Pour montrer qu'on a compris", "Pour gagner du temps", "Pour paraître professionnel", "Pour éviter de répondre"], correct: 0 },
+                { text: "Que faire si un client insulte ?", options: ["Répondre sur le même ton", "Rester calme et professionnel", "Raccrocher", "Le mettre en attente"], correct: 1 },
+                { text: "Le taux d'abandon en centre d'appels mesure :", options: ["Les clients qui raccrochent avant d'être servis", "Les conseillers qui quittent leur poste", "Les appels non répondus", "Les réclamations non traitées"], correct: 0 },
+                { text: "Qu'est-ce que l'omnicanalité ?", options: ["Être présent sur plusieurs canaux de communication", "Un nouveau logiciel", "Une technique de vente", "Un type de client"], correct: 0 },
+                { text: "Comment terminer un appel professionnellement ?", options: ["Raccrocher rapidement", "S'assurer que le client n'a plus de questions et le remercier", "Transférer à un collègue", "Proposer un rendez-vous"], correct: 1 },
+                { text: "Que signifie AHT (Average Handling Time) ?", options: ["Temps moyen de traitement d'un appel", "Taux d'absentéisme", "Nombre d'appels par heure", "Taux de satisfaction"], correct: 0 },
+                { text: "Pourquoi la prise de notes est-elle importante ?", options: ["Pour garder une trace", "Pour le suivi client", "Les deux", "Ni l'un ni l'autre"], correct: 2 },
+                { text: "Quelle est la devise du service client ?", options: ["Le client est roi", "Le client a toujours tort", "Le client paie", "Le client n'a pas raison"], correct: 0 }
             ]
         },
         CMZCMC: {
             metier: "Community Manager",
             questions: [
-                { text: "Rôle principal du CM ?", options: ["Animer la communauté", "Créer des visuels"], correct: 0 },
-                { text: "Comment réagir face à un commentaire négatif ?", options: ["Répondre professionnellement", "Supprimer le commentaire"], correct: 0 },
-                { text: "KPI d'engagement principal ?", options: ["Taux d'interaction", "Nombre de vues"], correct: 0 },
-                { text: "Fréquence idéale sur Instagram ?", options: ["1-2 par jour", "10 par jour"], correct: 0 }
+                { text: "Rôle principal d'un Community Manager ?", options: ["Animer et moder la communauté", "Créer des visuels", "Coder un site web", "Gérer la comptabilité"], correct: 0 },
+                { text: "Comment réagir face à un commentaire négatif ?", options: ["Supprimer immédiatement", "Répondre professionnellement et calmement", "Ignorer", "Partager le commentaire"], correct: 1 },
+                { text: "Quel est le KPI d'engagement principal ?", options: ["Taux d'interaction (likes, commentaires, partages)", "Nombre de vues", "Nombre d'abonnés", "Temps passé sur la page"], correct: 0 },
+                { text: "Quelle est la fréquence idéale de publication sur Instagram ?", options: ["1 à 2 posts par jour", "10 posts par jour", "1 post par semaine", "50 posts par jour"], correct: 0 },
+                { text: "Quel réseau social est le plus adapté pour du B2B ?", options: ["LinkedIn", "TikTok", "Instagram", "Snapchat"], correct: 0 },
+                { text: "Que signifie SEO ?", options: ["Search Engine Optimization", "Social Engagement Option", "Site Entry Order", "Simple Email Output"], correct: 0 },
+                { text: "Quel outil permet de planifier des publications ?", options: ["Buffer ou Hootsuite", "Photoshop", "Excel", "WordPress"], correct: 0 },
+                { text: "Qu'est-ce qu'une story sur Instagram ?", options: ["Un contenu éphémère de 24h", "Un post permanent", "Une vidéo longue", "Un message privé"], correct: 0 },
+                { text: "À quoi sert un chat en direct ?", options: ["Interagir en temps réel avec la communauté", "Envoyer des emails", "Faire des visuels", "Créer un site"], correct: 0 },
+                { text: "Que faire si une marque est victime d'une crise sur les réseaux ?", options: ["Réagir vite et communiquer clairement", "Supprimer tous les commentaires", "Ne rien dire", "Modifier son logo"], correct: 0 },
+                { text: "Quel est le meilleur moment pour poster sur LinkedIn ?", options: ["Mardi et jeudi matin", "Samedi soir", "Dimanche matin", "Minuit"], correct: 0 },
+                { text: "Le taux de clics (CTR) mesure :", options: ["Le nombre de clics sur un lien", "Le nombre de vues", "Le nombre d'abonnés", "Le temps de lecture"], correct: 0 },
+                { text: "Quel format de contenu génère le plus d'engagement ?", options: ["La vidéo courte", "Le long texte", "L'image fixe", "Le podcast"], correct: 0 },
+                { text: "Que signifie UGC (User Generated Content) ?", options: ["Contenu généré par les utilisateurs", "Unité de gestion du contenu", "Ultra Grand Contenu", "Usage Général du Code"], correct: 0 },
+                { text: "Quelle est la différence entre reach et impressions ?", options: ["Reach = nombre unique de personnes, impressions = nombre total de vues", "C'est la même chose", "Impressions = personnes uniques", "Reach = vues totales"], correct: 0 },
+                { text: "Quel réseau social privilégier pour toucher les 16-25 ans ?", options: ["TikTok", "LinkedIn", "Facebook", "Twitter"], correct: 0 },
+                { text: "Qu'est-ce qu'un influenceur ?", options: ["Une personne avec une forte communauté", "Un client mécontent", "Un fournisseur", "Un concurrent"], correct: 0 },
+                { text: "Pourquoi les hashtags sont-ils importants ?", options: ["Ils améliorent la visibilité", "Ils décorent le post", "Ils rallongent le texte", "Ils sont obligatoires"], correct: 0 },
+                { text: "Que faire si une publicité ne performe pas ?", options: ["Tester un autre visuel ou ciblage", "L'arrêter définitivement", "Augmenter le budget", "Changer de réseau"], correct: 0 },
+                { text: "Quelle est la qualité première d'un bon Community Manager ?", options: ["La réactivité et l'empathie", "La rapidité", "L'intelligence", "La force physique"], correct: 0 }
             ]
         },
         GDZCMC: {
             metier: "Graphiste Designer",
             questions: [
-                { text: "Logiciel pour le vectoriel ?", options: ["Illustrator", "Photoshop"], correct: 0 },
-                { text: "Client rejette votre charte :", options: ["Proposer une nouvelle version", "Abandonner"], correct: 0 },
-                { text: "Résolution pour impression ?", options: ["300 DPI", "72 DPI"], correct: 0 },
-                { text: "Qu'est-ce qu'un gabarit ?", options: ["Un modèle réutilisable", "Un filtre"], correct: 0 }
+                { text: "Quel logiciel est le standard pour le vectoriel ?", options: ["Illustrator", "Photoshop", "InDesign", "Lightroom"], correct: 0 },
+                { text: "Que signifie RGB ?", options: ["Rouge Vert Bleu", "Rapid Graphic Board", "Real Gradient Background", "Raster Graphic Bitmap"], correct: 0 },
+                { text: "Quelle résolution est adaptée pour l'impression ?", options: ["300 DPI", "72 DPI", "150 DPI", "500 DPI"], correct: 0 },
+                { text: "Qu'est-ce qu'un gabarit (template) ?", options: ["Un modèle réutilisable", "Un filtre", "Un calque", "Un pinceau"], correct: 0 },
+                { text: "Quel format est adapté pour un logo imprimable ?", options: ["SVG ou AI", "JPG", "PNG", "GIF"], correct: 0 },
+                { text: "Que signifie CMYK ?", options: ["Cyan Magenta Yellow Black", "Color Master Yellow Key", "Copy Make Yarn Keep", "Central Method Yellow Kit"], correct: 0 },
+                { text: "Quel logiciel utiliser pour du montage vidéo ?", options: ["Premiere Pro / After Effects", "Photoshop", "Illustrator", "InDesign"], correct: 0 },
+                { text: "Qu'est-ce que la théorie des couleurs ?", options: ["L'étude des combinaisons de couleurs", "Un logiciel", "Un filtre", "Une police d'écriture"], correct: 0 },
+                { text: "Que signifie UX Design ?", options: ["Design d'expérience utilisateur", "Design universel", "Design de texte", "Design de logo"], correct: 0 },
+                { text: "Quel format privilégier pour le web ?", options: ["PNG ou JPG compressé", "TIFF", "BMP", "PSD"], correct: 0 },
+                { text: "Qu'est-ce qu'une police de caractères ?", options: ["Un style d'écriture", "Un outil de dessin", "Un calque", "Un logiciel"], correct: 0 },
+                { text: "Que faire si un client rejette votre charte graphique ?", options: ["Proposer une nouvelle version", "Abandonner le projet", "Imposer sa vision", "Ignorer le client"], correct: 0 },
+                { text: "Qu'est-ce que le design responsive ?", options: ["Un site adapté à tous les écrans", "Un design lent", "Un logo animé", "Une impression grand format"], correct: 0 },
+                { text: "Quel outil pour le prototypage ?", options: ["Figma", "Excel", "Word", "PowerPoint"], correct: 0 },
+                { text: "Que signifie UI Design ?", options: ["Interface utilisateur", "Image unique", "Unité d'impression", "Upload d'image"], correct: 0 },
+                { text: "Comment respecter une charte graphique ?", options: ["Utiliser les bonnes couleurs et polices", "Ignorer les consignes", "Changer le logo", "Ajouter des effets"], correct: 0 },
+                { text: "Qu'est-ce que le blanc négatif ?", options: ["Les espaces vides dans un design", "Un filtre blanc", "Une police blanche", "Un calque blanc"], correct: 0 },
+                { text: "Quel logiciel pour le design d'intérieur 3D ?", options: ["SketchUp", "Photoshop", "Excel", "Word"], correct: 0 },
+                { text: "Qu'est-ce qu'un moodboard ?", options: ["Un collage d'inspiration visuelle", "Un logiciel", "Une police", "Un filtre"], correct: 0 },
+                { text: "Comment présenter son travail à un client ?", options: ["Clairement, justifier ses choix", "Sans explication", "Rapidement", "Seulement par email"], correct: 0 },
+                { text: "Que signifie DPI ?", options: ["Points par pouce", "Design par image", "Dessin par impression", "Digital Print Input"], correct: 0 },
+                { text: "Quelle est la qualité première d'un bon graphiste ?", options: ["La créativité", "La rapidité", "La force", "L'humour"], correct: 0 },
+                { text: "Qu'est-ce que la typographie ?", options: ["L'art de disposer les caractères", "Un logiciel", "Un pinceau", "Un filtre"], correct: 0 },
+                { text: "Quel format pour une image transparente ?", options: ["PNG", "JPG", "BMP", "TIFF"], correct: 0 },
+                { text: "Que faire avant de livrer un projet ?", options: ["Vérifier et contrôler les fichiers", "Envoyer sans vérifier", "Attendre une semaine", "Changer le projet"], correct: 0 },
+                { text: "Qu'est-ce que l'accessibilité en design ?", options: ["Rendre le design utilisable par tous", "Un filtre", "Une police", "Un logiciel"], correct: 0 },
+                { text: "Quel logiciel pour le pixel art ?", options: ["Photoshop", "Illustrator", "InDesign", "After Effects"], correct: 0 },
+                { text: "Qu'est-ce qu'un brief client ?", options: ["Un document avec les besoins du client", "Un contrat", "Un email", "Un appel"], correct: 0 },
+                { text: "Pourquoi sauvegarder en plusieurs formats ?", options: ["Pour les différents usages", "Pour perdre du temps", "Pour faire joli", "Pour copier"], correct: 0 },
+                { text: "Quelle est la règle d'or du graphiste ?", options: ["Toujours écouter son client", "Toujours imposer son style", "Travailler seul", "Ne jamais montrer son travail"], correct: 0 }
             ]
         }
     };
@@ -257,9 +305,9 @@
         const pourcentage = Math.round((score / qcmData[currentMetier].questions.length) * 100);
         
         let messageMotivation = "";
-        if (pourcentage >= 80) messageMotivation = `🎉 Félicitations ${currentNom} ! Tu es sur la bonne voie, ton profil est très prometteur. 🎉`;
-        else if (pourcentage >= 50) messageMotivation = `💪 ${currentNom}, tu as de bonnes bases ! Avec un peu de révision, tu brilles. 💪`;
-        else messageMotivation = `🌱 ${currentNom}, ne lâche rien. Chaque erreur est une leçon. On croit en toi ! 🌱`;
+        if (pourcentage >= 80) messageMotivation = `🎉 Félicitations ${currentNom} ! Tu es sur la bonne voie, ton profil est très prometteur pour rejoindre ZCMC. Continue comme ça ! 🎉`;
+        else if (pourcentage >= 50) messageMotivation = `💪 ${currentNom}, tu as de bonnes bases ! Avec un peu de préparation, tu peux décrocher le poste. On croit en toi. 💪`;
+        else messageMotivation = `🌱 ${currentNom}, ne lâche rien. Chaque erreur est une leçon. Prends le temps de te former et reviens encore plus fort. On t'attend. 🌱`;
         
         const data = {
             id: currentId,
@@ -275,7 +323,6 @@
             details: null
         };
         
-        // Génération des détails pour correction
         const details = [];
         for (let i = 0; i < qcmData[currentMetier].questions.length; i++) {
             details.push({
@@ -298,7 +345,7 @@
     function afficherResultats(resultat) {
         const q = qcmData[currentMetier];
         
-        let correctionHTML = `<div class="correction-finale"><h3>📖 Correction détaillée (Vert = juste / Rose = faux)</h3>`;
+        let correctionHTML = `<div class="correction-finale"><h3>📖 Correction détaillée</h3>`;
         resultat.details.forEach((det, idx) => {
             const colorClass = det.estCorrect ? "correct" : "incorrect";
             correctionHTML += `
@@ -313,10 +360,10 @@
         
         const progressHTML = `
             <div class="progress-bars-final">
-                <div class="progress-item-final"><div class="progress-label-final">📞 Relation client</div><div class="progress-bar-final"><div class="progress-fill-final" style="width: ${Math.min(100, resultat.pourcentage+10)}%;"></div></div></div>
-                <div class="progress-item-final"><div class="progress-label-final">💡 Technique métier</div><div class="progress-bar-final"><div class="progress-fill-final" style="width: ${resultat.pourcentage}%;"></div></div></div>
-                <div class="progress-item-final"><div class="progress-label-final">🎯 Résolution</div><div class="progress-bar-final"><div class="progress-fill-final" style="width: ${Math.max(10, resultat.pourcentage-10)}%;"></div></div></div>
-                <div class="progress-item-final"><div class="progress-label-final">🧠 Adaptabilité</div><div class="progress-bar-final"><div class="progress-fill-final" style="width: ${Math.min(100, resultat.pourcentage+5)}%;"></div></div></div>
+                <div class="progress-item-final"><div class="progress-label-final">📞 Compétences métier</div><div class="progress-bar-final"><div class="progress-fill-final" style="width: ${resultat.pourcentage}%;"></div></div></div>
+                <div class="progress-item-final"><div class="progress-label-final">💡 Connaissances techniques</div><div class="progress-bar-final"><div class="progress-fill-final" style="width: ${Math.min(100, resultat.pourcentage+5)}%;"></div></div></div>
+                <div class="progress-item-final"><div class="progress-label-final">🎯 Résolution de problèmes</div><div class="progress-bar-final"><div class="progress-fill-final" style="width: ${Math.max(10, resultat.pourcentage-5)}%;"></div></div></div>
+                <div class="progress-item-final"><div class="progress-label-final">🧠 Adaptabilité</div><div class="progress-bar-final"><div class="progress-fill-final" style="width: ${Math.min(100, resultat.pourcentage+10)}%;"></div></div></div>
             </div>
         `;
         
@@ -342,8 +389,6 @@
         
         document.getElementById('telechargerPDF').addEventListener('click', () => telechargerPDF(resultat));
         document.getElementById('retourAccueil').addEventListener('click', () => location.reload());
-        
-        window.currentResultat = resultat;
     }
     
     function telechargerPDF(resultat) {
