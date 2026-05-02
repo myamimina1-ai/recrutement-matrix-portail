@@ -1,701 +1,277 @@
-```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ZCMC Recrutement Vision - 20 Questions par Métier</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-        }
-        body {
-            background: linear-gradient(145deg, #fdf2f8 0%, #f3e8ff 100%);
-            min-height: 100vh;
-            padding: 1rem;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        .card {
-            background: white;
-            border-radius: 1.5rem;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .badge {
-            background: linear-gradient(95deg, #be185d, #7c3aed);
-            color: white;
-            display: inline-block;
-            padding: 0.25rem 1rem;
-            border-radius: 40px;
-            font-size: 0.75rem;
-            margin-bottom: 1rem;
-        }
-        h1, h2 {
-            color: #be185d;
-            margin-bottom: 1rem;
-            font-size: 1.4rem;
-        }
-        .progress-bar {
-            background: #f1f5f9;
-            border-radius: 40px;
-            height: 10px;
-            margin: 1rem 0;
-            overflow: hidden;
-        }
-        .progress-fill {
-            background: linear-gradient(90deg, #ec4899, #8b5cf6);
-            width: 0%;
-            height: 100%;
-            transition: width 0.3s;
-        }
-        .question {
-            background: #fff5fc;
-            border-radius: 1rem;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-left: 4px solid #ec4899;
-        }
-        .question-text {
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            color: #831843;
-        }
-        .options label {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: white;
-            padding: 0.5rem 0.8rem;
-            border-radius: 2rem;
-            border: 1px solid #fbcfe8;
-            margin: 0.3rem 0;
-            cursor: pointer;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 0.7rem;
-            border-radius: 1rem;
-            border: 1px solid #fbcfe8;
-            margin-bottom: 0.8rem;
-        }
-        button {
-            background: linear-gradient(95deg, #be185d, #7c3aed);
-            color: white;
-            border: none;
-            padding: 0.7rem 1.2rem;
-            border-radius: 2rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin: 0.5rem 0;
-        }
-        button:active { transform: scale(0.98); }
-        .flex { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
-        .candidat-item {
-            background: #fff1f9;
-            border-radius: 1rem;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-        .detail-panel {
-            background: #fef9c3;
-            padding: 0.8rem;
-            border-radius: 1rem;
-            margin-top: 0.8rem;
-            display: none;
-            font-size: 0.9rem;
-        }
-        hr { margin: 1rem 0; border-color: #fbcfe8; }
-        footer { text-align: center; margin-top: 1.5rem; font-size: 0.7rem; color: #6b21a5; }
-        .ia-btn {
-            background: #a855f7;
-            border: none;
-            border-radius: 20px;
-            padding: 4px 12px;
-            font-size: 11px;
-            cursor: pointer;
-            margin-left: 10px;
-            color: white;
-        }
-        .ia-reponse {
-            background: #fce7f3;
-            padding: 8px;
-            border-radius: 10px;
-            margin-top: 10px;
-            font-size: 13px;
-            display: none;
-            color: #831843;
-        }
-        .correction-finale {
-            background: rgba(0,0,0,0.05);
-            border-radius: 15px;
-            padding: 15px;
-            margin-top: 20px;
-        }
-        .correct { color: #10b981; font-weight: bold; }
-        .incorrect { color: #ef4444; font-weight: bold; }
-        .progress-bars-final {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin: 20px 0;
-        }
-        .progress-item-final {
-            flex: 1;
-            min-width: 150px;
-        }
-        .progress-label-final {
-            font-size: 13px;
-            margin-bottom: 5px;
-        }
-        .progress-bar-final {
-            background: #f1f5f9;
-            border-radius: 10px;
-            height: 20px;
-            overflow: hidden;
-        }
-        .progress-fill-final {
-            background: linear-gradient(95deg, #ec4899, #8b5cf6);
-            height: 100%;
-            width: 0%;
-            border-radius: 10px;
-        }
-        .motivation-pdf {
-            background: #fce7f3;
-            border-left: 5px solid #ec4899;
-            padding: 15px;
-            margin: 20px 0;
-        }
-        @media (max-width: 700px) {
-            .card { padding: 1rem; }
-        }
-    </style>
-</head>
-<body>
-<div class="container" id="app">
-    <div id="authScreen" class="card">
-        <div class="badge">ZCMC Recrutement Vision</div>
-        <h1>🔐 Accès sécurisé</h1>
-        <input type="text" id="accessCode" placeholder="Code d'accès (CCZCMC001, CMZCMC001, GDZCMC001)">
-        <input type="text" id="candidateName" placeholder="Votre prénom et nom">
-        <button id="loginBtn">🚀 Accéder à mon QCM</button>
-        <hr>
-        <h2>👩‍💼 Espace RH</h2>
-        <input type="password" id="rhPassword" placeholder="Mot de passe RH">
-        <button id="rhLoginBtn">🔐 Accéder à l'espace RH</button>
-        <p style="font-size:0.7rem; margin-top:0.5rem;">Codes : CCZCMC001 (Conseiller) | CMZCMC001 (CM) | GDZCMC001 (Graphiste)<br>RH : RH2026</p>
-    </div>
-</div>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZCMC Recrutement Vision ULTRA</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+
+/* ================= DESIGN ================= */
+
+body{
+background: linear-gradient(145deg,#fdf2f8,#f3e8ff);
+font-family:'Segoe UI',sans-serif;
+padding:20px;
+}
+
+.container{max-width:1000px;margin:auto;}
+
+.card{
+background:white;
+padding:20px;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,0.1);
+margin-bottom:20px;
+}
+
+button{
+background:linear-gradient(95deg,#be185d,#7c3aed);
+color:white;
+border:none;
+padding:10px 15px;
+border-radius:30px;
+cursor:pointer;
+margin-top:10px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:5px 0;
+border-radius:10px;
+border:1px solid #ddd;
+}
+
+/* TIMER */
+.timer{
+font-size:18px;
+font-weight:bold;
+color:#be185d;
+margin-bottom:10px;
+}
+
+/* ================= VARIABLES ================= */
+
+</style>
 
 <script>
-    // ==================== 20 QUESTIONS POUR CHAQUE MÉTIER ====================
-    const qcmData = {
-        CCZCMC: {
-            metier: "Conseiller Clientèle",
-            questions: [
-                { text: "Que signifie KPI ?", options: ["Indicateur clé de performance", "Kit de performance interne", "Knowledge Process Improvement", "Key Personnel Indicator"], correct: 0 },
-                { text: "Face à un client en colère, quelle est la première chose à faire ?", options: ["L'interrompre pour le calmer", "L'écouter activement sans l'interrompre", "Le transférer à son supérieur", "Raccrocher et rappeler plus tard"], correct: 1 },
-                { text: "Le NPS mesure quoi ?", options: ["La satisfaction client", "Le temps d'attente moyen", "Le nombre d'appels traités", "Le taux de vente"], correct: 0 },
-                { text: "L'upselling consiste à :", options: ["Proposer un produit complémentaire", "Vendre moins cher", "Fidéliser un client", "Résoudre une réclamation"], correct: 0 },
-                { text: "Quel est le délai recommandé pour répondre à un email client ?", options: ["24h maximum", "1 semaine", "Dans l'heure", "48h maximum"], correct: 0 },
-                { text: "Que faire si vous ne connaissez pas la réponse à une question client ?", options: ["Inventer une réponse", "Dire je ne sais pas et se renseigner", "Transférer sans explication", "Raccrocher"], correct: 1 },
-                { text: "Le taux de résolution au premier appel (FCR) est important car :", options: ["Il réduit les coûts", "Il améliore la satisfaction client", "Les deux", "Ni l'un ni l'autre"], correct: 2 },
-                { text: "Quelle est la qualité la plus importante pour un conseiller clientèle ?", options: ["L'empathie", "La vitesse", "La technique", "L'humour"], correct: 0 },
-                { text: "Que signifie CRM ?", options: ["Customer Relationship Management", "Client Report Manager", "Customer Response Method", "Central Record Maintenance"], correct: 0 },
-                { text: "Comment gérer un client qui demande un supérieur ?", options: ["Le transférer immédiatement", "L'écouter et essayer de résoudre d'abord", "Lui dire non", "Raccrocher"], correct: 1 },
-                { text: "Le taux de satisfaction client se calcule comment ?", options: ["(Clients satisfaits / Total clients) x 100", "(Total clients / Clients satisfaits) x 100", "Clients satisfaits - Clients insatisfaits", "Total des appels / Nombre de réclamations"], correct: 0 },
-                { text: "Qu'est-ce qu'un script d'appel ?", options: ["Un guide pour le conseiller", "Une obligation légale", "Un enregistrement", "Un logiciel"], correct: 0 },
-                { text: "Pourquoi est-il important de reformuler la demande du client ?", options: ["Pour montrer qu'on a compris", "Pour gagner du temps", "Pour paraître professionnel", "Pour éviter de répondre"], correct: 0 },
-                { text: "Que faire si un client insulte ?", options: ["Répondre sur le même ton", "Rester calme et professionnel", "Raccrocher", "Le mettre en attente"], correct: 1 },
-                { text: "Le taux d'abandon en centre d'appels mesure :", options: ["Les clients qui raccrochent avant d'être servis", "Les conseillers qui quittent leur poste", "Les appels non répondus", "Les réclamations non traitées"], correct: 0 },
-                { text: "Qu'est-ce que l'omnicanalité ?", options: ["Être présent sur plusieurs canaux de communication", "Un nouveau logiciel", "Une technique de vente", "Un type de client"], correct: 0 },
-                { text: "Comment terminer un appel professionnellement ?", options: ["Raccrocher rapidement", "S'assurer que le client n'a plus de questions et le remercier", "Transférer à un collègue", "Proposer un rendez-vous"], correct: 1 },
-                { text: "Que signifie AHT (Average Handling Time) ?", options: ["Temps moyen de traitement d'un appel", "Taux d'absentéisme", "Nombre d'appels par heure", "Taux de satisfaction"], correct: 0 },
-                { text: "Pourquoi la prise de notes est-elle importante ?", options: ["Pour garder une trace", "Pour le suivi client", "Les deux", "Ni l'un ni l'autre"], correct: 2 },
-                { text: "Quelle est la devise du service client ?", options: ["Le client est roi", "Le client a toujours tort", "Le client paie", "Le client n'a pas raison"], correct: 0 }
-            ]
-        },
-        CMZCMC: {
-            metier: "Community Manager",
-            questions: [
-                { text: "Rôle principal d'un Community Manager ?", options: ["Animer et moder la communauté", "Créer des visuels", "Coder un site web", "Gérer la comptabilité"], correct: 0 },
-                { text: "Comment réagir face à un commentaire négatif ?", options: ["Supprimer immédiatement", "Répondre professionnellement et calmement", "Ignorer", "Partager le commentaire"], correct: 1 },
-                { text: "Quel est le KPI d'engagement principal ?", options: ["Taux d'interaction (likes, commentaires, partages)", "Nombre de vues", "Nombre d'abonnés", "Temps passé sur la page"], correct: 0 },
-                { text: "Quelle est la fréquence idéale de publication sur Instagram ?", options: ["1 à 2 posts par jour", "10 posts par jour", "1 post par semaine", "50 posts par jour"], correct: 0 },
-                { text: "Quel réseau social est le plus adapté pour du B2B ?", options: ["LinkedIn", "TikTok", "Instagram", "Snapchat"], correct: 0 },
-                { text: "Que signifie SEO ?", options: ["Search Engine Optimization", "Social Engagement Option", "Site Entry Order", "Simple Email Output"], correct: 0 },
-                { text: "Quel outil permet de planifier des publications ?", options: ["Buffer ou Hootsuite", "Photoshop", "Excel", "WordPress"], correct: 0 },
-                { text: "Qu'est-ce qu'une story sur Instagram ?", options: ["Un contenu éphémère de 24h", "Un post permanent", "Une vidéo longue", "Un message privé"], correct: 0 },
-                { text: "À quoi sert un chat en direct ?", options: ["Interagir en temps réel avec la communauté", "Envoyer des emails", "Faire des visuels", "Créer un site"], correct: 0 },
-                { text: "Que faire si une marque est victime d'une crise sur les réseaux ?", options: ["Réagir vite et communiquer clairement", "Supprimer tous les commentaires", "Ne rien dire", "Modifier son logo"], correct: 0 },
-                { text: "Quel est le meilleur moment pour poster sur LinkedIn ?", options: ["Mardi et jeudi matin", "Samedi soir", "Dimanche matin", "Minuit"], correct: 0 },
-                { text: "Le taux de clics (CTR) mesure :", options: ["Le nombre de clics sur un lien", "Le nombre de vues", "Le nombre d'abonnés", "Le temps de lecture"], correct: 0 },
-                { text: "Quel format de contenu génère le plus d'engagement ?", options: ["La vidéo courte", "Le long texte", "L'image fixe", "Le podcast"], correct: 0 },
-                { text: "Que signifie UGC (User Generated Content) ?", options: ["Contenu généré par les utilisateurs", "Unité de gestion du contenu", "Ultra Grand Contenu", "Usage Général du Code"], correct: 0 },
-                { text: "Quelle est la différence entre reach et impressions ?", options: ["Reach = nombre unique de personnes, impressions = nombre total de vues", "C'est la même chose", "Impressions = personnes uniques", "Reach = vues totales"], correct: 0 },
-                { text: "Quel réseau social privilégier pour toucher les 16-25 ans ?", options: ["TikTok", "LinkedIn", "Facebook", "Twitter"], correct: 0 },
-                { text: "Qu'est-ce qu'un influenceur ?", options: ["Une personne avec une forte communauté", "Un client mécontent", "Un fournisseur", "Un concurrent"], correct: 0 },
-                { text: "Pourquoi les hashtags sont-ils importants ?", options: ["Ils améliorent la visibilité", "Ils décorent le post", "Ils rallongent le texte", "Ils sont obligatoires"], correct: 0 },
-                { text: "Que faire si une publicité ne performe pas ?", options: ["Tester un autre visuel ou ciblage", "L'arrêter définitivement", "Augmenter le budget", "Changer de réseau"], correct: 0 },
-                { text: "Quelle est la qualité première d'un bon Community Manager ?", options: ["La réactivité et l'empathie", "La rapidité", "L'intelligence", "La force physique"], correct: 0 }
-            ]
-        },
-        GDZCMC: {
-            metier: "Graphiste Designer",
-            questions: [
-                { text: "Quel logiciel est le standard pour le vectoriel ?", options: ["Illustrator", "Photoshop", "InDesign", "Lightroom"], correct: 0 },
-                { text: "Que signifie RGB ?", options: ["Rouge Vert Bleu", "Rapid Graphic Board", "Real Gradient Background", "Raster Graphic Bitmap"], correct: 0 },
-                { text: "Quelle résolution est adaptée pour l'impression ?", options: ["300 DPI", "72 DPI", "150 DPI", "500 DPI"], correct: 0 },
-                { text: "Qu'est-ce qu'un gabarit (template) ?", options: ["Un modèle réutilisable", "Un filtre", "Un calque", "Un pinceau"], correct: 0 },
-                { text: "Quel format est adapté pour un logo imprimable ?", options: ["SVG ou AI", "JPG", "PNG", "GIF"], correct: 0 },
-                { text: "Que signifie CMYK ?", options: ["Cyan Magenta Yellow Black", "Color Master Yellow Key", "Copy Make Yarn Keep", "Central Method Yellow Kit"], correct: 0 },
-                { text: "Quel logiciel utiliser pour du montage vidéo ?", options: ["Premiere Pro / After Effects", "Photoshop", "Illustrator", "InDesign"], correct: 0 },
-                { text: "Qu'est-ce que la théorie des couleurs ?", options: ["L'étude des combinaisons de couleurs", "Un logiciel", "Un filtre", "Une police d'écriture"], correct: 0 },
-                { text: "Que signifie UX Design ?", options: ["Design d'expérience utilisateur", "Design universel", "Design de texte", "Design de logo"], correct: 0 },
-                { text: "Quel format privilégier pour le web ?", options: ["PNG ou JPG compressé", "TIFF", "BMP", "PSD"], correct: 0 },
-                { text: "Qu'est-ce qu'une police de caractères ?", options: ["Un style d'écriture", "Un outil de dessin", "Un calque", "Un logiciel"], correct: 0 },
-                { text: "Que faire si un client rejette votre charte graphique ?", options: ["Proposer une nouvelle version", "Abandonner le projet", "Imposer sa vision", "Ignorer le client"], correct: 0 },
-                { text: "Qu'est-ce que le design responsive ?", options: ["Un site adapté à tous les écrans", "Un design lent", "Un logo animé", "Une impression grand format"], correct: 0 },
-                { text: "Quel outil pour le prototypage ?", options: ["Figma", "Excel", "Word", "PowerPoint"], correct: 0 },
-                { text: "Que signifie UI Design ?", options: ["Interface utilisateur", "Image unique", "Unité d'impression", "Upload d'image"], correct: 0 },
-                { text: "Comment respecter une charte graphique ?", options: ["Utiliser les bonnes couleurs et polices", "Ignorer les consignes", "Changer le logo", "Ajouter des effets"], correct: 0 },
-                { text: "Qu'est-ce que le blanc négatif ?", options: ["Les espaces vides dans un design", "Un filtre blanc", "Une police blanche", "Un calque blanc"], correct: 0 },
-                { text: "Quel logiciel pour le design d'intérieur 3D ?", options: ["SketchUp", "Photoshop", "Excel", "Word"], correct: 0 },
-                { text: "Qu'est-ce qu'un moodboard ?", options: ["Un collage d'inspiration visuelle", "Un logiciel", "Une police", "Un filtre"], correct: 0 },
-                { text: "Comment présenter son travail à un client ?", options: ["Clairement, justifier ses choix", "Sans explication", "Rapidement", "Seulement par email"], correct: 0 },
-                { text: "Que signifie DPI ?", options: ["Points par pouce", "Design par image", "Dessin par impression", "Digital Print Input"], correct: 0 },
-                { text: "Quelle est la qualité première d'un bon graphiste ?", options: ["La créativité", "La rapidité", "La force", "L'humour"], correct: 0 },
-                { text: "Qu'est-ce que la typographie ?", options: ["L'art de disposer les caractères", "Un logiciel", "Un pinceau", "Un filtre"], correct: 0 },
-                { text: "Quel format pour une image transparente ?", options: ["PNG", "JPG", "BMP", "TIFF"], correct: 0 },
-                { text: "Que faire avant de livrer un projet ?", options: ["Vérifier et contrôler les fichiers", "Envoyer sans vérifier", "Attendre une semaine", "Changer le projet"], correct: 0 },
-                { text: "Qu'est-ce que l'accessibilité en design ?", options: ["Rendre le design utilisable par tous", "Un filtre", "Une police", "Un logiciel"], correct: 0 },
-                { text: "Quel logiciel pour le pixel art ?", options: ["Photoshop", "Illustrator", "InDesign", "After Effects"], correct: 0 },
-                { text: "Qu'est-ce qu'un brief client ?", options: ["Un document avec les besoins du client", "Un contrat", "Un email", "Un appel"], correct: 0 },
-                { text: "Pourquoi sauvegarder en plusieurs formats ?", options: ["Pour les différents usages", "Pour perdre du temps", "Pour faire joli", "Pour copier"], correct: 0 },
-                { text: "Quelle est la règle d'or du graphiste ?", options: ["Toujours écouter son client", "Toujours imposer son style", "Travailler seul", "Ne jamais montrer son travail"], correct: 0 }
-            ]
-        }
-    };
 
-    const extraQuestions = [
-        { text: "Quel sera votre rôle chez ZCMC ?", type: "text" },
-        { text: "Qu'apporterez-vous en tant que collaborateur chez ZCMC ?", type: "text" },
-        { text: "Pourquoi souhaitez-vous rejoindre ZCMC ?", type: "text" },
-        { text: "Comment avez-vous entendu parler de ZCMC ?", type: "radio", options: ["LinkedIn", "Facebook", "Instagram", "Bouche-à-oreille", "Autre"] }
-    ];
+// 🔴 REMPLACE ICI
+const API = "https://TON-REPLIT-URL";
 
-    let currentMetier = null;
-    let currentNom = null;
-    let currentId = null;
-    let qcmReponses = [];
-    let extraReponses = [];
+let currentNom="";
+let currentId="";
+let qcmReponses=[];
+let temps=1800; // 30 min
 
-    function sauvegarderCandidat() {
-        let score = 0;
-        for (let i = 0; i < qcmData[currentMetier].questions.length; i++) {
-            if (qcmReponses[i] === qcmData[currentMetier].questions[i].correct) score++;
-        }
-        const pourcentage = Math.round((score / qcmData[currentMetier].questions.length) * 100);
-        
-        let messageMotivation = "";
-        if (pourcentage >= 80) messageMotivation = `🎉 Félicitations ${currentNom} ! Tu es sur la bonne voie, ton profil est très prometteur pour rejoindre ZCMC. Continue comme ça ! 🎉`;
-        else if (pourcentage >= 50) messageMotivation = `💪 ${currentNom}, tu as de bonnes bases ! Avec un peu de préparation, tu peux décrocher le poste. On croit en toi. 💪`;
-        else messageMotivation = `🌱 ${currentNom}, ne lâche rien. Chaque erreur est une leçon. Prends le temps de te former et reviens encore plus fort. On t'attend. 🌱`;
-        
-        const data = {
-            id: currentId,
-            nom: currentNom,
-            metier: qcmData[currentMetier].metier,
-            date: new Date().toISOString(),
-            qcmReponses: qcmReponses,
-            extraReponses: extraReponses,
-            evaluationRH: null,
-            score: `${score}/${qcmData[currentMetier].questions.length}`,
-            pourcentage: pourcentage,
-            messageMotivation: messageMotivation,
-            details: null
-        };
-        
-        const details = [];
-        for (let i = 0; i < qcmData[currentMetier].questions.length; i++) {
-            details.push({
-                question: qcmData[currentMetier].questions[i].text,
-                reponseDonnee: qcmReponses[i] !== undefined ? qcmData[currentMetier].questions[i].options[qcmReponses[i]] : "Pas de réponse",
-                bonneReponse: qcmData[currentMetier].questions[i].options[qcmData[currentMetier].questions[i].correct],
-                estCorrect: qcmReponses[i] === qcmData[currentMetier].questions[i].correct
-            });
-        }
-        data.details = details;
-        
-        localStorage.setItem(`candidat_${currentId}`, JSON.stringify(data));
-        let all = JSON.parse(localStorage.getItem('liste_candidats') || '[]');
-        if (!all.includes(currentId)) all.push(currentId);
-        localStorage.setItem('liste_candidats', JSON.stringify(all));
-        
-        return { score, pourcentage, messageMotivation, details };
-    }
+/* ================= IA ================= */
 
-    function afficherResultats(resultat) {
-        const q = qcmData[currentMetier];
-        
-        let correctionHTML = `<div class="correction-finale"><h3>📖 Correction détaillée</h3>`;
-        resultat.details.forEach((det, idx) => {
-            const colorClass = det.estCorrect ? "correct" : "incorrect";
-            correctionHTML += `
-                <div style="margin-top: 12px; border-top:1px solid #fbcfe8; padding-top:8px;">
-                    <strong>${idx+1}. ${det.question}</strong><br>
-                    <span class="${colorClass}">Votre réponse : ${det.reponseDonnee}</span><br>
-                    <span class="correct">✅ Bonne réponse : ${det.bonneReponse}</span>
-                </div>
-            `;
-        });
-        correctionHTML += `</div>`;
-        
-        const progressHTML = `
-            <div class="progress-bars-final">
-                <div class="progress-item-final"><div class="progress-label-final">📞 Compétences métier</div><div class="progress-bar-final"><div class="progress-fill-final" style="width: ${resultat.pourcentage}%;"></div></div></div>
-                <div class="progress-item-final"><div class="progress-label-final">💡 Connaissances techniques</div><div class="progress-bar-final"><div class="progress-fill-final" style="width: ${Math.min(100, resultat.pourcentage+5)}%;"></div></div></div>
-                <div class="progress-item-final"><div class="progress-label-final">🎯 Résolution de problèmes</div><div class="progress-bar-final"><div class="progress-fill-final" style="width: ${Math.max(10, resultat.pourcentage-5)}%;"></div></div></div>
-                <div class="progress-item-final"><div class="progress-label-final">🧠 Adaptabilité</div><div class="progress-bar-final"><div class="progress-fill-final" style="width: ${Math.min(100, resultat.pourcentage+10)}%;"></div></div></div>
-            </div>
-        `;
-        
-        let html = `<div class="card" id="resultatPanel">
-            <div class="badge">${q.metier}</div>
-            <h1>📊 Vos résultats, ${currentNom}</h1>
-            <h2>Score : ${resultat.score} / ${q.questions.length} (${resultat.pourcentage}%)</h2>
-            <div class="motivation-pdf">${resultat.messageMotivation}</div>
-            ${progressHTML}
-            ${correctionHTML}
-            <div class="flex">
-                <button id="telechargerPDF">📄 Télécharger mon rapport (PDF rose & violet)</button>
-                <button id="retourAccueil">🏠 Retour à l'accueil</button>
-            </div>
-        </div>`;
-        
-        const container = document.querySelector('.container');
-        let oldResult = document.getElementById('resultatPanel');
-        if (oldResult) oldResult.remove();
-        let qcmPanel = document.getElementById('qcmPanel');
-        if (qcmPanel) qcmPanel.remove();
-        container.insertAdjacentHTML('beforeend', html);
-        
-        document.getElementById('telechargerPDF').addEventListener('click', () => telechargerPDF(resultat));
-        document.getElementById('retourAccueil').addEventListener('click', () => location.reload());
-    }
-    
-    function telechargerPDF(resultat) {
-        const q = qcmData[currentMetier];
-        let detailsHTML = "";
-        resultat.details.forEach((det, idx) => {
-            detailsHTML += `
-                <div style="margin-bottom: 12px;">
-                    <strong>${idx+1}. ${det.question}</strong><br>
-                    <span style="color:${det.estCorrect ? '#10b981' : '#ef4444'}">Votre réponse : ${det.reponseDonnee}</span><br>
-                    <span style="color:#8b5cf6">Bonne réponse : ${det.bonneReponse}</span>
-                </div>
-            `;
-        });
-        
-        const contenuPDF = `
-            <div style="padding: 30px; background: white; font-family: 'Segoe UI', Arial, sans-serif;">
-                <h1 style="color: #a855f7; text-align: center;">🌸 ZCMC Recruitment Vision 🌸</h1>
-                <h2 style="color: #ec4899; text-align: center;">Rapport d'évaluation</h2>
-                <p><strong>Candidat :</strong> ${currentNom}</p>
-                <p><strong>Métier :</strong> ${q.metier}</p>
-                <p><strong>Date :</strong> ${new Date().toLocaleString()}</p>
-                <p><strong>Score :</strong> ${resultat.score} / ${q.questions.length} (${resultat.pourcentage}%)</p>
-                <div style="background: #fce7f3; border-left: 5px solid #ec4899; padding: 15px; margin: 20px 0;">
-                    ${resultat.messageMotivation}
-                </div>
-                <h3 style="color: #a855f7;">📖 Détail des réponses :</h3>
-                ${detailsHTML}
-                <p style="margin-top: 30px; font-size: 12px; text-align: center; color: #6b21a5;">Document généré par ZCMC Recruitment Vision - Bravo pour ton parcours !</p>
-            </div>
-        `;
-        
-        const element = document.createElement("div");
-        element.innerHTML = contenuPDF;
-        document.body.appendChild(element);
-        html2pdf().from(element).set({
-            margin: 0.5,
-            filename: `Evaluation_${currentNom.replace(/\s/g, '_')}.pdf`,
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: "in", format: "a4", orientation: "portrait" }
-        }).save().then(() => {
-            document.body.removeChild(element);
-        });
-    }
+function aideIA(index,question,options,correct){
+const div=document.getElementById("ia-"+index);
+div.innerHTML="🤖 "+options[correct];
+div.style.display="block";
+setTimeout(()=>div.style.display="none",4000);
+}
 
-    function aideIA(questionIndex, question, options, correctIndex) {
-        const bonneReponse = options[correctIndex];
-        const iaDiv = document.getElementById(`ia-${questionIndex}`);
-        if (iaDiv) {
-            iaDiv.innerHTML = `🤖 IA : La bonne réponse est "${bonneReponse}". Conseil : Relisez bien l'énoncé pour comprendre le contexte.`;
-            iaDiv.style.display = "block";
-            setTimeout(() => {
-                iaDiv.style.display = "none";
-            }, 5000);
-        }
-    }
+/* ================= LOGIN ================= */
 
-    function afficherQCM() {
-        const q = qcmData[currentMetier];
-        let html = `<div class="card" id="qcmPanel">
-            <div class="badge">${q.metier}</div>
-            <h1>Bonjour ${currentNom}</h1>
-            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>`;
-        
-        q.questions.forEach((question, idx) => {
-            html += `<div class="question">
-                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
-                    <div class="question-text">${idx+1}. ${question.text}</div>
-                    <button type="button" class="ia-btn" onclick="aideIA(${idx}, ${JSON.stringify(question.text).replace(/"/g, '&quot;')}, ${JSON.stringify(question.options).replace(/"/g, '&quot;')}, ${question.correct})">🤖 Aide IA</button>
-                </div>
-                <div class="options">
-                    ${question.options.map((opt, optIdx) => `<label><input type="radio" name="q${idx}" value="${optIdx}" ${qcmReponses[idx] === optIdx ? 'checked' : ''}> ${opt}</label>`).join('')}
-                </div>
-                <div id="ia-${idx}" class="ia-reponse"></div>
-            </div>`;
-        });
-        
-        extraQuestions.forEach((eq, idx) => {
-            if (eq.type === 'text') {
-                html += `<div class="question">
-                    <div class="question-text">${eq.text}</div>
-                    <textarea id="extra_${idx}" rows="2" placeholder="Votre réponse...">${extraReponses[idx] || ''}</textarea>
-                </div>`;
-            } else if (eq.type === 'radio') {
-                html += `<div class="question">
-                    <div class="question-text">${eq.text}</div>
-                    <div class="options">
-                        ${eq.options.map(opt => `<label><input type="radio" name="extra_${idx}" value="${opt}" ${extraReponses[idx] === opt ? 'checked' : ''}> ${opt}</label>`).join('')}
-                    </div>
-                </div>`;
-            }
-        });
-        
-        html += `<button id="validerQCM">✅ Valider et voir mes résultats</button>
-                 <div id="feedbackMsg" style="margin-top:1rem;"></div></div>`;
-        
-        document.getElementById('authScreen').style.display = 'none';
-        const container = document.querySelector('.container');
-        let existing = document.getElementById('qcmPanel');
-        if (existing) existing.remove();
-        container.insertAdjacentHTML('beforeend', html);
-        
-        for (let i = 0; i < q.questions.length; i++) {
-            document.querySelectorAll(`input[name="q${i}"]`).forEach(radio => {
-                radio.addEventListener('change', (e) => {
-                    qcmReponses[i] = parseInt(e.target.value);
-                    mettreAJourProgression();
-                });
-            });
-        }
-        for (let i = 0; i < extraQuestions.length; i++) {
-            if (extraQuestions[i].type === 'text') {
-                document.getElementById(`extra_${i}`).addEventListener('input', (e) => {
-                    extraReponses[i] = e.target.value;
-                    mettreAJourProgression();
-                });
-            } else if (extraQuestions[i].type === 'radio') {
-                document.querySelectorAll(`input[name="extra_${i}"]`).forEach(radio => {
-                    radio.addEventListener('change', (e) => {
-                        extraReponses[i] = e.target.value;
-                        mettreAJourProgression();
-                    });
-                });
-            }
-        }
-        
-        document.getElementById('validerQCM').addEventListener('click', () => {
-            let ok = true;
-            for (let i = 0; i < q.questions.length; i++) {
-                if (qcmReponses[i] === undefined) { alert(`Répondez à la question ${i+1}`); ok = false; break; }
-            }
-            for (let i = 0; i < extraQuestions.length; i++) {
-                if (!extraReponses[i] || extraReponses[i].trim() === '') {
-                    alert(`Répondez à : ${extraQuestions[i].text}`); ok = false; break;
-                }
-            }
-            if (ok) {
-                const resultat = sauvegarderCandidat();
-                afficherResultats(resultat);
-            }
-        });
-        
-        mettreAJourProgression();
-    }
-    
-    function mettreAJourProgression() {
-        const q = qcmData[currentMetier];
-        let total = q.questions.length + extraQuestions.length;
-        let repondu = 0;
-        for (let i = 0; i < q.questions.length; i++) if (qcmReponses[i] !== undefined) repondu++;
-        for (let i = 0; i < extraQuestions.length; i++) if (extraReponses[i] && extraReponses[i].trim() !== '') repondu++;
-        const percent = (repondu / total) * 100;
-        const fill = document.getElementById('progressFill');
-        if (fill) fill.style.width = percent + '%';
-    }
+function login(){
+const nom=document.getElementById("nom").value;
 
-    function afficherEspaceRH() {
-        const listeIds = JSON.parse(localStorage.getItem('liste_candidats') || '[]');
-        let html = `<div class="card" id="rhPanel">
-            <div class="badge">Interface RH</div>
-            <h1>📋 Tous les candidats</h1>
-            <button id="refreshRH">⟳ Actualiser</button>
-            <div id="candidatsList">`;
-        
-        if (listeIds.length === 0) {
-            html += "<p>Aucun candidat pour le moment.</p>";
-        } else {
-            for (let id of listeIds) {
-                const data = JSON.parse(localStorage.getItem(`candidat_${id}`) || '{}');
-                if (!data.nom) continue;
-                html += `<div class="candidat-item" data-id="${id}">
-                    <div><strong>${data.nom}</strong> - ${data.metier}<br>Score: ${data.score} (${data.pourcentage}%)<br>Sourcing: ${data.extraReponses ? data.extraReponses[3] : '?'}</div>
-                    <div class="flex">
-                        <button class="btnDetail" data-id="${id}">📄 Détail QCM</button>
-                        <button class="btnEval" data-id="${id}">📝 Grille RH</button>
-                        <button class="btnDelete" data-id="${id}">🗑 Supprimer</button>
-                    </div>
-                    <div id="detail-${id}" class="detail-panel"></div>
-                    <div id="eval-${id}" class="detail-panel" style="background:#e6f7ff;"></div>
-                </div>`;
-            }
-        }
-        html += `</div></div>`;
-        
-        document.getElementById('authScreen').style.display = 'none';
-        const container = document.querySelector('.container');
-        let existing = document.getElementById('rhPanel');
-        if (existing) existing.remove();
-        container.insertAdjacentHTML('beforeend', html);
-        
-        document.querySelectorAll('.btnDetail').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-id');
-                const data = JSON.parse(localStorage.getItem(`candidat_${id}`) || '{}');
-                const metierKey = Object.keys(qcmData).find(k => qcmData[k].metier === data.metier);
-                const q = qcmData[metierKey];
-                let detail = `<strong>Réponses QCM :</strong><br>`;
-                if (q && data.qcmReponses) {
-                    q.questions.forEach((question, idx) => {
-                        const reponse = data.qcmReponses[idx];
-                        const estCorrect = reponse === question.correct;
-                        detail += `${idx+1}. ${question.text} → ${question.options[reponse]} ${estCorrect ? '✅' : '❌'}<br>`;
-                    });
-                }
-                detail += `<br><strong>Réponses complémentaires :</strong><br>`;
-                extraQuestions.forEach((eq, idx) => {
-                    detail += `<strong>${eq.text}</strong> → ${data.extraReponses ? data.extraReponses[idx] : '-'}<br>`;
-                });
-                document.getElementById(`detail-${id}`).innerHTML = detail;
-                document.getElementById(`detail-${id}`).style.display = 'block';
-            });
-        });
-        
-        document.querySelectorAll('.btnEval').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-id');
-                const data = JSON.parse(localStorage.getItem(`candidat_${id}`) || '{}');
-                const evalData = data.evaluationRH || {};
-                
-                let evalHtml = `<h4>📋 Grille d'entretien RH</h4>
-                    <table style="width:100%; border-collapse:collapse;">
-                        <tr style="background:#f0f0f0;"><th>Compétence</th><th>Questions à poser</th><th>Note (1-5)</th><th>Commentaire</th></tr>`;
-                
-                const competences = [
-                    { nom: "Écoute active", question: "Décrivez une situation où vous avez calmé un client mécontent." },
-                    { nom: "Articulation", question: "Expliquez-moi un processus complexe simplement." },
-                    { nom: "Rigueur", question: "Comment organisez-vous vos priorités ?" },
-                    { nom: "Résilience", question: "Que faites-vous si on critique votre travail ?" },
-                    { nom: "Culture ZCMC", question: "Que savez-vous de notre activité médicale ?" }
-                ];
-                
-                competences.forEach((comp, idx) => {
-                    evalHtml += `<tr>
-                        <td><strong>${comp.nom}</strong><br><small>${comp.question}</small></td>
-                        <td><input type="number" class="note-${idx}" min="1" max="5" value="${evalData.notes ? evalData.notes[idx] || 3 : 3}" style="width:70px;"></td>
-                        <td><input type="text" class="comm-${idx}" placeholder="Optionnel" value="${evalData.commentaires ? evalData.commentaires[idx] || '' : ''}" style="width:100%;"></td>
-                    </tr>`;
-                });
-                
-                evalHtml += `<tr>
-                    <label>Appréciation générale :</label><textarea id="evalGlobal" rows="2">${evalData.global || ''}</textarea>
-                    <button id="saveEval-${id}">💾 Sauvegarder mon évaluation</button>`;
-                
-                document.getElementById(`eval-${id}`).innerHTML = evalHtml;
-                document.getElementById(`eval-${id}`).style.display = 'block';
-                
-                document.getElementById(`saveEval-${id}`).addEventListener('click', () => {
-                    const notes = [];
-                    const commentaires = [];
-                    for (let i = 0; i < competences.length; i++) {
-                        notes.push(parseInt(document.querySelector(`.note-${i}`).value) || 3);
-                        commentaires.push(document.querySelector(`.comm-${i}`).value);
-                    }
-                    const global = document.getElementById('evalGlobal').value;
-                    data.evaluationRH = { notes, commentaires, global, date: new Date().toISOString() };
-                    localStorage.setItem(`candidat_${id}`, JSON.stringify(data));
-                    alert("Évaluation RH sauvegardée.");
-                });
-            });
-        });
-        
-        document.querySelectorAll('.btnDelete').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-id');
-                if (confirm("Supprimer définitivement ce candidat ?")) {
-                    localStorage.removeItem(`candidat_${id}`);
-                    let liste = JSON.parse(localStorage.getItem('liste_candidats') || '[]');
-                    liste = liste.filter(i => i !== id);
-                    localStorage.setItem('liste_candidats', JSON.stringify(liste));
-                    afficherEspaceRH();
-                }
-            });
-        });
-        
-        document.getElementById('refreshRH')?.addEventListener('click', () => afficherEspaceRH());
-    }
+if(!nom) return alert("Nom requis");
 
-    document.getElementById('loginBtn').addEventListener('click', () => {
-        const code = document.getElementById('accessCode').value.trim().toUpperCase();
-        const nom = document.getElementById('candidateName').value.trim();
-        if (!code || !nom) { alert("Code et nom requis."); return; }
-        
-        let metier = null;
-        if (code.startsWith("CCZCMC")) metier = "CCZCMC";
-        else if (code.startsWith("CMZCMC")) metier = "CMZCMC";
-        else if (code.startsWith("GDZCMC")) metier = "GDZCMC";
-        else { alert("Code invalide. Utilisez CCZCMC001, CMZCMC001 ou GDZCMC001."); return; }
-        
-        currentMetier = metier;
-        currentNom = nom;
-        currentId = `${code}_${nom}`;
-        
-        const existing = localStorage.getItem(`candidat_${currentId}`);
-        if (existing) { alert("Vous avez déjà répondu au QCM. Merci."); return; }
-        
-        qcmReponses = [];
-        extraReponses = [];
-        afficherQCM();
-    });
-    
-    document.getElementById('rhLoginBtn').addEventListener('click', () => {
-        const mdp = document.getElementById('rhPassword').value;
-        if (mdp !== "RH2026") { alert("Mot de passe RH incorrect."); return; }
-        afficherEspaceRH();
-    });
+currentNom=nom;
+currentId=Date.now()+"_"+nom;
+
+afficherQCM();
+startTimer();
+}
+
+/* ================= TIMER ================= */
+
+function startTimer(){
+const interval=setInterval(()=>{
+temps--;
+
+let min=Math.floor(temps/60);
+let sec=temps%60;
+
+document.getElementById("timer").innerText=
+"⏱ "+min+":"+ (sec<10?"0"+sec:sec);
+
+if(temps<=0){
+clearInterval(interval);
+valider();
+alert("Temps écoulé");
+}
+
+},1000);
+}
+
+/* ================= QUESTIONS ================= */
+
+const questions=[
+{text:"KPI ?",options:["Indicateur clé","Erreur"],correct:0},
+{text:"Client en colère ?",options:["Couper","Écouter"],correct:1},
+{text:"CRM ?",options:["Gestion client","Erreur"],correct:0}
+];
+
+/* ================= QCM ================= */
+
+function afficherQCM(){
+
+let html=`<div class="card">
+
+<div id="timer" class="timer"></div>
+
+<h2>Bonjour ${currentNom}</h2>
+`;
+
+questions.forEach((q,i)=>{
+html+=`
+<div>
+${i+1}. ${q.text}
+
+<button onclick="aideIA(${i},'${q.text}',${JSON.stringify(q.options)},${q.correct})">🤖</button>
+
+${q.options.map((o,j)=>`
+<label><input type="radio" name="q${i}" value="${j}">${o}</label>
+`).join("")}
+
+<div id="ia-${i}" style="display:none;"></div>
+
+</div>
+`;
+});
+
+html+=`<button onclick="valider()">Valider</button></div>`;
+
+document.querySelector(".container").innerHTML=html;
+}
+
+/* ================= SAVE ================= */
+
+function valider(){
+
+questions.forEach((q,i)=>{
+const val=document.querySelector(`input[name="q${i}"]:checked`);
+qcmReponses[i]=val?parseInt(val.value):null;
+});
+
+let score=0;
+questions.forEach((q,i)=>{
+if(qcmReponses[i]===q.correct) score++;
+});
+
+const data={
+id:currentId,
+nom:currentNom,
+score:score,
+total:questions.length,
+date:new Date()
+};
+
+fetch(API+"/save",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(data)
+});
+
+afficherResultat(score);
+}
+
+/* ================= RESULT ================= */
+
+function afficherResultat(score){
+
+let html=`
+<div class="card">
+<h2>Résultat</h2>
+<p>${currentNom} : ${score}/${questions.length}</p>
+
+<button onclick="location.reload()">Retour</button>
+</div>
+`;
+
+document.querySelector(".container").innerHTML=html;
+}
+
+/* ================= RH ================= */
+
+function loginRH(){
+
+const mdp=document.getElementById("rh").value;
+if(mdp!=="RH2026") return alert("Erreur");
+
+chargerRH();
+}
+
+function chargerRH(){
+
+fetch(API+"/candidats")
+.then(r=>r.json())
+.then(data=>afficherRH(data));
+}
+
+function afficherRH(list){
+
+let total=list.length;
+let moyenne=0;
+
+list.forEach(c=>moyenne+=c.score);
+moyenne= total?Math.round(moyenne/total):0;
+
+let html=`
+<div class="card">
+<h2>Dashboard RH</h2>
+<p>Total candidats : ${total}</p>
+<p>Moyenne : ${moyenne}</p>
+<button onclick="chargerRH()">🔄 Refresh</button>
+</div>
+`;
+
+list.forEach(c=>{
+html+=`
+<div class="card">
+${c.nom} - ${c.score}/${c.total}
+<button onclick="supprimer('${c.id}')">🗑</button>
+</div>
+`;
+});
+
+document.querySelector(".container").innerHTML=html;
+}
+
+function supprimer(id){
+fetch(API+"/delete/"+id,{method:"DELETE"})
+.then(()=>chargerRH());
+}
+
 </script>
-<footer>Powered by Chaoui Meriem</footer>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<h2>Connexion candidat</h2>
+<input id="nom" placeholder="Nom">
+<button onclick="login()">Commencer</button>
+
+<hr>
+
+<h2>Espace RH</h2>
+<input id="rh" placeholder="Mot de passe">
+<button onclick="loginRH()">Accéder</button>
+
+</div>
+
+</div>
+
 </body>
 </html>
-```
