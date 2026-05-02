@@ -3,22 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZCMC Recrutement Vision ULTRA</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<title>ZCMC Recrutement Vision</title>
 
 <style>
-
-/* ================= DESIGN ================= */
-
 body{
 background: linear-gradient(145deg,#fdf2f8,#f3e8ff);
 font-family:'Segoe UI',sans-serif;
 padding:20px;
 }
-
-.container{max-width:1000px;margin:auto;}
-
+.container{max-width:900px;margin:auto;}
 .card{
 background:white;
 padding:20px;
@@ -26,7 +19,6 @@ border-radius:20px;
 box-shadow:0 10px 25px rgba(0,0,0,0.1);
 margin-bottom:20px;
 }
-
 button{
 background:linear-gradient(95deg,#be185d,#7c3aed);
 color:white;
@@ -34,154 +26,148 @@ border:none;
 padding:10px 15px;
 border-radius:30px;
 cursor:pointer;
-margin-top:10px;
 }
+input{width:100%;padding:10px;margin:5px 0;border-radius:10px;}
+.timer{font-weight:bold;color:#be185d;}
+</style>
+</head>
 
-input{
-width:100%;
-padding:10px;
-margin:5px 0;
-border-radius:10px;
-border:1px solid #ddd;
-}
+<body>
 
-/* TIMER */
-.timer{
-font-size:18px;
-font-weight:bold;
-color:#be185d;
-margin-bottom:10px;
-}
+<div class="container" id="app">
+
+<div class="card">
+<h2>Connexion candidat</h2>
+<input id="nom" placeholder="Nom">
+<button onclick="login()">Commencer</button>
+
+<hr>
+
+<h2>Espace RH</h2>
+<input id="mdp" placeholder="Mot de passe">
+<button onclick="loginRH()">Accéder</button>
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+/* 🔥 CONFIG FIREBASE */
+const firebaseConfig = {
+  apiKey: "AIzaSyCdnpPw6p7QAD_Kq-DsGPZXfbLSB1VHbfk",
+  authDomain: "zcmc-edaf5.firebaseapp.com",
+  projectId: "zcmc-edaf5",
+  storageBucket: "zcmc-edaf5.firebasestorage.app",
+  messagingSenderId: "639717001838",
+  appId: "1:639717001838:web:5e37dd28590d36ac0c747f"
+};
+
+const appFirebase = initializeApp(firebaseConfig);
+const db = getFirestore(appFirebase);
 
 /* ================= VARIABLES ================= */
 
-</style>
-
-<script>
-
-// 🔴 REMPLACE ICI
-const API = "https://TON-REPLIT-URL";
-
 let currentNom="";
-let currentId="";
-let qcmReponses=[];
-let temps=1800; // 30 min
-
-/* ================= IA ================= */
-
-function aideIA(index,question,options,correct){
-const div=document.getElementById("ia-"+index);
-div.innerHTML="🤖 "+options[correct];
-div.style.display="block";
-setTimeout(()=>div.style.display="none",4000);
-}
-
-/* ================= LOGIN ================= */
-
-function login(){
-const nom=document.getElementById("nom").value;
-
-if(!nom) return alert("Nom requis");
-
-currentNom=nom;
-currentId=Date.now()+"_"+nom;
-
-afficherQCM();
-startTimer();
-}
-
-/* ================= TIMER ================= */
-
-function startTimer(){
-const interval=setInterval(()=>{
-temps--;
-
-let min=Math.floor(temps/60);
-let sec=temps%60;
-
-document.getElementById("timer").innerText=
-"⏱ "+min+":"+ (sec<10?"0"+sec:sec);
-
-if(temps<=0){
-clearInterval(interval);
-valider();
-alert("Temps écoulé");
-}
-
-},1000);
-}
+let reponses=[];
+let temps=1800;
+let timerInterval;
 
 /* ================= QUESTIONS ================= */
 
 const questions=[
-{text:"KPI ?",options:["Indicateur clé","Erreur"],correct:0},
+{text:"KPI ?",options:["Indicateur clé de performance","Erreur"],correct:0},
 {text:"Client en colère ?",options:["Couper","Écouter"],correct:1},
 {text:"CRM ?",options:["Gestion client","Erreur"],correct:0}
 ];
+
+/* ================= LOGIN ================= */
+
+window.login = function(){
+const nom=document.getElementById("nom").value;
+if(!nom) return alert("Nom requis");
+currentNom=nom;
+afficherQCM();
+startTimer();
+};
+
+/* ================= TIMER ================= */
+
+function startTimer(){
+timerInterval=setInterval(()=>{
+temps--;
+let min=Math.floor(temps/60);
+let sec=temps%60;
+document.getElementById("timer").innerText="⏱ "+min+":"+(sec<10?"0"+sec:sec);
+
+if(temps<=0){
+clearInterval(timerInterval);
+valider();
+alert("Temps écoulé");
+}
+},1000);
+}
+
+/* ================= IA ================= */
+
+window.aideIA=function(i){
+alert("🤖 Bonne réponse : "+questions[i].options[questions[i].correct]);
+};
 
 /* ================= QCM ================= */
 
 function afficherQCM(){
 
 let html=`<div class="card">
-
 <div id="timer" class="timer"></div>
-
-<h2>Bonjour ${currentNom}</h2>
+<h2>${currentNom}</h2>
 `;
 
 questions.forEach((q,i)=>{
 html+=`
 <div>
 ${i+1}. ${q.text}
-
-<button onclick="aideIA(${i},'${q.text}',${JSON.stringify(q.options)},${q.correct})">🤖</button>
-
+<button onclick="aideIA(${i})">🤖</button>
 ${q.options.map((o,j)=>`
 <label><input type="radio" name="q${i}" value="${j}">${o}</label>
 `).join("")}
-
-<div id="ia-${i}" style="display:none;"></div>
-
 </div>
 `;
 });
 
 html+=`<button onclick="valider()">Valider</button></div>`;
 
-document.querySelector(".container").innerHTML=html;
+document.getElementById("app").innerHTML=html;
 }
 
-/* ================= SAVE ================= */
+/* ================= VALIDATION ================= */
 
-function valider(){
+window.valider=async function(){
+
+clearInterval(timerInterval);
 
 questions.forEach((q,i)=>{
 const val=document.querySelector(`input[name="q${i}"]:checked`);
-qcmReponses[i]=val?parseInt(val.value):null;
+reponses[i]=val?parseInt(val.value):null;
 });
 
 let score=0;
 questions.forEach((q,i)=>{
-if(qcmReponses[i]===q.correct) score++;
+if(reponses[i]===q.correct) score++;
 });
 
-const data={
-id:currentId,
+/* 🔥 SAVE FIREBASE */
+await addDoc(collection(db,"candidats"),{
 nom:currentNom,
 score:score,
 total:questions.length,
 date:new Date()
-};
-
-fetch(API+"/save",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify(data)
 });
 
 afficherResultat(score);
-}
+};
 
 /* ================= RESULT ================= */
 
@@ -191,45 +177,46 @@ let html=`
 <div class="card">
 <h2>Résultat</h2>
 <p>${currentNom} : ${score}/${questions.length}</p>
-
 <button onclick="location.reload()">Retour</button>
 </div>
 `;
 
-document.querySelector(".container").innerHTML=html;
+document.getElementById("app").innerHTML=html;
 }
 
 /* ================= RH ================= */
 
-function loginRH(){
-
-const mdp=document.getElementById("rh").value;
+window.loginRH=function(){
+const mdp=document.getElementById("mdp").value;
 if(mdp!=="RH2026") return alert("Erreur");
-
 chargerRH();
-}
+};
 
-function chargerRH(){
+async function chargerRH(){
 
-fetch(API+"/candidats")
-.then(r=>r.json())
-.then(data=>afficherRH(data));
+const snapshot=await getDocs(collection(db,"candidats"));
+
+let list=[];
+snapshot.forEach(doc=>{
+list.push({...doc.data(),id:doc.id});
+});
+
+afficherRH(list);
 }
 
 function afficherRH(list){
 
 let total=list.length;
 let moyenne=0;
-
 list.forEach(c=>moyenne+=c.score);
-moyenne= total?Math.round(moyenne/total):0;
+moyenne=total?Math.round(moyenne/total):0;
 
 let html=`
 <div class="card">
 <h2>Dashboard RH</h2>
-<p>Total candidats : ${total}</p>
+<p>Total : ${total}</p>
 <p>Moyenne : ${moyenne}</p>
-<button onclick="chargerRH()">🔄 Refresh</button>
+<button onclick="location.reload()">Retour</button>
 </div>
 `;
 
@@ -242,36 +229,17 @@ ${c.nom} - ${c.score}/${c.total}
 `;
 });
 
-document.querySelector(".container").innerHTML=html;
+document.getElementById("app").innerHTML=html;
 }
 
-function supprimer(id){
-fetch(API+"/delete/"+id,{method:"DELETE"})
-.then(()=>chargerRH());
-}
+/* ================= DELETE ================= */
+
+window.supprimer=async function(id){
+await deleteDoc(doc(db,"candidats",id));
+chargerRH();
+};
 
 </script>
-</head>
-
-<body>
-
-<div class="container">
-
-<div class="card">
-
-<h2>Connexion candidat</h2>
-<input id="nom" placeholder="Nom">
-<button onclick="login()">Commencer</button>
-
-<hr>
-
-<h2>Espace RH</h2>
-<input id="rh" placeholder="Mot de passe">
-<button onclick="loginRH()">Accéder</button>
-
-</div>
-
-</div>
 
 </body>
 </html>
